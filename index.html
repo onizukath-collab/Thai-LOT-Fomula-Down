@@ -1446,18 +1446,24 @@
             ctx.textAlign = 'center';
             ctx.fillStyle = '#fbbf24';
             ctx.font = 'bold 48px Kanit, sans-serif';
-            ctx.fillText('สรุปผลเลขเด่นล่าง', 540, 145);
+            ctx.fillText('สรุปผลเลขเด่นล่าง', 540, 140);
+            
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 66px Kanit, sans-serif';
-            ctx.fillText('จากการคัดชนเด่นล่าง', 540, 225);
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '32px Kanit, sans-serif';
-            ctx.fillText(`ชุดตัวเลขทั้งหมด ${numbers.length} ชุด`, 540, 285);
+            ctx.font = 'bold 62px Kanit, sans-serif';
+            ctx.fillText('จากการคัดชนเด่นล่าง', 540, 215);
+
+            // ดึงค่าวันที่จากช่องกรอก (ถ้าไม่ได้กรอก จะแสดงเป็นคำแนะนำหรือซ่อนไว้)
+            const dateInputEl = document.getElementById('drawDateInput');
+            const drawDateText = dateInputEl && dateInputEl.value.trim() ? `งวดวันที่ ${dateInputEl.value.trim()}` : `ชุดตัวเลขทั้งหมด ${numbers.length} ชุด`;
+
+            ctx.fillStyle = '#38bdf8'; // สีฟ้าสว่างสวยงามสำหรับวันที่
+            font = 'bold 34px Kanit, sans-serif';
+            ctx.font = font;
+            ctx.fillText(drawDateText, 540, 280);
 
             const cols = numbers.length <= 24 ? 4 : 5;
             const rows = Math.ceil(numbers.length / cols);
             const top = 345;
-            // กันพื้นที่ด้านล่างไว้สำหรับข้อความแจ้งเตือน ไม่ให้ชุดตัวเลขเบียดกัน
             const bottom = 900;
             const gapX = 18;
             const gapY = 14;
@@ -1486,7 +1492,7 @@
                 ctx.fillText(num, x + cellW / 2, y + cellH / 2 + 1, cellW - 12);
             });
 
-            // กล่องข้อความชี้แจง: วางต่อจากชุดตัวเลขและปรับตำแหน่งตามจำนวนแถว
+            // กล่องข้อความชี้แจงด้านล่าง
             const gridBottom = top + rows * cellH + gapY * Math.max(0, rows - 1);
             const noticeY = Math.min(1050, Math.max(620, gridBottom + 90));
             ctx.beginPath();
@@ -1499,20 +1505,20 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'alphabetic';
             ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 23px Kanit, sans-serif';
-            ctx.fillText('โปรดอ่านคำชี้แจง', 540, noticeY + 43);
+            ctx.font = 'bold 35px Kanit, sans-serif';
+            ctx.fillText('โปรดอ่านคำชี้แจง', 540, noticeY + 50);
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 30px Kanit, sans-serif';
-            ctx.fillText('แค่แนวทางซื้อสลากกินแบ่งรัฐบาลเท่านั้น', 540, noticeY + 91, 820);
+            ctx.font = 'bold 50px Kanit, sans-serif';
+            ctx.fillText('แค่แนวทางซื้อสลากกินแบ่งรัฐบาลเท่านั้น', 540, noticeY + 100, 820);
 
             ctx.textBaseline = 'alphabetic';
             ctx.fillStyle = '#cbd5e1';
-            ctx.font = '26px Kanit, sans-serif';
+            ctx.font = '34px Kanit, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('สร้างจากโปรแกรมจับคู่ตัวเลข & ห้องสูตร Excel', 540, 1080);
+            ctx.fillText('สร้างจากโปรแกรมจับคู่ตัวเลข 2 ตัวล่าง', 540, 1055);
             ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 24px Kanit, sans-serif';
-            ctx.fillText('NUMBER ANALYSIS SUMMARY', 540, 1125);
+            ctx.font = 'bold 30px Kanit, sans-serif';
+            ctx.fillText('NUMBER ANALYSIS SUMMARY', 540, 1095);
             return canvas;
         }
 
@@ -1535,7 +1541,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'สรุปผลเลขเด่น.png';
+                a.download = 'สรุปผลเลขเด่น 2 ตัวล่าง.png';
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
@@ -1561,7 +1567,7 @@
                 const shareData = {
                     files: [file],
                     title: 'สรุปผลเลขเด่นผ่านการคัดกรอง',
-                    text: generatedShareText || `สรุปผลเลขเด่น ${generatedShareNumbers.length} ชุด`
+                    text: generatedShareText || `สรุปผลเลขเด่น 2 ตัวล่าง ${generatedShareNumbers.length} ชุด`
                 };
 
                 if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1650,6 +1656,13 @@
             </h3>
             <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
+		
+<!-- ช่องกรอกงวดวันที่สำหรับแสดงบนภาพ PNG -->
+<div class="space-y-1">
+    <label class="text-xl text-indigo-200 font-medium">งวดวันที่ออกสลาก (เช่น 16 มีนาคม 2569):</label>
+    <input type="text" id="drawDateInput" placeholder="เช่น 16 มีนาคม 2569" 
+        class="w-full bg-slate-900 border border-indigo-500/40 rounded-xl px-3 py-2 text-xs text-amber-300 placeholder-slate-500 font-semibold outline-none focus:ring-2 focus:ring-indigo-500">
+</div>
 
         <!-- Preview Box (พรีวิวข้อความสวยๆ ที่จะโพสต์) -->
         <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2 leading-relaxed shadow-inner">
