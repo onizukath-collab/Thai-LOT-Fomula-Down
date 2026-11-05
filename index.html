@@ -1602,6 +1602,42 @@
             openShareModal();
         }
 
+// ==========================================
+        // 🔄 ระบบดึงไฟล์ JSON จาก GitHub มาใช้อัตโนมัติเมื่อเปิดเว็บ
+        // ==========================================
+        async function autoLoadJsonFromGitHub() {
+            try {
+                // เปลี่ยน 'data.json' เป็นชื่อไฟล์ JSON ที่พี่เต้ยอัปโหลดขึ้น GitHub (ให้อยู่โฟลเดอร์เดียวกันกับ index.html)
+                const jsonFileUrl = 'data.json?t=' + new Date().getTime(); // ใส่ตัวสุ่มกันแคชเก่า
+                
+                const response = await fetch(jsonFileUrl);
+                if (!response.ok) return; // ถ้ายังไม่มีไฟล์บน GitHub ให้ข้ามไปใช้ของเดิมในเครื่องปกติ
+                
+                const remoteBundle = await response.json();
+                if (remoteBundle && remoteBundle.mainData) {
+                    // นำข้อมูลจากไฟล์ JSON บน GitHub มาอัปเดตลงเครื่องอัตโนมัติ
+                    applyBackupBundle(remoteBundle);
+                    showToast('ดึงข้อมูลล่าสุดจาก GitHub สำเร็จ!');
+                }
+            } catch (err) {
+                // กรณีรันแบบเปิดไฟล์ตรงในเครื่อง (file://) หรือออฟไลน์ ให้ข้ามไปใช้งาน LocalStorage ตามปกติ
+                console.log('โหมดออฟไลน์: ใช้ข้อมูลในเครื่อง');
+            }
+        }
+
+        // สั่งให้ระบบทำงานทันทีที่เปิดหน้าเว็บขึ้นมา
+        window.addEventListener('DOMContentLoaded', () => {
+            // โหลดข้อมูลเดิมในเครื่องก่อน
+            loadPresetsToSelect();
+            loadFilterPresetsToSelect();
+            loadSavedData();
+            initExcelSheetsEngine();
+            autoProcess();
+
+            // 🚀 จากนั้นพยายามดึงไฟล์ JSON จาก GitHub มาอัปเดตทับ (ถ้ามีไฟล์อยู่บน GitHub)
+            setTimeout(autoLoadJsonFromGitHub, 500);
+        });
+
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
