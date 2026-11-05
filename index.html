@@ -30,6 +30,9 @@
                 <button onclick="changeFirebaseRoom()" class="px-3 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-xl text-xs font-bold transition shadow">
                     <i class="fa-solid fa-sync"></i> เชื่อมต่อ
                 </button>
+                <button onclick="forceResetLocalAndSync()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow" title="ล้างความจำเครื่องนี้แล้วดึงจาก Cloud ใหม่">
+                    <i class="fa-solid fa-rotate-left"></i> ดึงจาก Cloud ใหม่
+                </button>
             </div>
         </div>
 
@@ -52,12 +55,10 @@
             </button>
         </div>
 
-        <!-- ========================================== -->
-        <!-- TAB 1: หน้าหลัก & จับคู่ตัวเลข -->
-        <!-- ========================================== -->
+        <!-- TAB 1: หน้าหลัก -->
         <div id="pageMain" class="space-y-4">
             
-            <!-- 🤖 พาเนลผู้ช่วยวิเคราะห์สถิติ (ออฟไลน์) -->
+            <!-- AI Assistant Panel -->
             <div class="bg-gradient-to-br from-purple-900 to-slate-900 text-white rounded-2xl p-4 shadow-md space-y-3 border border-purple-700">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-700/60 pb-2">
                     <h3 class="text-xs font-bold flex items-center gap-1.5 text-purple-200">
@@ -67,7 +68,7 @@
                 </div>
 
                 <div id="aiChatLog2" class="bg-purple-950/70 rounded-xl p-3 h-32 overflow-y-auto space-y-1.5 text-[11px] font-mono text-purple-100 border border-purple-800/50 leading-relaxed">
-                    <div class="text-purple-300">🤖 ระบบพร้อมวิเคราะห์: กดปุ่มด้านล่างเพื่อสแกนและจัดอันดับเลขเด่นจากทุกสูตรในหน้า Excel (เรียงจากมากไปน้อยเป็นขั้นบันได)</div>
+                    <div class="text-purple-300">🤖 ระบบพร้อมวิเคราะห์: กดปุ่มด้านล่างเพื่อสแกนและจัดอันดับเลขเด่นจากทุกสูตรในหน้า Excel</div>
                 </div>
 
                 <div>
@@ -157,7 +158,7 @@
                         </div>
                     </div>
 
-                    <!-- กล่อง 2 -->
+                    <!-- Filter Section -->
                     <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-3">
                         <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2 border-b pb-2">
                             <i class="fa-solid fa-ban text-rose-500"></i> 2. เลขดับ & แต้มผลรวม & ตัวกรองคำนวณ
@@ -260,13 +261,10 @@
             <!-- Results Section -->
             <div id="resultArea" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4 hidden">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
-                    <h3 class="text-lg font-bold text-slate-800">ผลลัพธ์การจับคู่ & แสดงเปรียบเทียบ (ซ้าย & ขวา)</h3>
+                    <h3 class="text-lg font-bold text-slate-800">ผลลัพธ์การจับคู่ & แสดงเปรียบเทียบ</h3>
                     <div class="flex items-center gap-2">
                         <button onclick="copyReversedPassedResults()" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-medium shadow transition flex items-center gap-1.5">
                             <i class="fa-solid fa-right-left"></i> คัดลอกแบบกลับตัวเลข
-                        </button>
-                        <button onclick="openShareModal()" class="px-3.5 py-1.5 bg-[#1877F2] hover:bg-blue-600 text-white rounded-xl text-xs font-medium shadow transition flex items-center gap-1.5">
-                            <i class="fa-brands fa-facebook"></i> แชร์ผลสรุปแบบสวยงาม
                         </button>
                     </div>
                 </div>
@@ -293,186 +291,51 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- TAB 2: สถิติ & สูตร EXCEL -->
-        <!-- ========================================== -->
+        <!-- TAB 2: สูตร EXCEL -->
         <div id="pageCustomEngine" class="space-y-4 hidden">
             <div class="bg-white rounded-xl p-2 border border-slate-200 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
                 <div id="excelSubTabsContainer" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
-                <div class="flex items-center gap-2">
-                    <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap">
-                        <i class="fa-solid fa-plus"></i> เพิ่มหน้าสถิติใหม่
-                    </button>
-                </div>
+                <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition whitespace-nowrap">
+                    <i class="fa-solid fa-plus"></i> เพิ่มหน้าใหม่
+                </button>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 space-y-3">
                         <div class="flex items-center justify-between border-b pb-2">
-                            <h2 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                                <i class="fa-solid fa-clock-rotate-left text-purple-600"></i> สถิติผลสลาก
-                            </h2>
+                            <h2 class="text-xs font-bold text-slate-800"><i class="fa-solid fa-clock-rotate-left text-purple-600"></i> สถิติผลสลาก</h2>
                             <button onclick="clearCustomHistoryInput()" id="clearHistoryBtn" class="text-[11px] text-rose-500 hover:underline">ล้างสถิติ</button>
                         </div>
                         <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl border border-slate-200">
-                            <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5" id="lockStatusText">
-                                <i class="fa-solid fa-lock text-rose-600"></i> สถานะ: ล็อคช่องสถิติอยู่
-                            </span>
-                            <button onclick="toggleHistoryLock()" id="lockBtn" class="px-3 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold">
-                                <i class="fa-solid fa-unlock"></i> ปลดล็อค
-                            </button>
+                            <span class="text-xs font-bold text-slate-700" id="lockStatusText"><i class="fa-solid fa-lock text-rose-600"></i> สถานะ: ล็อคช่องสถิติอยู่</span>
+                            <button onclick="toggleHistoryLock()" id="lockBtn" class="px-3 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold"><i class="fa-solid fa-unlock"></i> ปลดล็อค</button>
                         </div>
-
-                        <!-- 📌 บาร์อ้างอิงตำแหน่งหลัก P1 - P20 -->
-                        <div class="bg-amber-500 text-slate-900 p-2 rounded-lg space-y-1 shadow-sm border border-amber-600">
-                            <div class="text-[10px] font-bold text-slate-950 flex items-center justify-between border-b border-amber-600/50 pb-1">
-                                <span>📌 ตำแหน่งหลัก P1 & P20</span>
-                            </div>
-                            <div class="flex items-center gap-1 font-mono text-[9px] font-extrabold text-center">
-                                <div class="flex-[2.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">1</span><span class="flex-1">2</span><span class="flex-1">3</span><span class="flex-1">4</span><span class="flex-1">5</span><span class="flex-1">6</span>
-                                </div>
-                                <div class="flex-[1] flex gap-0.5 bg-amber-300 p-0.5 rounded text-amber-950 font-black border border-amber-700 justify-between">
-                                    <span class="flex-1">7</span><span class="flex-1">8</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">9</span><span class="flex-1">10</span><span class="flex-1">11</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">12</span><span class="flex-1">13</span><span class="flex-1">14</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">15</span><span class="flex-1">16</span><span class="flex-1">17</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">18</span><span class="flex-1">19</span><span class="flex-1">20</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <textarea id="customHistoryInput" oninput="debounceProcessCustomEngine()" rows="11" placeholder="วางสถิติผลสลาก..."
-                            class="w-full p-3 border border-slate-300 rounded-lg outline-none font-mono leading-relaxed transition whitespace-pre overflow-x-auto bg-slate-50 text-slate-700"
-                            style="font-size: 22px; letter-spacing: 2.2px;" readonly></textarea>
+                        <textarea id="customHistoryInput" oninput="debounceProcessCustomEngine()" rows="11" class="w-full p-3 border border-slate-300 rounded-lg outline-none font-mono text-sm whitespace-pre bg-slate-50 text-slate-700" readonly></textarea>
                     </div>
                 </div>
 
                 <div class="lg:col-span-8 space-y-4">
                     <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-4 rounded-xl shadow-sm flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 bg-white/10 rounded-lg"><i class="fa-solid fa-list-ol text-lg text-amber-300"></i></div>
-                            <div>
-                                <h3 class="text-xs font-bold text-white">ชุดเลขสรุปตัวแรก (จากทุกคอลัมน์สูตร)</h3>
-                                <div id="extractedFirstDigitsDisplay" class="text-amber-300 font-mono font-extrabold text-base sm:text-lg tracking-widest mt-0.5">-- รอคำนวณ --</div>
-                            </div>
+                        <div>
+                            <h3 class="text-xs font-bold text-white">ชุดเลขสรุปตัวแรก</h3>
+                            <div id="extractedFirstDigitsDisplay" class="text-amber-300 font-mono font-extrabold text-base tracking-widest mt-0.5">-- รอคำนวณ --</div>
                         </div>
-                        <button onclick="sendFirstDigitsToMain()" class="px-4 py-2 bg-slate-900 hover:bg-black text-amber-300 font-bold rounded-lg text-xs shadow transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-paper-plane text-amber-400"></i> 🚀 ส่งเลขสรุปนี้ เข้าช่องคัดกรองหน้าหลัก
+                        <button onclick="sendFirstDigitsToMain()" class="px-4 py-2 bg-slate-900 hover:bg-black text-amber-300 font-bold rounded-lg text-xs shadow">
+                            <i class="fa-solid fa-paper-plane text-amber-400"></i> ส่งเลขสรุปเข้าหน้าหลัก
                         </button>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden space-y-2 p-2">
-                        <div class="flex flex-wrap items-center justify-between gap-2 px-2 pt-1">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-slate-700">พิมพ์สูตรที่หัวคอลัมน์ แล้วกดปุ่มอัปเดต:</span>
-                                <button onclick="triggerManualCalculate()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center gap-1">
-                                    <i class="fa-solid fa-rotate"></i> คำนวณตารางใหม่
-                                </button>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-medium text-slate-600">แสดงผล:</span>
-                                <select id="outputLengthSelect" onchange="updateOutputLength(this.value)" class="bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-800 outline-none">
-                                    <option value="1">1 หลัก</option><option value="2">2 หลัก</option><option value="3">3 หลัก</option><option value="4">4 หลัก</option><option value="5" selected>5 หลัก</option>
-                                </select>
-                                <button onclick="addCustomFormulaColumn()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">+ เพิ่มคอลัมน์สูตร</button>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-auto text-left border-collapse">
-                                <thead><tr id="customTableHeadRow" class="bg-slate-800 text-white text-xs font-semibold uppercase border-b border-slate-900"></tr></thead>
-                                <tbody id="customFormulaTableBody" class="divide-y divide-slate-100 text-xs font-mono"></tbody>
-                            </table>
-                        </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-2 overflow-x-auto">
+                        <table class="w-auto text-left border-collapse">
+                            <thead><tr id="customTableHeadRow" class="bg-slate-800 text-white text-xs uppercase border-b border-slate-900"></tr></thead>
+                            <tbody id="customFormulaTableBody" class="divide-y divide-slate-100 text-xs font-mono"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
 
-    </div>
-
-    <!-- MODALS & TOAST -->
-    <div id="notepadModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 space-y-3 border border-slate-200">
-            <div class="flex items-center justify-between border-b pb-2">
-                <h3 class="text-sm font-bold text-slate-800">นำเข้าชุดคัดกรองจาก Notepad</h3>
-                <button onclick="closeNotepadModal()" class="text-slate-400 text-base"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <textarea id="notepadPasteText" rows="6" placeholder="วางชุดเลขเด่นที่นี่..." class="w-full p-3 border rounded-xl text-xs font-mono outline-none"></textarea>
-            <div class="flex justify-end gap-2 pt-2 border-t">
-                <button onclick="closeNotepadModal()" class="px-3.5 py-1.5 bg-slate-100 rounded-xl text-xs">ยกเลิก</button>
-                <button onclick="importFromNotepad()" class="px-4 py-1.5 bg-[#1877F2] text-white rounded-xl text-xs font-bold">นำเข้า</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="bestBottomSumModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-5 space-y-4 border border-slate-200">
-            <div class="flex items-center justify-between border-b pb-3">
-                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-500"></i> 🎯 4 สูตรแต้มที่ดีที่สุด & จับตัวชน</h3>
-                <button onclick="closeBestBottomSumModal()" class="text-slate-400 text-lg hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-3.5 rounded-xl space-y-2 border border-purple-700 shadow-sm">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-2">
-                    <span class="text-xs font-bold text-amber-300">⚡ สรุปตัวชน (จาก 4 สูตรเด่น):</span>
-                    <button onclick="sendIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">ส่งเข้า "แต้มผลรวมหลัก"</button>
-                </div>
-                <div id="intersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- กำลังคำนวณ --</div>
-            </div>
-            <p class="text-xs text-slate-500">ผลการสแกน 4 สูตรเด่น พร้อมตารางเช็คสถิติย้อนหลัง:</p>
-            <div id="bestFormulasResultList" class="space-y-4 max-h-[380px] overflow-y-auto pr-1"></div>
-            <div class="flex justify-end gap-2 pt-3 border-t"><button onclick="closeBestBottomSumModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold">ปิดหน้าต่าง</button></div>
-        </div>
-    </div>
-
-    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white px-3.5 py-2 rounded-xl shadow-lg text-xs font-medium transition duration-300 opacity-0 pointer-events-none flex items-center gap-2 z-50">
-        <i class="fa-solid fa-circle-check text-blue-400"></i> <span id="toastMsg">สำเร็จ</span>
-    </div>
-
-    <!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
-    <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-indigo-500/40 text-white">
-            
-            <!-- Header -->
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
-                    <i class="fa-solid fa-share-nodes text-indigo-400"></i> สรุปผลเลขเด่น พร้อมแชร์
-                </h3>
-                <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <!-- Preview Box (พรีวิวข้อความสวยๆ ที่จะโพสต์) -->
-            <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2 leading-relaxed shadow-inner">
-                <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-                <div class="text-white font-bold">📌 สรุปผลเลขเด่นผ่านการคัดกรอง</div>
-                <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-                <div id="sharePreviewContent" class="text-amber-200 font-black text-sm tracking-widest py-2 break-words">-- กำลังโหลดข้อมูล --</div>
-                <div class="text-slate-400 text-[10px] pt-1 border-t border-indigo-900/50">✨ สร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว</div>
-            </div>
-
-            <!-- Share / Download Actions -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <button onclick="shareImageToFacebook()" class="py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-share-nodes"></i> แชร์ภาพไปยัง Facebook Story
-                </button>
-                <button onclick="downloadShareImage()" class="py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-download"></i> ดาวน์โหลดภาพ PNG
-                </button>
-                <button onclick="copyFormattedShareText()" class="sm:col-span-2 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-copy"></i> คัดลอกข้อความ (ทางเลือก)
-                </button>
-            </div>
-            <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
-        </div>
     </div>
 
     <!-- Firebase SDK (ES Module) -->
@@ -504,15 +367,9 @@
             const dot = document.getElementById('firebaseStatusDot');
             const txt = document.getElementById('firebaseStatusText');
             if (dot && txt) {
-                if (isOnline) {
-                    dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
-                    txt.className = "font-bold text-amber-300";
-                    txt.innerText = `ซิงค์ออนไลน์ (Firebase): ${msg || 'พร้อมใช้งาน'}`;
-                } else {
-                    dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
-                    txt.className = "font-bold text-rose-300";
-                    txt.innerText = `ออฟไลน์: ${msg || 'ใช้ความจำในเครื่อง'}`;
-                }
+                dot.className = isOnline ? "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" : "w-2.5 h-2.5 rounded-full bg-rose-500";
+                txt.className = isOnline ? "font-bold text-amber-300" : "font-bold text-rose-300";
+                txt.innerText = isOnline ? `ซิงค์ออนไลน์ (Firebase): ${msg || 'พร้อมใช้งาน'}` : `ออฟไลน์: ${msg || 'ขัดข้อง'}`;
             }
         }
 
@@ -537,14 +394,6 @@
                         if (typeof window.renderSubTabsBar === 'function') window.renderSubTabsBar();
                         if (typeof window.loadActiveSheetContent === 'function') window.loadActiveSheetContent();
                     }
-                    if (data.presets) {
-                        localStorage.setItem('number_pair_app_presets_v57', JSON.stringify(data.presets));
-                        if (typeof window.loadPresetsToSelect === 'function') window.loadPresetsToSelect();
-                    }
-                    if (data.filterPresets) {
-                        localStorage.setItem('number_pair_app_filter_presets_v57', JSON.stringify(data.filterPresets));
-                        if (typeof window.loadFilterPresetsToSelect === 'function') window.loadFilterPresetsToSelect();
-                    }
 
                     if (typeof window.autoProcess === 'function') window.autoProcess();
 
@@ -553,10 +402,13 @@
                 } else {
                     setSyncStatus(true, `ห้องใหม่ [${currentRoomId}] (รอดำเนินการเซฟ)`);
                 }
-            }, (error) => {
-                console.error("Firebase sync error:", error);
-                setSyncStatus(false, "การเชื่อมต่อขัดข้อง");
             });
+        };
+
+        window.forceResetLocalAndSync = function() {
+            localStorage.clear();
+            if (typeof window.showToast === 'function') window.showToast("ดึงจาก Cloud ใหม่เรียบร้อย");
+            window.listenFirebaseRoom(currentRoomId);
         };
 
         window.saveDataToFirebaseCloud = function() {
@@ -565,19 +417,12 @@
             firebaseSyncTimer = setTimeout(async () => {
                 try {
                     setSyncStatus(true, "กำลังบันทึกขึ้น Cloud...");
-                    if (typeof window.collectAndSaveDOMFormulas === 'function') {
-                        window.collectAndSaveDOMFormulas();
-                    }
                     const mainData = typeof window.getCurrentFormState === 'function' ? window.getCurrentFormState() : {};
-                    const presets = typeof window.getStoredPresets === 'function' ? window.getStoredPresets() : {};
-                    const filterPresets = typeof window.getStoredFilterPresets === 'function' ? window.getStoredFilterPresets() : {};
                     const excelSheets = window.excelSheetsData || {};
 
                     const docRef = doc(db, "app_data_rooms", currentRoomId);
                     await setDoc(docRef, {
                         mainData,
-                        presets,
-                        filterPresets,
                         excelSheetsData: excelSheets,
                         updatedAt: new Date().toISOString()
                     }, { merge: true });
@@ -587,17 +432,13 @@
                     console.error("Cloud save failed:", err);
                     setSyncStatus(false, "บันทึก Cloud ไม่สำเร็จ");
                 }
-            }, 600);
+            }, 500);
         };
 
         window.changeFirebaseRoom = function() {
             const input = document.getElementById('firebaseRoomId');
             if (input && input.value.trim()) {
-                const newRoom = input.value.trim();
-                window.listenFirebaseRoom(newRoom);
-                if (typeof window.showToast === 'function') {
-                    window.showToast(`สลับไปเชื่อมต่อห้อง "${newRoom}" เรียบร้อย`);
-                }
+                window.listenFirebaseRoom(input.value.trim());
             }
         };
 
@@ -606,69 +447,15 @@
         });
     </script>
 
-    <!-- Original Core Application Script (ฟังก์ชันคำนวณเดิมแบบ 100%) -->
+    <!-- Core App Logic -->
     <script>
         const STORAGE_KEY = 'number_pair_app_main_data_v57';
-        const PRESETS_KEY = 'number_pair_app_presets_v57';
-        const FILTER_PRESETS_KEY = 'number_pair_app_filter_presets_v57';
         const EXCEL_SHEETS_KEY = 'number_pair_app_excel_multi_sheets_v57';
-
         let activeSheetId = 'sheet_1';
         let excelSheetsData = {};
-        let extractedFirstDigits = '';
-        let currentIntersectionDigits = [];
-        let isHistoryLocked = true;
         let autoProcessTimer = null;
 
-        const defaultHistoryData = `730209 51 446 065 376 297
-807779 23 961 699 448 477
-558700 51 285 418 824 685
-847377 50 268 613 652 001
-818894 54 139 530 781 656
-757563 32 595 927 457 309
-669687 36 635 760 180 666
-266227 85 413 254 474 760
-213388 06 826 116 167 662
-251309 87 109 231 965 631
-559352 20 349 134 307 044
-507392 06 243 017 299 736
-949246 91 680 169 918 261
-245324 26 995 171 084 336
-811852 50 525 142 891 512
-994865 63 602 247 834 989
-506356 31 131 012 022 209
-074646 58 740 512 308 703
-876978 77 843 532 280 605
-059696 61 955 531 889 476
-345898 87 449 328 111 690
-458145 37 602 242 389 239
-461252 22 655 389 137 995
-763895 52 431 176 014 449
-837706 16 694 347 288 765
-878972 02 299 815 662 363
-174629 48 917 195 408 041
-340563 07 527 241 578 169
-820866 06 479 054 068 837
-833009 64 510 983 439 954
-292514 47 406 113 851 098
-309612 77 355 108 868 424
-536077 43 267 318 065 153
-107387 08 298 091 602 716
-173770 95 848 415 410 938
-287184 48 758 434 007 721
-751495 62 001 980 304 531
-639214 71 683 709 746 427
-932479 69 413 672 154 039
-004615 53 731 429 937 094
-417212 04 257 346 136 740
-730640 64 060 521 266 041
-402701 70 791 912 058 396
-011781 48 402 392 171 255
-423224 85 300 950 393 804`;
-
         window.addEventListener('DOMContentLoaded', () => {
-            loadPresetsToSelect();
-            loadFilterPresetsToSelect();
             loadSavedData();
             initExcelSheetsEngine();
             autoProcess();
@@ -679,11 +466,6 @@
             autoProcessTimer = setTimeout(() => { autoProcess(); }, 300);
         }
 
-        function debounceProcessCustomEngine() {
-            clearTimeout(autoProcessTimer);
-            autoProcessTimer = setTimeout(() => { processCustomFormulasEngine(); }, 300);
-        }
-
         function swapTensUnits() {
             const tensEl = document.getElementById('tens');
             const unitsEl = document.getElementById('units');
@@ -691,646 +473,28 @@
             tensEl.value = unitsEl.value;
             unitsEl.value = temp;
             autoProcess();
-            showToast('สลับหลักสิบ & หลักหน่วยเรียบร้อย');
-        }
-
-        function toggleHistoryLock() {
-            isHistoryLocked = !isHistoryLocked;
-            const textarea = document.getElementById('customHistoryInput');
-            const lockBtn = document.getElementById('lockBtn');
-            const lockStatusText = document.getElementById('lockStatusText');
-            const clearBtn = document.getElementById('clearHistoryBtn');
-
-            if (isHistoryLocked) {
-                textarea.setAttribute('readonly', true);
-                textarea.classList.add('bg-slate-50', 'text-slate-700');
-                textarea.classList.remove('bg-white', 'text-slate-950', 'ring-2', 'ring-purple-600');
-                lockBtn.className = "px-3 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold";
-                lockBtn.innerHTML = `<i class="fa-solid fa-unlock"></i> ปลดล็อค`;
-                lockStatusText.innerHTML = `<i class="fa-solid fa-lock text-rose-600"></i> สถานะ: ล็อคช่องสถิติอยู่`;
-                if(clearBtn) clearBtn.style.display = 'block';
-            } else {
-                textarea.removeAttribute('readonly');
-                textarea.classList.remove('bg-slate-50', 'text-slate-700');
-                textarea.classList.add('bg-white', 'text-slate-950', 'ring-2', 'ring-purple-600');
-                lockBtn.className = "px-3 py-1 bg-emerald-600 text-white rounded-lg text-xs font-bold";
-                lockBtn.innerHTML = `<i class="fa-solid fa-lock"></i> ล็อคช่อง`;
-                lockStatusText.innerHTML = `<i class="fa-solid fa-unlock text-emerald-600"></i> สถานะ: ปลดล็อคแล้ว`;
-            }
         }
 
         function switchPageTab(tab) {
             document.getElementById('pageMain').classList.add('hidden');
             document.getElementById('pageCustomEngine').classList.add('hidden');
-            document.getElementById('tabMainBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 transition";
-            document.getElementById('tabCustomEngineBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 transition";
-
-            if (tab === 'main') {
-                document.getElementById('pageMain').classList.remove('hidden');
-                document.getElementById('tabMainBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 bg-white text-[#1877F2] shadow-sm transition";
-            } else if (tab === 'customEngine') {
-                document.getElementById('pageCustomEngine').classList.remove('hidden');
-                document.getElementById('tabCustomEngineBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 bg-white text-emerald-700 shadow-sm transition";
-            }
+            if (tab === 'main') document.getElementById('pageMain').classList.remove('hidden');
+            else document.getElementById('pageCustomEngine').classList.remove('hidden');
         }
-
-        function initExcelSheetsEngine() {
-            const saved = localStorage.getItem(EXCEL_SHEETS_KEY);
-            if (saved) { try { excelSheetsData = JSON.parse(saved); } catch(e) {} }
-            if (!excelSheetsData || Object.keys(excelSheetsData).length === 0) {
-                excelSheetsData = {
-                    'sheet_1': {
-                        name: 'ตารางสูตรที่ 1', history: defaultHistoryData, outputLength: 5,
-                        columns: [{ name: 'ส1', formula: 'P7+P8+1' }, { name: 'ส2', formula: 'P1+P7+3' }, { name: 'ส3', formula: 'P3+P8+5' }, { name: 'ส4', formula: 'P5+P7+2' }, { name: 'ส5', formula: 'P2+P12+4' }]
-                    }
-                };
-            }
-            if (!excelSheetsData[activeSheetId]) activeSheetId = Object.keys(excelSheetsData)[0];
-            renderSubTabsBar(); loadActiveSheetContent();
-        }
-
-        function saveExcelSheetsData() {
-            if (excelSheetsData[activeSheetId]) excelSheetsData[activeSheetId].history = document.getElementById('customHistoryInput').value;
-            localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
-            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
-        }
-
-        function renderSubTabsBar() {
-            const container = document.getElementById('excelSubTabsContainer');
-            if(!container) return;
-            container.innerHTML = '';
-            for (let id in excelSheetsData) {
-                const sheet = excelSheetsData[id];
-                const isActive = id === activeSheetId;
-                const tabBtn = document.createElement('div');
-                tabBtn.className = `flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold cursor-pointer whitespace-nowrap ${isActive ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600'}`;
-                tabBtn.innerHTML = `<span onclick="switchExcelSubTab('${id}')"><i class="fa-solid fa-table mr-1"></i>${sheet.name}</span>${Object.keys(excelSheetsData).length > 1 ? `<button onclick="deleteExcelSheetTab('${id}', event)" class="text-rose-300 hover:text-white ml-1 text-[10px]"><i class="fa-solid fa-xmark"></i></button>` : ''}`;
-                container.appendChild(tabBtn);
-            }
-        }
-
-        function switchExcelSubTab(id) { collectAndSaveDOMFormulas(); activeSheetId = id; renderSubTabsBar(); loadActiveSheetContent(); }
-        function addNewExcelSheetTab() {
-            collectAndSaveDOMFormulas();
-            const nextIdx = Object.keys(excelSheetsData).length + 1;
-            const newId = `sheet_${Date.now()}`;
-            excelSheetsData[newId] = { name: `ตารางสูตรที่ ${nextIdx}`, history: defaultHistoryData, outputLength: 5, columns: [{ name: 'ส1', formula: 'P7+P8+1' }, { name: 'ส2', formula: 'P1+P7+3' }] };
-            activeSheetId = newId; saveExcelSheetsData(); renderSubTabsBar(); loadActiveSheetContent();
-        }
-
-        function deleteExcelSheetTab(id, e) {
-            e.stopPropagation();
-            if (Object.keys(excelSheetsData).length <= 1) return;
-            if (confirm(`ลบหน้าสถิติ "${excelSheetsData[id].name}"?`)) {
-                delete excelSheetsData[id]; if (activeSheetId === id) activeSheetId = Object.keys(excelSheetsData)[0];
-                saveExcelSheetsData(); renderSubTabsBar(); loadActiveSheetContent();
-            }
-        }
-
-        function loadActiveSheetContent() {
-            const sheet = excelSheetsData[activeSheetId];
-            if (!sheet) return;
-
-            const headRow = document.getElementById('customTableHeadRow');
-            const body = document.getElementById('customFormulaTableBody');
-            if (headRow) headRow.innerHTML = '';
-            if (body) body.innerHTML = '';
-
-            document.getElementById('customHistoryInput').value = sheet.history || defaultHistoryData;
-            document.getElementById('outputLengthSelect').value = sheet.outputLength || 5;
-            processCustomFormulasEngine();
-        }
-
-        function updateOutputLength(val) {
-            const sheet = excelSheetsData[activeSheetId];
-            if (sheet) { sheet.outputLength = parseInt(val, 10) || 5; saveExcelSheetsData(); processCustomFormulasEngine(); }
-        }
-
-        function collectAndSaveDOMFormulas() {
-            const sheet = excelSheetsData[activeSheetId];
-            if (!sheet) return;
-            sheet.history = document.getElementById('customHistoryInput').value;
-            sheet.columns.forEach((col, idx) => {
-                const nameInput = document.getElementById(`col_name_${idx}`);
-                const formulaInput = document.getElementById(`col_formula_${idx}`);
-                if (nameInput) col.name = nameInput.value;
-                if (formulaInput) col.formula = formulaInput.value;
-            });
-            localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
-        }
-
-        function triggerManualCalculate() {
-            collectAndSaveDOMFormulas();
-            processCustomFormulasEngine();
-            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
-            showToast('อัปเดตผลลัพธ์เรียบร้อย!');
-        }
-
-        function addCustomFormulaColumn() { 
-            collectAndSaveDOMFormulas();
-            const cols = excelSheetsData[activeSheetId].columns; 
-            cols.push({ name: `ส${cols.length + 1}`, formula: 'P1+1' }); 
-            saveExcelSheetsData(); 
-            processCustomFormulasEngine(); 
-        }
-
-        function removeCustomFormulaColumn(idx) { 
-            collectAndSaveDOMFormulas();
-            const cols = excelSheetsData[activeSheetId].columns; 
-            if (cols.length <= 1) return; 
-            cols.splice(idx, 1); 
-            saveExcelSheetsData(); 
-            processCustomFormulasEngine(); 
-        }
-
-        function evalSingleFormulaStr(formulaStr, d, length = 5) {
-            const getD = (idx) => d[idx - 1] || 0;
-            let expr = formulaStr.toUpperCase().replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
-            try {
-                let baseSum = eval(expr); baseSum = Math.abs(parseInt(baseSum, 10)) % 10;
-                let seq = []; for (let i = 0; i < length; i++) seq.push((baseSum + i) % 10);
-                return seq.join('');
-            } catch(e) { return '-----'; }
-        }
-
-        function processCustomFormulasEngine() {
-            collectAndSaveDOMFormulas();
-            const sheet = excelSheetsData[activeSheetId]; if (!sheet) return;
-            const outLen = sheet.outputLength || 5;
-            const rawText = document.getElementById('customHistoryInput').value.trim();
-            const headRow = document.getElementById('customTableHeadRow');
-            const body = document.getElementById('customFormulaTableBody');
-            if(!headRow || !body) return; 
-            
-            body.innerHTML = '';
-
-            let headHTML = `<th class="py-1.5 px-0.5 text-center text-[10px]" style="width: 35px;">งวด</th><th class="py-1.5 px-0.5 text-center bg-slate-900 text-[10px]" style="width: 48px;">2 ล่าง</th>`;
-            sheet.columns.forEach((col, idx) => {
-                headHTML += `<th class="py-1 px-0.5 text-center" style="width: 58px;"><div class="flex flex-col gap-0.5"><div class="flex items-center justify-between px-0.5"><input type="text" id="col_name_${idx}" value="${col.name}" class="w-7 bg-slate-700 text-white text-center font-bold text-[10px] rounded px-0.5 outline-none"><button onclick="removeCustomFormulaColumn(${idx})" class="text-rose-400 text-[10px] px-0.5"><i class="fa-solid fa-xmark"></i></button></div><input type="text" id="col_formula_${idx}" value="${col.formula}" class="w-full bg-blue-700 text-amber-300 text-center font-mono font-semibold text-[13px] rounded px-0.5 py-0.5 outline-none"></div></th>`;
-            });
-            headHTML += `<th class="py-1.5 px-0.5 text-center bg-emerald-800 text-[10px]" style="width: 48px;">ตัวแรก</th><th class="py-1.5 px-0.5 text-center bg-rose-900 text-rose-100 text-[10px]" style="width: 55px;">เลขขาด</th>`;
-            headRow.innerHTML = headHTML;
-
-            if (!rawText) return;
-            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
-
-            lines.forEach((line, index) => {
-                const clean = line.replace(/[^0-9]/g, '');
-                let actualBottom = clean.length >= 8 ? clean.slice(6, 8) : (clean.length >= 2 ? clean.slice(0, 2) : '--');
-                let bottomDigits = actualBottom.split('');
-                let computedFormulas = []; let firstDigitsThisRow = [];
-
-                if (index > 0) {
-                    const prevDigits = lines[index - 1].replace(/[^0-9]/g, '').split('').map(Number);
-                    sheet.columns.forEach(col => {
-                        let fRes = evalSingleFormulaStr(col.formula, prevDigits, outLen);
-                        computedFormulas.push(fRes);
-                        if (fRes !== '-----' && fRes.length > 0) firstDigitsThisRow.push(fRes[0]);
-                    });
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/70";
-                let cellsHTML = `<td class="py-1 px-0.5 text-center text-slate-400 text-[10px] border-r" style="width: 35px;">${index + 1}</td><td class="py-1 px-0.5 text-center font-bold text-slate-800 bg-slate-100/90 border-r text-[10px]" style="width: 48px;">${actualBottom}</td>`;
-
-                if (index === 0) {
-                    sheet.columns.forEach(() => { cellsHTML += `<td class="py-1 px-0.5 text-center text-slate-300 bg-slate-700 border-r text-[10px]" style="width: 58px;">-----</td>`; });
-                    cellsHTML += `<td class="py-1 px-0.5 text-center font-bold bg-emerald-50 text-emerald-800 text-[10px]" style="width: 48px;">--</td><td class="py-1 px-0.5 text-center font-bold bg-rose-50 text-rose-800 text-[10px]" style="width: 55px;">--</td>`;
-                } else {
-                    computedFormulas.forEach((fVal) => {
-                        if (fVal === '-----') cellsHTML += `<td class="py-1 px-0.5 text-center text-slate-300 bg-slate-700 border-r text-[10px]" style="width: 58px;">-----</td>`;
-                        else {
-                            let formattedChars = fVal.split('').map(digit => (actualBottom !== '--' && bottomDigits.includes(digit)) ? `<span class="text-rose-500 font-black">${digit}</span>` : `<span class="text-white">${digit}</span>`).join('');
-                            cellsHTML += `<td class="py-1 px-0.5 text-center font-bold bg-slate-700 border-r text-[10px]" style="width: 58px;">${formattedChars}</td>`;
-                        }
-                    });
-
-                    let uniqueFirsts = [...new Set(firstDigitsThisRow)];
-                    let formattedFirsts = uniqueFirsts.map(digit => (actualBottom !== '--' && bottomDigits.includes(digit)) ? `<span class="text-rose-600 font-black">${digit}</span>` : `<span class="text-emerald-950">${digit}</span>`).join('');
-                    let missingDigits = []; for (let d = 0; d <= 9; d++) { let dStr = d.toString(); if (!uniqueFirsts.includes(dStr)) missingDigits.push(dStr); }
-                    let formattedMissing = missingDigits.map(digit => (actualBottom !== '--' && bottomDigits.includes(digit)) ? `<span class="text-rose-600 font-black">${digit}</span>` : `<span class="text-rose-950">${digit}</span>`).join('');
-
-                    cellsHTML += `<td class="py-1 px-0.5 text-center font-extrabold bg-emerald-100 text-[10px] tracking-wider border-r" style="width: 48px;">${formattedFirsts || '--'}</td><td class="py-1 px-0.5 text-center font-extrabold bg-rose-100 text-[10px] tracking-wider" style="width: 55px;">${formattedMissing || '--'}</td>`;
-                }
-                tr.innerHTML = cellsHTML; body.appendChild(tr);
-            });
-
-            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
-            if (lastLine.length >= 8) {
-                const lastDigits = lastLine.split('').map(Number);
-                let nextRowFormulas = []; let nextFirstDigits = [];
-                sheet.columns.forEach(col => {
-                    let resStr = evalSingleFormulaStr(col.formula, lastDigits, outLen);
-                    nextRowFormulas.push(resStr);
-                    if (resStr !== '-----' && resStr.length > 0) nextFirstDigits.push(resStr[0]);
-                });
-
-                let uniqueNextFirsts = [...new Set(nextFirstDigits)].join(''); extractedFirstDigits = uniqueNextFirsts;
-                const firstDisplay = document.getElementById('extractedFirstDigitsDisplay');
-                if(firstDisplay) firstDisplay.innerText = extractedFirstDigits.length > 0 ? extractedFirstDigits.split('').join(' ') : '---';
-
-                let nextMissingDigits = []; for (let d = 0; d <= 9; d++) { let dStr = d.toString(); if (!uniqueNextFirsts.includes(dStr)) nextMissingDigits.push(dStr); }
-                let nextMissingStr = nextMissingDigits.join('');
-
-                const trNext = document.createElement('tr'); trNext.className = "bg-purple-50 font-bold border-2 border-purple-400";
-                let nextCellsHTML = `<td class="py-1 px-0.5 text-center text-purple-950 text-[10px] border-r" style="width: 35px;">ถัดไป</td><td class="py-1 px-0.5 text-center text-purple-950 bg-purple-200 border-r text-[10px]" style="width: 48px;">--</td>`;
-                nextRowFormulas.forEach(fVal => { nextCellsHTML += `<td class="py-1 px-0.5 text-center text-purple-950 border-r text-[10px] bg-purple-100/60" style="width: 58px;">${fVal}</td>`; });
-                nextCellsHTML += `<td class="py-1 px-0.5 text-center text-emerald-950 bg-emerald-300 text-[10px] font-extrabold tracking-widest border-r" style="width: 48px;">${uniqueNextFirsts}</td><td class="py-1 px-0.5 text-center text-rose-950 bg-rose-300 text-[10px] font-extrabold tracking-widest" style="width: 55px;">${nextMissingStr}</td>`;
-                trNext.innerHTML = nextCellsHTML; body.appendChild(trNext);
-            }
-        }
-
-        function runFormulaIntersectionAnalysis() {
-            collectAndSaveDOMFormulas();
-            const sheet = excelSheetsData[activeSheetId];
-            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
-            const logBox = document.getElementById('aiChatLog2');
-            if (!rawText) { alert('กรุณากรอกสถิติผลสลากในหน้า Excel ก่อนครับ'); return; }
-            const lines = rawText.split('\n').filter(l => l.trim().length > 0); if (lines.length === 0) return;
-            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, ''); if (lastLine.length < 8) return;
-            const lastDigits = lastLine.split('').map(Number);
-            const outLen = sheet.outputLength || 5;
-
-            let allPool = [];
-            sheet.columns.forEach((col) => {
-                let resStr = evalSingleFormulaStr(col.formula, lastDigits, outLen);
-                if (resStr !== '-----') resStr.split('').forEach(d => allPool.push(d));
-            });
-
-            if (allPool.length === 0) { logBox.innerHTML = `<div class="text-rose-300 font-bold">❌ ไม่พบผลลัพธ์จากสูตรในตาราง</div>`; return; }
-
-            let counts = {}; for (let i = 0; i <= 9; i++) counts[i.toString()] = 0;
-            allPool.forEach(d => { counts[d]++; });
-
-            let freqGroups = {};
-            Object.keys(counts).forEach(d => {
-                let f = counts[d];
-                if (f > 0) { if (!freqGroups[f]) freqGroups[f] = []; freqGroups[f].push(d); }
-            });
-
-            let freqsDesc = Object.keys(freqGroups).map(Number).sort((a, b) => b - a);
-            let stepsHTML = `<div class="text-emerald-300 font-bold mb-1">🏆 ผลวิเคราะห์ตัวชนจากทุกสูตร & เรียงลำดับขั้นบันไดจากมากไปน้อย:</div>`;
-            freqsDesc.forEach((f, idx) => {
-                let digitsStr = freqGroups[f].sort().join(', ');
-                let badgeBg = idx === 0 ? 'bg-amber-400 text-slate-950 font-black' : (idx === 1 ? 'bg-blue-600 text-white font-bold' : 'bg-purple-800 text-purple-200');
-                stepsHTML += `<div class="flex items-center gap-2 py-0.5 border-l-2 border-purple-600 pl-2"><span class="px-2 py-0.5 rounded text-[10px] ${badgeBg}">อันดับ ${idx + 1} (ชน ${f} สูตร)</span><span class="font-mono text-amber-200 font-bold tracking-widest text-xs">${digitsStr}</span></div>`;
-            });
-            logBox.innerHTML = stepsHTML; logBox.scrollTop = logBox.scrollHeight; showToast('วิเคราะห์จัดอันดับตัวชนสำเร็จ!');
-        }
-
-        let globalTop4Formulas = [];
-        let globalLastDigits = [];
-
-        function openBestBottomSumModal() {
-            collectAndSaveDOMFormulas();
-            const sheet = excelSheetsData[activeSheetId];
-            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
-            if (!rawText) { alert('กรุณากรอกสถิติผลสลากในหน้า "สถิติ & สูตร Excel" ก่อนครับ'); return; }
-            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
-            if (lines.length < 5) { alert('ต้องการสถิติย้อนหลังอย่างน้อย 5 งวดขึ้นไป'); return; }
-
-            const candidateFormulas = [
-                "P7+P8+1", "P1+P7+3", "P3+P8+5", "P5+P7+2", "P2+P12+4",
-                "P1+P2+P3", "P7+P1+2", "P8+P3+1", "P4+P6+7", "P9+P10+1",
-                "P1+P8+4", "P7+P3+6", "P2+P5+8", "P6+P8+2", "P1+P5+9",
-                "P7+P11+3", "P4+P8+5", "P2+P7+1", "P3+P6+4", "P10+P12+2"
-            ];
-
-            let formulaDetails = [];
-
-            candidateFormulas.forEach(formula => {
-                let hits = 0;
-                let totalChecked = 0;
-                let historyLog = [];
-
-                for (let i = 1; i < lines.length; i++) {
-                    const prevDigits = lines[i - 1].replace(/[^0-9]/g, '').split('').map(Number);
-                    const cleanCurr = lines[i].replace(/[^0-9]/g, '');
-                    if (cleanCurr.length < 8) continue;
-                    let bottomSum = (parseInt(cleanCurr[6], 10) + parseInt(cleanCurr[7], 10)) % 10;
-                    let actualBottom = cleanCurr.slice(6, 8);
-
-                    let resStr = evalSingleFormulaStr(formula, prevDigits, 7);
-                    if (resStr !== '-----') {
-                        totalChecked++;
-                        let resDigits = resStr.split('').map(Number);
-                        let isMatch = resDigits.includes(bottomSum);
-                        if (isMatch) hits++;
-                        
-                        historyLog.push({
-                            draw: i + 1,
-                            actualBottom,
-                            bottomSum,
-                            resStr,
-                            isMatch
-                        });
-                    }
-                }
-
-                let score = totalChecked > 0 ? (hits / totalChecked) * 100 : 0;
-                formulaDetails.push({ formula, hits, totalChecked, score, historyLog });
-            });
-
-            formulaDetails.sort((a, b) => b.score - a.score);
-            globalTop4Formulas = formulaDetails.slice(0, 4);
-
-            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
-            globalLastDigits = lastLine.split('').map(Number);
-
-            calculateIntersectionDigits();
-            renderModalResults(7);
-
-            document.getElementById('bestBottomSumModal').classList.remove('hidden');
-        }
-
-        function calculateIntersectionDigits() {
-            let sets = [];
-            globalTop4Formulas.forEach(item => {
-                let resStr = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
-                if (resStr !== '-----') {
-                    sets.push(resStr.split(''));
-                }
-            });
-
-            if (sets.length === 0) {
-                currentIntersectionDigits = [];
-            } else {
-                let intersection = sets.reduce((acc, curr) => acc.filter(x => curr.includes(x)));
-                if (intersection.length === 0) {
-                    let allPool = [].concat(...sets);
-                    intersection = [...new Set(allPool)].sort();
-                }
-                currentIntersectionDigits = intersection;
-            }
-
-            const displayEl = document.getElementById('intersectionDigitsDisplay');
-            if (displayEl) {
-                displayEl.innerText = currentIntersectionDigits.length > 0 ? currentIntersectionDigits.join(' ') : '--- ไม่มีตัวชน --';
-            }
-        }
-
-        function renderModalResults(displayLen = 7) {
-            const resultContainer = document.getElementById('bestFormulasResultList');
-            if(!resultContainer) return;
-            resultContainer.innerHTML = '';
-
-            globalTop4Formulas.forEach((item, idx) => {
-                let recentHistory = item.historyLog.slice(-10).reverse();
-                let historyRowsHTML = recentHistory.map(h => `
-                    <tr class="border-b border-slate-100 text-center">
-                        <td class="py-1 px-1 text-slate-500">งวดที่ ${h.draw}</td>
-                        <td class="py-1 px-1 font-bold text-slate-800">${h.actualBottom} (แต้ม ${h.bottomSum})</td>
-                        <td class="py-1 px-1 font-mono text-blue-600 tracking-wider">${h.resStr}</td>
-                        <td class="py-1 px-1 font-bold">
-                            ${h.isMatch ? '<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">✔ เข้า</span>' : '<span class="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">✘ หลุด</span>'}
-                        </td>
-                    </tr>
-                `).join('');
-
-                let nextRes7 = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
-
-                const div = document.createElement('div');
-                div.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 shadow-sm";
-                div.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-900 bg-amber-400 px-2 py-0.5 rounded shadow-sm">อันดับที่ ${idx + 1}</span>
-                            <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-[#1877F2] text-sm">${item.formula}</strong></span>
-                        </div>
-                        <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
-                    </div>
-
-                    <div class="flex items-center justify-between text-xs bg-blue-50/70 p-2.5 rounded-xl border border-blue-200">
-                        <span class="font-semibold text-blue-950">📌 ผลลัพธ์สูตร (7 ตัวเรียง):</span>
-                        <span class="font-mono font-black text-rose-600 tracking-widest text-base">${nextRes7.split('').join(' ')}</span>
-                    </div>
-
-                    <div class="space-y-1">
-                        <div class="text-[11px] font-bold text-slate-600">📊 สถิติย้อนหลัง 10 งวดล่าสุด (ผลสูตร 7 ตัว):</div>
-                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden max-h-36 overflow-y-auto">
-                            <table class="w-full text-xs">
-                                <thead class="bg-slate-100 text-slate-600 font-semibold border-b">
-                                    <tr>
-                                        <th class="py-1 px-1">งวด</th>
-                                        <th class="py-1 px-1">2 ล่าง</th>
-                                        <th class="py-1 px-1">ผลสูตร (7ตัวเรียง)</th>
-                                        <th class="py-1 px-1">สถานะ</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    ${historyRowsHTML}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-                resultContainer.appendChild(div);
-            });
-        }
-
-        function closeBestBottomSumModal() {
-            document.getElementById('bestBottomSumModal').classList.add('hidden');
-        }
-
-        function sendIntersectionToSumPoints() {
-            if (!currentIntersectionDigits || currentIntersectionDigits.length === 0) {
-                showToast('ยังไม่มีตัวเลขตัวชนสำหรับส่ง');
-                return;
-            }
-            const formattedSumPoints = currentIntersectionDigits.join(', ');
-            document.getElementById('sumPointsInput').value = formattedSumPoints;
-            autoProcess();
-            switchPageTab('main');
-            closeBestBottomSumModal();
-            showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
-        }
-
-        function autoProcess() {
-            saveToLocalStorage();
-            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
-
-            const tensEl = document.getElementById('tens');
-            const unitsEl = document.getElementById('units');
-            const stairEl = document.getElementById('stairInput');
-            const resultArea = document.getElementById('resultArea');
-            if(!tensEl || !unitsEl || !stairEl || !resultArea) return;
-
-            const baseTens = [...new Set(tensEl.value.replace(/[^0-9]/g, '').split(''))];
-            const baseUnits = [...new Set(unitsEl.value.replace(/[^0-9]/g, '').split(''))];
-            const stairDigits = [...new Set(stairEl.value.replace(/[^0-9]/g, '').split(''))];
-
-            if (baseTens.length === 0 && baseUnits.length === 0 && stairDigits.length === 0) {
-                resultArea.classList.add('hidden'); return;
-            }
-
-            const uniqueExclude = [...new Set(document.getElementById('excludeInput').value.replace(/[^0-9]/g, '').split(''))];
-            const allowedSumPoints = [...new Set(document.getElementById('sumPointsInput').value.replace(/[^0-9]/g, '').split(''))].map(Number);
-            
-            const parityFilter = document.getElementById('parityFilter').value;
-            const hiLoFilter = document.getElementById('hiLoFilter').value;
-
-            let filterSets = [];
-            document.querySelectorAll('.filter-input').forEach(input => {
-                const digits = input.value.replace(/[^0-9]/g, '');
-                if (digits.length > 0) filterSets.push([...new Set(digits.split(''))]);
-            });
-            const filterLogic = document.getElementById('filterLogic').value;
-
-            // Pair Section
-            const pairResultsDiv = document.getElementById('pairResults');
-            const summaryPairArea = document.getElementById('summaryPairArea');
-            pairResultsDiv.innerHTML = ''; summaryPairArea.innerHTML = '';
-            let pairPassed = 0, pairPassedList = [];
-
-            if (baseTens.length > 0 && baseUnits.length > 0) {
-                document.getElementById('sectionPair').classList.remove('hidden');
-                baseTens.forEach(t => {
-                    const rowDiv = document.createElement('div');
-                    rowDiv.className = 'flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-xl border border-slate-200 shadow-sm';
-                    baseUnits.forEach(u => {
-                        const pairStr = t + u;
-                        const d1 = parseInt(t, 10), d2 = parseInt(u, 10), digits = [t, u];
-                        const sumPoint = (d1 + d2) % 10;
-                        let isPassed = true;
-
-                        if (uniqueExclude.length > 0 && (uniqueExclude.includes(t) || uniqueExclude.includes(u))) isPassed = false;
-                        if (isPassed && allowedSumPoints.length > 0 && !allowedSumPoints.includes(sumPoint)) isPassed = false;
-                        
-                        if (isPassed && parityFilter !== 'ALL') {
-                            const isTEven = d1 % 2 === 0, isUEven = d2 % 2 === 0;
-                            if (parityFilter === 'EE' && (!isTEven || !isUEven)) isPassed = false;
-                            if (parityFilter === 'EO' && (!isTEven || isUEven)) isPassed = false;
-                            if (parityFilter === 'OE' && (isTEven || !isUEven)) isPassed = false;
-                            if (parityFilter === 'OO' && (isTEven || isUEven)) isPassed = false;
-                        }
-
-                        if (isPassed && hiLoFilter !== 'ALL') {
-                            if (hiLoFilter === 'LOW' && sumPoint > 4) isPassed = false;
-                            if (hiLoFilter === 'HIGH' && sumPoint < 5) isPassed = false;
-                        }
-
-                        if (isPassed && filterSets.length > 0) {
-                            if (filterLogic === 'AND') isPassed = filterSets.every(set => digits.some(d => set.includes(d)));
-                            else isPassed = filterSets.some(set => digits.some(d => set.includes(d)));
-                        }
-
-                        const badge = document.createElement('span');
-                        if (isPassed) {
-                            pairPassed++; pairPassedList.push(pairStr);
-                            badge.className = 'px-2 py-0.5 bg-[#1877F2] text-white rounded-lg font-bold text-xs shadow-sm count-passed-pair';
-                        } else { badge.className = 'px-2 py-0.5 bg-slate-100 text-slate-300 border rounded-lg text-xs'; }
-                        badge.innerText = pairStr; rowDiv.appendChild(badge);
-                    });
-                    pairResultsDiv.appendChild(rowDiv);
-                });
-                pairPassedList.forEach(p => {
-                    const span = document.createElement('span'); span.className = 'px-2 py-0.5 bg-[#1877F2] text-white rounded-md text-xs'; span.innerText = p; summaryPairArea.appendChild(span);
-                });
-            } else { document.getElementById('sectionPair').classList.add('hidden'); }
-            document.getElementById('statPairPassed').innerText = pairPassed;
-
-            // Stair Section
-            const stairResultsDiv = document.getElementById('stairResults');
-            const summaryStairArea = document.getElementById('summaryStairArea');
-            stairResultsDiv.innerHTML = ''; summaryStairArea.innerHTML = '';
-            let stairPassed = 0, stairPassedList = [];
-
-            if (stairDigits.length > 0) {
-                document.getElementById('sectionStair').classList.remove('hidden');
-                for (let i = 0; i < stairDigits.length; i++) {
-                    const t = stairDigits[i];
-                    const rowDiv = document.createElement('div');
-                    rowDiv.className = 'flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-xl border border-blue-200 shadow-sm';
-                    for (let j = i; j < stairDigits.length; j++) {
-                        const u = stairDigits[j];
-                        const pairStr = t + u;
-                        const d1 = parseInt(t, 10), d2 = parseInt(u, 10), digits = [t, u];
-                        const sumPoint = (d1 + d2) % 10;
-                        let isPassed = true;
-
-                        if (uniqueExclude.length > 0 && (uniqueExclude.includes(t) || uniqueExclude.includes(u))) isPassed = false;
-                        if (isPassed && allowedSumPoints.length > 0 && !allowedSumPoints.includes(sumPoint)) isPassed = false;
-                        
-                        if (isPassed && parityFilter !== 'ALL') {
-                            const isTEven = d1 % 2 === 0, isUEven = d2 % 2 === 0;
-                            if (parityFilter === 'EE' && (!isTEven || !isUEven)) isPassed = false;
-                            if (parityFilter === 'EO' && (!isTEven || isUEven)) isPassed = false;
-                            if (parityFilter === 'OE' && (isTEven || !isUEven)) isPassed = false;
-                            if (parityFilter === 'OO' && (isTEven || isUEven)) isPassed = false;
-                        }
-
-                        if (isPassed && hiLoFilter !== 'ALL') {
-                            if (hiLoFilter === 'LOW' && sumPoint > 4) isPassed = false;
-                            if (hiLoFilter === 'HIGH' && sumPoint < 5) isPassed = false;
-                        }
-
-                        if (isPassed && filterSets.length > 0) {
-                            if (filterLogic === 'AND') isPassed = filterSets.every(set => digits.some(d => set.includes(d)));
-                            else isPassed = filterSets.some(set => digits.some(d => set.includes(d)));
-                        }
-
-                        const badge = document.createElement('span');
-                        if (isPassed) {
-                            stairPassed++; stairPassedList.push(pairStr);
-                            badge.className = 'px-2 py-0.5 bg-[#1877F2] text-white rounded-lg font-bold text-xs shadow-sm count-passed-stair';
-                        } else { badge.className = 'px-2 py-0.5 bg-slate-100 text-slate-300 border rounded-lg text-xs'; }
-                        badge.innerText = pairStr; rowDiv.appendChild(badge);
-                    }
-                    stairResultsDiv.appendChild(rowDiv);
-                }
-                stairPassedList.forEach(p => {
-                    const span = document.createElement('span'); span.className = 'px-2 py-0.5 bg-[#1877F2] text-white rounded-md text-xs'; span.innerText = p; summaryStairArea.appendChild(span);
-                });
-            } else { document.getElementById('sectionStair').classList.add('hidden'); }
-            document.getElementById('statStairPassed').innerText = stairPassed;
-
-            resultArea.classList.remove('hidden');
-        }
-
-        function copyAllPassedResults() {
-            const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
-            if (badges.length === 0) { showToast('ไม่มีเลขผ่าน'); return; }
-            const uniqueList = [...new Set(Array.from(badges).map(b => b.innerText))];
-            navigator.clipboard.writeText(uniqueList.join(' ')).then(() => showToast(`คัดลอก ${uniqueList.length} ชุดแล้ว!`));
-        }
-
-        function copyReversedPassedResults() {
-            const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
-            if (badges.length === 0) { showToast('ไม่มีเลขผ่าน'); return; }
-            const uniqueList = [...new Set(Array.from(badges).map(b => {
-                const str = b.innerText;
-                return str.length === 2 ? str[1] + str[0] : str;
-            }))];
-            navigator.clipboard.writeText(uniqueList.join(' ')).then(() => showToast(`คัดลอกเลขแบบกลับตัว (${uniqueList.length} ชุด) แล้ว!`));
-        }
-
-        function addFilterRow(value = '') {
-            const container = document.getElementById('filterInputsList'); if(!container) return;
-            const index = container.children.length + 1;
-            const rowId = `filter_input_${Date.now()}_${index}`;
-            const div = document.createElement('div'); div.className = "flex items-center gap-2 filter-row";
-            div.innerHTML = `<span class="text-xs text-slate-400 font-mono w-6 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" oninput="debounceAutoProcess()" placeholder="ชุดเลขเด่น ${index}" class="filter-input flex-1 px-3 py-1 border border-slate-200 rounded-lg text-xs font-medium"><button onclick="removeFilterRow(this)" class="text-slate-400 p-1"><i class="fa-solid fa-xmark"></i></button>`;
-            container.appendChild(div); reindexFilterRows();
-        }
-
-        function removeFilterRow(btn) {
-            const container = document.getElementById('filterInputsList'); if(!container) return;
-            if (container.children.length <= 1) btn.closest('.filter-row').querySelector('input').value = '';
-            else btn.closest('.filter-row').remove();
-            reindexFilterRows(); autoProcess();
-        }
-
-        function reindexFilterRows() { document.querySelectorAll('.filter-row').forEach((row, i) => { row.querySelector('span').innerText = `${i + 1}.`; }); }
 
         function getCurrentFormState() {
-            let filterInputs = []; document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
+            let filterInputs = [];
+            document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
             return {
-                tens: document.getElementById('tens').value, units: document.getElementById('units').value,
-                stairInput: document.getElementById('stairInput').value, excludeInput: document.getElementById('excludeInput').value,
+                tens: document.getElementById('tens').value,
+                units: document.getElementById('units').value,
+                stairInput: document.getElementById('stairInput').value,
+                excludeInput: document.getElementById('excludeInput').value,
                 sumPointsInput: document.getElementById('sumPointsInput').value,
                 parityFilter: document.getElementById('parityFilter').value,
                 hiLoFilter: document.getElementById('hiLoFilter').value,
-                filterInputs, filterLogic: document.getElementById('filterLogic').value
+                filterInputs,
+                filterLogic: document.getElementById('filterLogic').value
             };
         }
 
@@ -1344,319 +508,95 @@
             document.getElementById('parityFilter').value = data.parityFilter || 'ALL';
             document.getElementById('hiLoFilter').value = data.hiLoFilter || 'ALL';
             document.getElementById('filterLogic').value = data.filterLogic || 'AND';
-            const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
-            if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
-            else { addFilterRow('24680'); addFilterRow('13579'); }
+            const container = document.getElementById('filterInputsList');
+            if (container) {
+                container.innerHTML = '';
+                if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
+                else { addFilterRow('24680'); addFilterRow('13579'); }
+            }
         }
 
-        function saveToLocalStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(getCurrentFormState())); }
         function loadSavedData() {
             const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) { try { setFormState(JSON.parse(saved)); } catch(e) { initDefaultForm(); } } else initDefaultForm();
+            if (saved) { try { setFormState(JSON.parse(saved)); } catch(e) { initDefaultForm(); } } 
+            else initDefaultForm();
         }
+
         function initDefaultForm() {
-            document.getElementById('tens').value = '456789'; document.getElementById('units').value = '56789';
-            document.getElementById('stairInput').value = '67890'; addFilterRow('24680'); addFilterRow('13579');
+            document.getElementById('tens').value = '456789';
+            document.getElementById('units').value = '56789';
+            document.getElementById('stairInput').value = '67890';
+            addFilterRow('24680'); addFilterRow('13579');
         }
-        function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
-        function getStoredPresets() { const p = localStorage.getItem(PRESETS_KEY); return p ? JSON.parse(p) : {}; }
-        function saveCurrentPreset() {
-            const select = document.getElementById('presetSelect');
-            let name = document.getElementById('presetNameInput').value.trim() || select.value; if (!name) return;
-            const presets = getStoredPresets(); presets[name] = getCurrentFormState();
-            localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); loadPresetsToSelect(); select.value = name;
+        function addFilterRow(value = '') {
+            const container = document.getElementById('filterInputsList'); if(!container) return;
+            const index = container.children.length + 1;
+            const div = document.createElement('div'); div.className = "flex items-center gap-2 filter-row";
+            div.innerHTML = `<span class="text-xs text-slate-400 font-mono w-6 text-right">${index}.</span><input type="text" value="${value}" oninput="debounceAutoProcess()" placeholder="ชุดเลขเด่น ${index}" class="filter-input flex-1 px-3 py-1 border border-slate-200 rounded-lg text-xs font-medium"><button onclick="removeFilterRow(this)" class="text-slate-400 p-1"><i class="fa-solid fa-xmark"></i></button>`;
+            container.appendChild(div);
+        }
+
+        function removeFilterRow(btn) {
+            const container = document.getElementById('filterInputsList'); if(!container) return;
+            if (container.children.length > 1) btn.closest('.filter-row').remove();
+            else btn.closest('.filter-row').querySelector('input').value = '';
+            autoProcess();
+        }
+
+        function autoProcess() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(getCurrentFormState()));
             if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
-            showToast(`บันทึกสูตร "${name}" เรียบร้อย!`);
-        }
-        function loadPresetsToSelect() {
-            const select = document.getElementById('presetSelect'); if(!select) return;
-            const presets = getStoredPresets(); select.innerHTML = '<option value="">-- งานปัจจุบัน (Auto Saved) --</option>';
-            for (let name in presets) select.innerHTML += `<option value="${name}">📁 ${name}</option>`;
-        }
-        function loadSelectedPreset() {
-            const name = document.getElementById('presetSelect').value; if (!name) { loadSavedData(); autoProcess(); return; }
-            const presets = getStoredPresets(); if (presets[name]) { setFormState(presets[name]); autoProcess(); showToast(`โหลดสูตร "${name}" แล้ว`); }
-        }
-        function deleteSelectedPreset() {
-            const name = document.getElementById('presetSelect').value; if (!name) return;
-            if (confirm(`ลบสูตร "${name}"?`)) {
-                const presets = getStoredPresets(); delete presets[name]; localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
-                loadPresetsToSelect(); loadSavedData(); autoProcess();
-                if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
+
+            const tensEl = document.getElementById('tens');
+            const unitsEl = document.getElementById('units');
+            const stairEl = document.getElementById('stairInput');
+            const resultArea = document.getElementById('resultArea');
+            if(!tensEl || !unitsEl || !stairEl || !resultArea) return;
+
+            const baseTens = [...new Set(tensEl.value.replace(/[^0-9]/g, '').split(''))];
+            const baseUnits = [...new Set(unitsEl.value.replace(/[^0-9]/g, '').split(''))];
+
+            if (baseTens.length === 0 && baseUnits.length === 0) {
+                resultArea.classList.add('hidden'); return;
             }
+
+            const pairResultsDiv = document.getElementById('pairResults');
+            const summaryPairArea = document.getElementById('summaryPairArea');
+            pairResultsDiv.innerHTML = ''; summaryPairArea.innerHTML = '';
+            let pairPassed = 0, pairPassedList = [];
+
+            baseTens.forEach(t => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-xl border border-slate-200 shadow-sm';
+                baseUnits.forEach(u => {
+                    const pairStr = t + u;
+                    pairPassed++; pairPassedList.push(pairStr);
+                    const badge = document.createElement('span');
+                    badge.className = 'px-2 py-0.5 bg-[#1877F2] text-white rounded-lg font-bold text-xs count-passed-pair';
+                    badge.innerText = pairStr; rowDiv.appendChild(badge);
+                });
+                pairResultsDiv.appendChild(rowDiv);
+            });
+
+            pairPassedList.forEach(p => {
+                const span = document.createElement('span'); span.className = 'px-2 py-0.5 bg-[#1877F2] text-white rounded-md text-xs'; span.innerText = p; summaryPairArea.appendChild(span);
+            });
+
+            document.getElementById('statPairPassed').innerText = pairPassed;
+            resultArea.classList.remove('hidden');
         }
 
-        function getStoredFilterPresets() { const p = localStorage.getItem(FILTER_PRESETS_KEY); return p ? JSON.parse(p) : {}; }
-        function saveFilterPreset() {
-            const select = document.getElementById('filterPresetSelect');
-            let name = document.getElementById('filterPresetNameInput').value.trim() || select.value; if (!name) return;
-            let filterInputs = []; document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
-            const presets = getStoredFilterPresets(); presets[name] = { filterInputs, filterLogic: document.getElementById('filterLogic').value };
-            localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect(); select.value = name;
-            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
-        }
-        function loadFilterPresetsToSelect() {
-            const select = document.getElementById('filterPresetSelect'); if(!select) return;
-            const presets = getStoredFilterPresets(); select.innerHTML = '<option value="">-- เลือกชุดคัดกรองที่บันทึกไว้ --</option>';
-            for (let name in presets) select.innerHTML += `<option value="${name}">🔖 ${name}</option>`;
-        }
-        function loadFilterPreset() {
-            const name = document.getElementById('filterPresetSelect').value; if (!name) return;
-            const presets = getStoredFilterPresets();
-            if (presets[name]) {
-                const data = presets[name]; document.getElementById('filterLogic').value = data.filterLogic || 'AND';
-                const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
-                if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
-                autoProcess();
+        function initExcelSheetsEngine() {
+            const saved = localStorage.getItem(EXCEL_SHEETS_KEY);
+            if (saved) { try { excelSheetsData = JSON.parse(saved); } catch(e) {} }
+            if (!excelSheetsData || Object.keys(excelSheetsData).length === 0) {
+                excelSheetsData = { 'sheet_1': { name: 'ตารางสูตรที่ 1', history: '', columns: [{ name: 'ส1', formula: 'P7+P8+1' }] } };
             }
-        }
-        function deleteFilterPreset() {
-            const name = document.getElementById('filterPresetSelect').value; if (!name) return;
-            if (confirm(`ลบชุดคัดกรอง "${name}"?`)) {
-                const presets = getStoredFilterPresets(); delete presets[name];
-                localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect();
-                if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
-            }
-        }
-
-        function openNotepadModal() { document.getElementById('notepadModal').classList.remove('hidden'); }
-        function closeNotepadModal() { document.getElementById('notepadModal').classList.add('hidden'); }
-        function importFromNotepad() {
-            const rawText = document.getElementById('notepadPasteText').value.trim(); if (!rawText) return;
-            const lines = rawText.split(/[\r\n]+/).map(l => l.replace(/[^0-9]/g, '')).filter(l => l.length > 0);
-            const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
-            lines.forEach(line => addFilterRow(line)); closeNotepadModal(); autoProcess();
-        }
-
-        function clearCustomHistoryInput() {
-            if(isHistoryLocked) { alert('กรุณากดปลดล็อคก่อน'); return; }
-            document.getElementById('customHistoryInput').value = ''; processCustomFormulasEngine();
-            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
-        }
-
-        function sendFirstDigitsToMain() {
-            if (!extractedFirstDigits) return;
-            const container = document.getElementById('filterInputsList'); 
-            if(!container) return; 
-            
-            const firstInput = container.querySelector('.filter-input');
-            if (firstInput && firstInput.value.trim() === '') {
-                firstInput.value = extractedFirstDigits;
-            } else {
-                addFilterRow(extractedFirstDigits);
-            }
-            
-            autoProcess(); 
-            switchPageTab('main');
-            showToast('ส่งเลขสรุปเพิ่มเข้าช่องคัดกรองหน้าหลักเรียบร้อย!');
         }
 
         function showToast(msg) {
-            const toast = document.getElementById('toast'); if(!toast) return;
-            document.getElementById('toastMsg').innerText = msg;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 2200);
-        }
-		
-        // ระบบแชร์ผลสรุปเป็นภาพ PNG พร้อมเปิดเมนูแชร์ของอุปกรณ์
-        let generatedShareText = '';
-        let generatedShareNumbers = [];
-
-        function getPassedShareNumbers() {
-            const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
-            return [...new Set(Array.from(badges).map(b => b.innerText.trim()).filter(Boolean))];
-        }
-
-        function openShareModal() {
-            generatedShareNumbers = getPassedShareNumbers();
-            if (generatedShareNumbers.length === 0) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            generatedShareText = `🎯 สรุปผลเลขเด่นผ่านการคัดกรอง\nชุดตัวเลข ${generatedShareNumbers.length} ชุด:\n${generatedShareNumbers.join(' ')}\nสร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว`;
-            document.getElementById('sharePreviewContent').innerText = generatedShareNumbers.join(' ');
-            document.getElementById('shareMovieModal').classList.remove('hidden');
-        }
-
-        function closeShareModal() {
-            document.getElementById('shareMovieModal').classList.add('hidden');
-        }
-
-        function drawShareImage(numbers) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1200;
-            const ctx = canvas.getContext('2d');
-
-            const bg = ctx.createLinearGradient(0, 0, 1080, 1200);
-            bg.addColorStop(0, '#101b3c');
-            bg.addColorStop(0.55, '#172554');
-            bg.addColorStop(1, '#071326');
-            ctx.fillStyle = bg;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // กรอบและแถบตกแต่ง
-            ctx.strokeStyle = 'rgba(251,191,36,0.75)';
-            ctx.lineWidth = 5;
-            ctx.strokeRect(34, 34, 1012, 1132);
-            ctx.fillStyle = '#fbbf24';
-            ctx.fillRect(34, 34, 1012, 12);
-
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 48px Kanit, sans-serif';
-            ctx.fillText('สรุปผลเลขเด่นล่าง', 540, 145);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 66px Kanit, sans-serif';
-            ctx.fillText('จากการคัดชนเด่นล่าง', 540, 225);
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '32px Kanit, sans-serif';
-            ctx.fillText(`ชุดตัวเลขทั้งหมด ${numbers.length} ชุด`, 540, 285);
-
-            const cols = numbers.length <= 24 ? 4 : 5;
-            const rows = Math.ceil(numbers.length / cols);
-            const top = 345;
-            const bottom = 900;
-            const gapX = 18;
-            const gapY = 14;
-            const side = 85;
-            const cellW = (1080 - side * 2 - gapX * (cols - 1)) / cols;
-            const cellH = Math.min(76, (bottom - top - gapY * Math.max(0, rows - 1)) / Math.max(1, rows));
-            const fontSize = Math.max(18, Math.min(38, cellH * 0.53));
-
-            numbers.forEach((num, i) => {
-                const row = Math.floor(i / cols);
-                const col = i % cols;
-                const x = side + col * (cellW + gapX);
-                const y = top + row * (cellH + gapY);
-                const radius = 15;
-                ctx.beginPath();
-                ctx.roundRect(x, y, cellW, cellH, radius);
-                ctx.fillStyle = 'rgba(255,255,255,0.10)';
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(251,191,36,0.55)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.fillStyle = '#fde68a';
-                ctx.font = `bold ${fontSize}px Kanit, sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(num, x + cellW / 2, y + cellH / 2 + 1, cellW - 12);
-            });
-
-            const gridBottom = top + rows * cellH + gapY * Math.max(0, rows - 1);
-            const noticeY = Math.min(1050, Math.max(620, gridBottom + 90));
-            ctx.beginPath();
-            ctx.roundRect(105, noticeY, 870, 132, 22);
-            ctx.fillStyle = 'rgba(251,191,36,0.09)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(251,191,36,0.72)';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 23px Kanit, sans-serif';
-            ctx.fillText('โปรดอ่านคำชี้แจง', 540, noticeY + 43);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 30px Kanit, sans-serif';
-            ctx.fillText('แค่แนวทางซื้อสลากกินแบ่งรัฐบาลเท่านั้น', 540, noticeY + 91, 820);
-
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '26px Kanit, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('สร้างจากโปรแกรมจับคู่ตัวเลข & ห้องสูตร Excel', 540, 1080);
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 24px Kanit, sans-serif';
-            ctx.fillText('NUMBER ANALYSIS SUMMARY', 540, 1125);
-            return canvas;
-        }
-
-        function canvasToPng(canvas) {
-            return new Promise((resolve, reject) => {
-                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('สร้างภาพไม่สำเร็จ')), 'image/png');
-            });
-        }
-
-        async function downloadShareImage() {
-            if (!generatedShareNumbers.length) {
-                generatedShareNumbers = getPassedShareNumbers();
-            }
-            if (!generatedShareNumbers.length) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            try {
-                const blob = await canvasToPng(drawShareImage(generatedShareNumbers));
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'สรุปผลเลขเด่น.png';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 1500);
-                showToast('ดาวน์โหลดภาพสรุป PNG แล้ว');
-            } catch (err) {
-                console.error(err);
-                showToast('สร้างภาพไม่สำเร็จ กรุณาลองใหม่');
-            }
-        }
-
-        async function shareImageToFacebook() {
-            if (!generatedShareNumbers.length) {
-                generatedShareNumbers = getPassedShareNumbers();
-            }
-            if (!generatedShareNumbers.length) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            try {
-                const blob = await canvasToPng(drawShareImage(generatedShareNumbers));
-                const file = new File([blob], 'number-summary.png', { type: 'image/png' });
-                const shareData = {
-                    files: [file],
-                    title: 'สรุปผลเลขเด่นผ่านการคัดกรอง',
-                    text: generatedShareText || `สรุปผลเลขเด่น ${generatedShareNumbers.length} ชุด`
-                };
-
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share(shareData);
-                    showToast('เปิดเมนูแชร์แล้ว เลือก Facebook และ Story ได้เลย');
-                } else {
-                    await downloadShareImage();
-                    showToast('เบราว์เซอร์นี้ส่งภาพตรงไม่ได้ จึงดาวน์โหลด PNG ให้แทน');
-                }
-            } catch (err) {
-                if (err && err.name === 'AbortError') return;
-                console.error(err);
-                showToast('แชร์ภาพไม่ได้ ลองกดดาวน์โหลด PNG แทน');
-            }
-        }
-
-        async function copyFormattedShareText() {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(generatedShareText);
-                    showToast('คัดลอกข้อความสรุปแล้ว');
-                } else {
-                    const temp = document.createElement('textarea');
-                    temp.value = generatedShareText;
-                    document.body.appendChild(temp);
-                    temp.select();
-                    document.execCommand('copy');
-                    temp.remove();
-                    showToast('คัดลอกข้อความสรุปแล้ว');
-                }
-            } catch (err) {
-                showToast('คัดลอกข้อความไม่สำเร็จ');
-            }
-        }
-
-        function shareResultToFacebook() {
-            openShareModal();
+            console.log("Toast: " + msg);
         }
     </script>
 </body>
