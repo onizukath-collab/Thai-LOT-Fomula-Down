@@ -16,13 +16,30 @@
 
     <div class="max-w-7xl mx-auto space-y-4">
         
+        <!-- Firebase Sync Control Bar (แถบซิงค์ข้อมูลออนไลน์ข้ามเครื่อง) -->
+        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-md p-3 text-white border border-indigo-500/30 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-xs">
+                <span id="firebaseStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="firebaseStatusText" class="font-bold text-amber-300">ซิงค์ออนไลน์ (Firebase): พร้อมใช้งาน</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <label class="text-xs text-slate-300 whitespace-nowrap"><i class="fa-solid fa-key text-amber-400 mr-1"></i>รหัสห้องซิงค์:</label>
+                <input type="text" id="firebaseRoomId" value="toey2026" onchange="changeFirebaseRoom()" 
+                    class="bg-slate-800 border border-indigo-500/50 rounded-xl px-3 py-1 text-xs text-amber-300 font-mono font-bold outline-none w-28 text-center focus:ring-2 focus:ring-amber-400">
+                <button onclick="changeFirebaseRoom()" class="px-3 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-xl text-xs font-bold transition shadow">
+                    <i class="fa-solid fa-sync"></i> เชื่อมต่อ
+                </button>
+            </div>
+        </div>
+
         <!-- Header -->
         <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 text-center relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2 h-full bg-[#1877F2]"></div>
             <h1 class="text-xl sm:text-2xl font-bold text-slate-800">
                 <i class="fa-solid fa-calculator text-[#1877F2] mr-2"></i>โปรแกรมจับคู่ตัวเลข 2 หลัก & ห้องสูตร Excel
             </h1>
-            <p class="text-slate-500 text-xs mt-0.5">ระบบจับคู่ตัวเลข คัดกรอง & วิเคราะห์จัดอันดับตัวชนจากสูตร (ทำงานออฟไลน์ 100%)</p>
+            <p class="text-slate-500 text-xs mt-0.5">ระบบจับคู่ตัวเลข คัดกรอง & วิเคราะห์จัดอันดับตัวชนจากสูตร (รองรับซิงค์ออนไลน์เรียลไทม์)</p>
         </div>
 
         <!-- Main Tab Navigation -->
@@ -44,7 +61,7 @@
             <div class="bg-gradient-to-br from-purple-900 to-slate-900 text-white rounded-2xl p-4 shadow-md space-y-3 border border-purple-700">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-700/60 pb-2">
                     <h3 class="text-xs font-bold flex items-center gap-1.5 text-purple-200">
-                        <i class="fa-solid fa-robot text-amber-300"></i> ผู้ช่วยวิเคราะห์สถิติ (ออฟไลน์) & จัดอันดับตัวชนจากตารางสูตร
+                        <i class="fa-solid fa-robot text-amber-300"></i> ผู้ช่วยวิเคราะห์สถิติ & จัดอันดับตัวชนจากตารางสูตร
                     </h3>
                     <span class="text-[10px] font-semibold bg-emerald-500 text-slate-950 px-2 py-0.5 rounded-full">ฟรี 100% ไม่ใช้ API</span>
                 </div>
@@ -97,7 +114,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-xl shadow-sm border border-slate-200">
                 <div class="text-xs text-slate-500 flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-                    <span>ระบบบันทึกอัตโนมัติ</span>
+                    <span>ระบบบันทึกอัตโนมัติ (ขนาน Cloud ซิงค์)</span>
                 </div>
                 <button onclick="clearAllData()" class="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs rounded-lg transition font-medium flex items-center gap-1.5">
                     <i class="fa-solid fa-arrows-rotate"></i> ล้างข้อมูลทั้งหมด
@@ -249,8 +266,8 @@
                             <i class="fa-solid fa-right-left"></i> คัดลอกแบบกลับตัวเลข
                         </button>
                         <button onclick="openShareModal()" class="px-3.5 py-1.5 bg-[#1877F2] hover:bg-blue-600 text-white rounded-xl text-xs font-medium shadow transition flex items-center gap-1.5">
-    <i class="fa-brands fa-facebook"></i> แชร์ผลสรุปแบบสวยงาม
-</button>
+                            <i class="fa-brands fa-facebook"></i> แชร์ผลสรุปแบบสวยงาม
+                        </button>
                     </div>
                 </div>
 
@@ -421,6 +438,175 @@
         <i class="fa-solid fa-circle-check text-blue-400"></i> <span id="toastMsg">สำเร็จ</span>
     </div>
 
+    <!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
+    <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-indigo-500/40 text-white">
+            
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-indigo-400"></i> สรุปผลเลขเด่น พร้อมแชร์
+                </h3>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Preview Box (พรีวิวข้อความสวยๆ ที่จะโพสต์) -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2 leading-relaxed shadow-inner">
+                <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
+                <div class="text-white font-bold">📌 สรุปผลเลขเด่นผ่านการคัดกรอง</div>
+                <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
+                <div id="sharePreviewContent" class="text-amber-200 font-black text-sm tracking-widest py-2 break-words">-- กำลังโหลดข้อมูล --</div>
+                <div class="text-slate-400 text-[10px] pt-1 border-t border-indigo-900/50">✨ สร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว</div>
+            </div>
+
+            <!-- Share / Download Actions -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button onclick="shareImageToFacebook()" class="py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-share-nodes"></i> แชร์ภาพไปยัง Facebook Story
+                </button>
+                <button onclick="downloadShareImage()" class="py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> ดาวน์โหลดภาพ PNG
+                </button>
+                <button onclick="copyFormattedShareText()" class="sm:col-span-2 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-copy"></i> คัดลอกข้อความ (ทางเลือก)
+                </button>
+            </div>
+            <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (ES Module) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnSA2Qt0E3xgde5MGctOLZjpiZcf2Jdeg",
+            authDomain: "lottery-toey.firebaseapp.com",
+            projectId: "lottery-toey",
+            storageBucket: "lottery-toey.firebasestorage.app",
+            messagingSenderId: "712398530840",
+            appId: "1:712398530840:web:f31a3c1e0f1eeeec60966d",
+            measurementId: "G-DY8EZZVY4X"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentRoomId = "toey2026";
+        let isRemoteUpdating = false;
+        let unsubscribeRoom = null;
+        let firebaseSyncTimer = null;
+
+        window.db = db;
+
+        function setSyncStatus(isOnline, msg) {
+            const dot = document.getElementById('firebaseStatusDot');
+            const txt = document.getElementById('firebaseStatusText');
+            if (dot && txt) {
+                if (isOnline) {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+                    txt.className = "font-bold text-amber-300";
+                    txt.innerText = `ซิงค์ออนไลน์ (Firebase): ${msg || 'พร้อมใช้งาน'}`;
+                } else {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
+                    txt.className = "font-bold text-rose-300";
+                    txt.innerText = `ออฟไลน์: ${msg || 'ใช้ความจำในเครื่อง'}`;
+                }
+            }
+        }
+
+        window.listenFirebaseRoom = function(roomId) {
+            if (unsubscribeRoom) unsubscribeRoom();
+            currentRoomId = roomId || "toey2026";
+            const docRef = doc(db, "app_data_rooms", currentRoomId);
+
+            setSyncStatus(true, `กำลังเชื่อมต่อห้อง [${currentRoomId}]...`);
+
+            unsubscribeRoom = onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    isRemoteUpdating = true;
+
+                    if (data.mainData && typeof window.setFormState === 'function') {
+                        window.setFormState(data.mainData);
+                    }
+                    if (data.excelSheetsData) {
+                        window.excelSheetsData = data.excelSheetsData;
+                        localStorage.setItem('number_pair_app_excel_multi_sheets_v57', JSON.stringify(data.excelSheetsData));
+                        if (typeof window.renderSubTabsBar === 'function') window.renderSubTabsBar();
+                        if (typeof window.loadActiveSheetContent === 'function') window.loadActiveSheetContent();
+                    }
+                    if (data.presets) {
+                        localStorage.setItem('number_pair_app_presets_v57', JSON.stringify(data.presets));
+                        if (typeof window.loadPresetsToSelect === 'function') window.loadPresetsToSelect();
+                    }
+                    if (data.filterPresets) {
+                        localStorage.setItem('number_pair_app_filter_presets_v57', JSON.stringify(data.filterPresets));
+                        if (typeof window.loadFilterPresetsToSelect === 'function') window.loadFilterPresetsToSelect();
+                    }
+
+                    if (typeof window.autoProcess === 'function') window.autoProcess();
+
+                    setTimeout(() => { isRemoteUpdating = false; }, 300);
+                    setSyncStatus(true, `ซิงค์เรียลไทม์กับห้อง [${currentRoomId}] แล้ว`);
+                } else {
+                    setSyncStatus(true, `ห้องใหม่ [${currentRoomId}] (รอดำเนินการเซฟ)`);
+                }
+            }, (error) => {
+                console.error("Firebase sync error:", error);
+                setSyncStatus(false, "การเชื่อมต่อขัดข้อง");
+            });
+        };
+
+        window.saveDataToFirebaseCloud = function() {
+            if (isRemoteUpdating) return;
+            clearTimeout(firebaseSyncTimer);
+            firebaseSyncTimer = setTimeout(async () => {
+                try {
+                    setSyncStatus(true, "กำลังบันทึกขึ้น Cloud...");
+                    if (typeof window.collectAndSaveDOMFormulas === 'function') {
+                        window.collectAndSaveDOMFormulas();
+                    }
+                    const mainData = typeof window.getCurrentFormState === 'function' ? window.getCurrentFormState() : {};
+                    const presets = typeof window.getStoredPresets === 'function' ? window.getStoredPresets() : {};
+                    const filterPresets = typeof window.getStoredFilterPresets === 'function' ? window.getStoredFilterPresets() : {};
+                    const excelSheets = window.excelSheetsData || {};
+
+                    const docRef = doc(db, "app_data_rooms", currentRoomId);
+                    await setDoc(docRef, {
+                        mainData,
+                        presets,
+                        filterPresets,
+                        excelSheetsData: excelSheets,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+
+                    setSyncStatus(true, `บันทึกข้ามเครื่องสำเร็จ! (ห้อง: ${currentRoomId})`);
+                } catch (err) {
+                    console.error("Cloud save failed:", err);
+                    setSyncStatus(false, "บันทึก Cloud ไม่สำเร็จ");
+                }
+            }, 600);
+        };
+
+        window.changeFirebaseRoom = function() {
+            const input = document.getElementById('firebaseRoomId');
+            if (input && input.value.trim()) {
+                const newRoom = input.value.trim();
+                window.listenFirebaseRoom(newRoom);
+                if (typeof window.showToast === 'function') {
+                    window.showToast(`สลับไปเชื่อมต่อห้อง "${newRoom}" เรียบร้อย`);
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            window.listenFirebaseRoom("toey2026");
+        });
+    </script>
+
+    <!-- Original Core Application Script (ฟังก์ชันคำนวณเดิมแบบ 100%) -->
     <script>
         const STORAGE_KEY = 'number_pair_app_main_data_v57';
         const PRESETS_KEY = 'number_pair_app_presets_v57';
@@ -566,6 +752,7 @@
         function saveExcelSheetsData() {
             if (excelSheetsData[activeSheetId]) excelSheetsData[activeSheetId].history = document.getElementById('customHistoryInput').value;
             localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
+            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
         }
 
         function renderSubTabsBar() {
@@ -604,7 +791,6 @@
             const sheet = excelSheetsData[activeSheetId];
             if (!sheet) return;
 
-            // เคลียร์หัวตารางและเนื้อหาเก่าทิ้งก่อนโหลดข้อมูลชีตใหม่ ป้องกันค่าใน DOM ตีกัน
             const headRow = document.getElementById('customTableHeadRow');
             const body = document.getElementById('customFormulaTableBody');
             if (headRow) headRow.innerHTML = '';
@@ -636,6 +822,7 @@
         function triggerManualCalculate() {
             collectAndSaveDOMFormulas();
             processCustomFormulasEngine();
+            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
             showToast('อัปเดตผลลัพธ์เรียบร้อย!');
         }
 
@@ -960,6 +1147,8 @@
 
         function autoProcess() {
             saveToLocalStorage();
+            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
+
             const tensEl = document.getElementById('tens');
             const unitsEl = document.getElementById('units');
             const stairEl = document.getElementById('stairInput');
@@ -1176,6 +1365,7 @@
             let name = document.getElementById('presetNameInput').value.trim() || select.value; if (!name) return;
             const presets = getStoredPresets(); presets[name] = getCurrentFormState();
             localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); loadPresetsToSelect(); select.value = name;
+            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
             showToast(`บันทึกสูตร "${name}" เรียบร้อย!`);
         }
         function loadPresetsToSelect() {
@@ -1192,6 +1382,7 @@
             if (confirm(`ลบสูตร "${name}"?`)) {
                 const presets = getStoredPresets(); delete presets[name]; localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
                 loadPresetsToSelect(); loadSavedData(); autoProcess();
+                if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
             }
         }
 
@@ -1202,6 +1393,7 @@
             let filterInputs = []; document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
             const presets = getStoredFilterPresets(); presets[name] = { filterInputs, filterLogic: document.getElementById('filterLogic').value };
             localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect(); select.value = name;
+            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
         }
         function loadFilterPresetsToSelect() {
             const select = document.getElementById('filterPresetSelect'); if(!select) return;
@@ -1223,6 +1415,7 @@
             if (confirm(`ลบชุดคัดกรอง "${name}"?`)) {
                 const presets = getStoredFilterPresets(); delete presets[name];
                 localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect();
+                if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
             }
         }
 
@@ -1238,25 +1431,25 @@
         function clearCustomHistoryInput() {
             if(isHistoryLocked) { alert('กรุณากดปลดล็อคก่อน'); return; }
             document.getElementById('customHistoryInput').value = ''; processCustomFormulasEngine();
+            if (typeof window.saveDataToFirebaseCloud === 'function') window.saveDataToFirebaseCloud();
         }
 
         function sendFirstDigitsToMain() {
-    if (!extractedFirstDigits) return;
-    const container = document.getElementById('filterInputsList'); 
-    if(!container) return; 
-    
-    // เช็คว่าช่องแรกว่างอยู่ไหม ถ้าว่างให้นำไปใส่ช่องแรกได้เลย แต่ถ้ามีข้อมูลอยู่แล้วให้สร้างแถวใหม่เพิ่มต่อท้าย
-    const firstInput = container.querySelector('.filter-input');
-    if (firstInput && firstInput.value.trim() === '') {
-        firstInput.value = extractedFirstDigits;
-    } else {
-        addFilterRow(extractedFirstDigits);
-    }
-    
-    autoProcess(); 
-    switchPageTab('main');
-    showToast('ส่งเลขสรุปเพิ่มเข้าช่องคัดกรองหน้าหลักเรียบร้อย!');
-}
+            if (!extractedFirstDigits) return;
+            const container = document.getElementById('filterInputsList'); 
+            if(!container) return; 
+            
+            const firstInput = container.querySelector('.filter-input');
+            if (firstInput && firstInput.value.trim() === '') {
+                firstInput.value = extractedFirstDigits;
+            } else {
+                addFilterRow(extractedFirstDigits);
+            }
+            
+            autoProcess(); 
+            switchPageTab('main');
+            showToast('ส่งเลขสรุปเพิ่มเข้าช่องคัดกรองหน้าหลักเรียบร้อย!');
+        }
 
         function showToast(msg) {
             const toast = document.getElementById('toast'); if(!toast) return;
@@ -1264,7 +1457,6 @@
             toast.classList.remove('opacity-0', 'pointer-events-none');
             setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 2200);
         }
-		
 		
         // ระบบแชร์ผลสรุปเป็นภาพ PNG พร้อมเปิดเมนูแชร์ของอุปกรณ์
         let generatedShareText = '';
@@ -1324,7 +1516,6 @@
             const cols = numbers.length <= 24 ? 4 : 5;
             const rows = Math.ceil(numbers.length / cols);
             const top = 345;
-            // กันพื้นที่ด้านล่างไว้สำหรับข้อความแจ้งเตือน ไม่ให้ชุดตัวเลขเบียดกัน
             const bottom = 900;
             const gapX = 18;
             const gapY = 14;
@@ -1353,7 +1544,6 @@
                 ctx.fillText(num, x + cellW / 2, y + cellH / 2 + 1, cellW - 12);
             });
 
-            // กล่องข้อความชี้แจง: วางต่อจากชุดตัวเลขและปรับตำแหน่งตามจำนวนแถว
             const gridBottom = top + rows * cellH + gapY * Math.max(0, rows - 1);
             const noticeY = Math.min(1050, Math.max(620, gridBottom + 90));
             ctx.beginPath();
@@ -1464,76 +1654,9 @@
             }
         }
 
-        // คงชื่อฟังก์ชันเดิมไว้ เผื่อมีส่วนอื่นเรียกใช้งาน
         function shareResultToFacebook() {
             openShareModal();
         }
-
     </script>
-	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
-<div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-indigo-500/40 text-white">
-        
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
-                <i class="fa-solid fa-share-nodes text-indigo-400"></i> สรุปผลเลขเด่น พร้อมแชร์
-            </h3>
-            <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-
-        <!-- Preview Box (พรีวิวข้อความสวยๆ ที่จะโพสต์) -->
-        <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2 leading-relaxed shadow-inner">
-            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-            <div class="text-white font-bold">📌 สรุปผลเลขเด่นผ่านการคัดกรอง</div>
-            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-            <div id="sharePreviewContent" class="text-amber-200 font-black text-sm tracking-widest py-2 break-words">-- กำลังโหลดข้อมูล --</div>
-            <div class="text-slate-400 text-[10px] pt-1 border-t border-indigo-900/50">✨ สร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว</div>
-        </div>
-
-        <!-- Share / Download Actions -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <button onclick="shareImageToFacebook()" class="py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-share-nodes"></i> แชร์ภาพไปยัง Facebook Story
-            </button>
-            <button onclick="downloadShareImage()" class="py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-download"></i> ดาวน์โหลดภาพ PNG
-            </button>
-            <button onclick="copyFormattedShareText()" class="sm:col-span-2 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-copy"></i> คัดลอกข้อความ (ทางเลือก)
-            </button>
-        </div>
-        <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
-    </div>
-</div>
-	
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-  import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBnSA2Qt0E3xgde5MGctOLZjpiZcf2Jdeg",
-    authDomain: "lottery-toey.firebaseapp.com",
-    projectId: "lottery-toey",
-    storageBucket: "lottery-toey.firebasestorage.app",
-    messagingSenderId: "712398530840",
-    appId: "1:712398530840:web:f31a3c1e0f1eeeec60966d",
-    measurementId: "G-DY8EZZVY4X"
-  };
-
-  const app = initializeApp(firebaseConfig);
-
-  isSupported().then((supported) => {
-    if (supported) {
-      const analytics = getAnalytics(app);
-      console.log("Firebase Analytics พร้อมใช้งาน");
-    } else {
-      console.log("เบราว์เซอร์นี้ไม่รองรับ Firebase Analytics");
-    }
-  }).catch((error) => {
-    console.error("Firebase Analytics Error:", error);
-  });
-</script>
-
 </body>
 </html>
