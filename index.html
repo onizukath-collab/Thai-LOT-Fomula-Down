@@ -1886,19 +1886,20 @@ function parseAndApplyFilterVoice(text) {
     showToast(`✨ เพิ่มชุดคัดกรองต่อท้ายสำเร็จ (${validSets.length} ชุด)`);
 }
 
-// --- ระบบ AI ฟังเสียงพูดอัจฉริยะ (แยก หลักสิบ / หลักหน่วย / วิน อัตโนมัติในปุ่มเดียว) ---
+// --- ระบบ AI ฟังเสียงพูดสั่งงาน: หลักสิบ / หลักหน่วย / วิน (เวอร์ชันคลีน ไม่พังแน่นอน) ---
 let mainTargetRecognition = null;
 let isMainTargetListening = false;
 
 function toggleMainTargetVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง');
+        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง (แนะนำใช้ Chrome หรือ Edge)');
         return;
     }
 
     if (isMainTargetListening) {
         if (mainTargetRecognition) mainTargetRecognition.stop();
+        isMainTargetListening = false;
         return;
     }
 
@@ -1909,7 +1910,9 @@ function toggleMainTargetVoiceRecognition() {
 
     mainTargetRecognition.onstart = function() {
         isMainTargetListening = true;
-        showToast('🎙️ กำลังฟัง... (เช่น "หลักสิบ 12345", "หลักหน่วย 678", "วิน 012")');
+        if (typeof showToast === 'function') {
+            showToast('🎙️ กำลังฟัง... (เช่น "หลักสิบ 123" หรือ "หน่วย 456")');
+        }
     };
 
     mainTargetRecognition.onresult = function(event) {
@@ -1918,8 +1921,10 @@ function toggleMainTargetVoiceRecognition() {
     };
 
     mainTargetRecognition.onerror = function(event) {
-        console.error('Speech error:', event.error);
-        showToast('❌ ฟังเสียงไม่ชัด ลองใหม่อีกครั้งครับ');
+        console.error('Speech recognition error:', event.error);
+        if (typeof showToast === 'function') {
+            showToast('❌ ฟังเสียงไม่ชัดเจน ลองใหม่อีกครั้ง');
+        }
         isMainTargetListening = false;
     };
 
@@ -1938,70 +1943,45 @@ function parseAndApplyMainTargetVoice(text) {
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
         .replace(/เก้า/g, '9');
 
-    // 2. ดึงเฉพาะตัวเลขทั้งหมดที่อยู่ในประโยค
+    // 2. ดึงเฉพาะตัวเลขทั้งหมด
     let digits = cleaned.replace(/[^0-9]/g, '');
 
     if (!digits) {
-        showToast('❌ ไม่พบตัวเลขในเสียงพูด');
+        if (typeof showToast === 'function') showToast('❌ ไม่พบตัวเลขในเสียงพูด');
         return;
     }
 
-    // 3. ตรวจสอบคำสั่ง (เพิ่มคำว่า "วิน", "บันได", "เบิ้ล" ให้ครอบคลุม)
+    // 3. กระจายคำสั่งลงช่อง
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
-        // --- หมวด: หลักสิบ ---
         let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
         if (inputEl) {
             inputEl.value = digits;
             inputEl.dispatchEvent(new Event('input'));
-            showToast(`✅ บันทึก [หลักสิบ]: ${digits}`);
+            inputEl.dispatchEvent(new Event('change'));
+            if (typeof showToast === 'function') showToast(`✅ หลักสิบ: ${digits}`);
         } else {
-            showToast(`⚠️ ช่องหลักสิบว่าง (เลข: ${digits})`);
+            alert(`พูดหลักสิบ [${digits}] แต่หาช่อง ID หลักสิบไม่เจอครับ`);
         }
     }
     else if (cleaned.includes('หน่วย')) {
-        // --- หมวด: หลักหน่วย ---
         let inputEl = document.getElementById('unitsInput') || document.getElementById('units') || document.querySelector('[name="units"]');
         if (inputEl) {
             inputEl.value = digits;
             inputEl.dispatchEvent(new Event('input'));
-            showToast(`✅ บันทึก [หลักหน่วย]: ${digits}`);
+            inputEl.dispatchEvent(new Event('change'));
+            if (typeof showToast === 'function') showToast(`✅ หลักหน่วย: ${digits}`);
         } else {
-            showToast(`⚠️ ช่องหลักหน่วยว่าง (เลข: ${digits})`);
-        }
-    }
-    else if (cleaned.includes('วิน') || cleaned.includes('บันได') || cleaned.includes('เบิ้ล') || cleaned.includes('ประกบ')) {
-        // --- หมวด: ชุดวินขึ้นบันไดรวมเลขเบิ้ล ---
-        
-        // ค้นหาช่องกรอกสำหรับวินโดยเฉพาะ (เช่น id="win", "winInput", "stairs", ฯลฯ)
-        let winInputEl = document.getElementById('winInput') || 
-                         document.getElementById('win') || 
-                         document.getElementById('stairsInput') ||
-                         document.querySelector('[name="win"]') ||
-                         document.querySelector('input[id*="win" i]');
-        
-        if (winInputEl) {
-            winInputEl.value = digits;
-            winInputEl.dispatchEvent(new Event('input'));
-            winInputEl.dispatchEvent(new Event('change'));
-            showToast(`✨ ใส่ช่อง [วิน/บันได]: ${digits}`);
-        } else {
-            // ถ้าไม่เจอช่อง ให้ลองค้นหาปุ่มสร้างวินแล้วกด หรือแสดงแจ้งเตือน
-            showToast(`✨ คำสั่งวิน [${digits}] (ยังไม่พบช่อง ID วิน แจ้งผมได้ครับ)`);
-        }
-
-        // สั่งเรียกฟังก์ชันสร้างวิน (ถ้ามี)
-        if (typeof generateWinNumber === 'function') {
-            generateWinNumber(digits);
-        } else if (typeof makeWin === 'function') {
-            makeWin(digits);
+            alert(`พูดหลักหน่วย [${digits}] แต่หาช่อง ID หลักหน่วยไม่เจอครับ`);
         }
     }
     else {
-        // --- กรณีพูดแต่ตัวเลขเปล่าๆ ---
+        // วิน หรือ ชุดคัดกรอง
         if (typeof addFilterRow === 'function') {
             addFilterRow(digits);
             if (typeof autoProcess === 'function') autoProcess();
-            showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
+            if (typeof showToast === 'function') showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
+        } else {
+            alert(`เลขที่จับได้คือ: ${digits}`);
         }
     }
 }
