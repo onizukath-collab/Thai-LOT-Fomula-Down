@@ -230,6 +230,11 @@
                             </button>
                         </div>
 
+<!-- ปุ่มเสียงสำหรับชุดคัดกรอง -->
+<button id="micFilterBtn" onclick="toggleFilterVoiceRecognition()" class="text-xs bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm">
+    <i class="fa-solid fa-microphone" id="micFilterIcon"></i> <span id="micFilterText">พูดชุดเลข</span>
+</button>
+
                         <!-- Filter Preset Manager -->
                         <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
                             <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
@@ -1782,6 +1787,98 @@ function parseAndApplyVoiceFormula(text) {
     } else {
         showToast('ไม่พบข้อมูลตารางสูตร');
     }
+}
+
+// --- ระบบ AI ฟังเสียงพูดชุดเลขคัดกรอง ---
+let filterRecognition = null;
+let isFilterListening = false;
+
+function toggleFilterVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง');
+        return;
+    }
+
+    if (isFilterListening) {
+        if (filterRecognition) filterRecognition.stop();
+        return;
+    }
+
+    filterRecognition = new SpeechRecognition();
+    filterRecognition.lang = 'th-TH';
+    filterRecognition.interimResults = false;
+    filterRecognition.maxAlternatives = 1;
+
+    const micBtn = document.getElementById('micFilterBtn');
+    const micIcon = document.getElementById('micFilterIcon');
+    const micText = document.getElementById('micFilterText');
+
+    filterRecognition.onstart = function() {
+        isFilterListening = true;
+        micBtn.className = "text-xs bg-rose-600 text-white px-2 py-1 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm animate-pulse";
+        if(micIcon) micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
+        if(micText) micText.innerText = "กำลังฟัง...";
+        showToast('🎙️ กำลังฟังชุดเลขคัดกรอง... (พูดชุดเลขทีละชุดได้เลย)');
+    };
+
+    filterRecognition.onresult = function(event) {
+        const speechText = event.results[0][0].transcript.trim();
+        parseAndApplyFilterVoice(speechText);
+    };
+
+    filterRecognition.onerror = function(event) {
+        console.error('Filter speech error:', event.error);
+        showToast('❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง');
+        resetFilterMicUI();
+    };
+
+    filterRecognition.onend = function() {
+        resetFilterMicUI();
+    };
+
+    filterRecognition.start();
+}
+
+function resetFilterMicUI() {
+    isFilterListening = false;
+    const micBtn = document.getElementById('micFilterBtn');
+    const micIcon = document.getElementById('micFilterIcon');
+    const micText = document.getElementById('micFilterText');
+    if(micBtn) {
+        micBtn.className = "text-xs bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm";
+        if(micIcon) micIcon.className = "fa-solid fa-microphone";
+        if(micText) micText.innerText = "พูดชุดเลข";
+    }
+}
+
+function parseAndApplyFilterVoice(text) {
+    // แปลงคำพูดภาษาไทยตัวเลขให้เป็นตัวเลขดิจิตอล
+    let cleaned = text
+        .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
+        .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
+        .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
+        .replace(/เก้า/g, '9');
+
+    // แยกชุดตัวเลขตามช่องว่าง คำว่า "ชุด", "และ", หรือเครื่องหมายจุลภาค
+    let parts = cleaned.split(/[\s,และชุด]+/).map(p => p.replace(/[^0-9]/g, '')).filter(p => p.length > 0);
+
+    if (parts.length === 0) {
+        showToast('❌ ไม่พบชุดตัวเลขในเสียงพูด');
+        return;
+    }
+
+    const container = document.getElementById('filterInputsList');
+    if (!container) return;
+
+    // เคลียร์ช่องเก่าแล้วใส่ชุดเลขใหม่ที่พูดเข้ามาทั้งหมดเรียงลงไปทีละชุด
+    container.innerHTML = '';
+    parts.forEach(numStr => {
+        addFilterRow(numStr);
+    });
+
+    autoProcess(); // สั่งรันประมวลผลจับคู่ใหม่ทันที
+    showToast(`✨ เพิ่มชุดคัดกรองจากเสียงพูดสำเร็จ (${parts.length} ชุด)`);
 }
 
     </script>
