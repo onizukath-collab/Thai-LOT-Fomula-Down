@@ -1946,7 +1946,7 @@ function parseAndApplyMainTargetVoice(text) {
         return;
     }
 
-    // 3. ตรวจสอบคำสั่งทีละเงื่อนไข
+    // 3. ตรวจสอบคำสั่ง (เพิ่มคำว่า "วิน", "บันได", "เบิ้ล" ให้ครอบคลุม)
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
         // --- หมวด: หลักสิบ ---
         let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
@@ -1969,31 +1969,31 @@ function parseAndApplyMainTargetVoice(text) {
             showToast(`⚠️ ช่องหลักหน่วยว่าง (เลข: ${digits})`);
         }
     }
-    else if (cleaned.includes('วิน') || cleaned.includes('ประกบ')) {
-        // --- หมวด: วินขึ้นบันไดรวมเลขเบิ้ล (เชื่อมกับฟังก์ชันเดิมของพี่เต้ย) ---
+    else if (cleaned.includes('วิน') || cleaned.includes('บันได') || cleaned.includes('เบิ้ล') || cleaned.includes('ประกบ')) {
+        // --- หมวด: ชุดวินขึ้นบันไดรวมเลขเบิ้ล ---
         
-        // 📌 วิธีที่ 1: ถ้าบนหน้าเว็บมีช่องกรอกสำหรับใส่เลขวินโดยเฉพาะ (เช่น id="winInput" หรือ id="win") ให้เอาเลขไปใส่ช่องนั้นก่อน
-        let winInputEl = document.getElementById('winInput') || document.getElementById('win') || document.querySelector('[name="win"]');
+        // ค้นหาช่องกรอกสำหรับวินโดยเฉพาะ (เช่น id="win", "winInput", "stairs", ฯลฯ)
+        let winInputEl = document.getElementById('winInput') || 
+                         document.getElementById('win') || 
+                         document.getElementById('stairsInput') ||
+                         document.querySelector('[name="win"]') ||
+                         document.querySelector('input[id*="win" i]');
+        
         if (winInputEl) {
             winInputEl.value = digits;
             winInputEl.dispatchEvent(new Event('input'));
             winInputEl.dispatchEvent(new Event('change'));
+            showToast(`✨ ใส่ช่อง [วิน/บันได]: ${digits}`);
+        } else {
+            // ถ้าไม่เจอช่อง ให้ลองค้นหาปุ่มสร้างวินแล้วกด หรือแสดงแจ้งเตือน
+            showToast(`✨ คำสั่งวิน [${digits}] (ยังไม่พบช่อง ID วิน แจ้งผมได้ครับ)`);
         }
 
-        // 📌 วิธีที่ 2: สั่งเรียกฟังก์ชันสร้างวินขึ้นบันไดของพี่เต้ย (เปลี่ยนชื่อฟังก์ชัน generateWinNumber หรือชื่อจริงที่พี่เต้ยใช้ได้เลยครับ)
+        // สั่งเรียกฟังก์ชันสร้างวิน (ถ้ามี)
         if (typeof generateWinNumber === 'function') {
-            generateWinNumber(digits); // ส่งเลขไปสร้างวิน
-            showToast(`✨ สร้าง [วินขึ้นบันไดรวมเบิ้ล]: ${digits}`);
-        } 
-        else if (typeof makeWin === 'function') {
+            generateWinNumber(digits);
+        } else if (typeof makeWin === 'function') {
             makeWin(digits);
-            showToast(`✨ สร้าง [วินขึ้นบันไดรวมเบิ้ล]: ${digits}`);
-        }
-        else {
-            // ถ้าหาชื่อฟังก์ชันไม่เจอ ให้ใช้วิธีจำลองการคลิกปุ่ม "สร้างวิน" บนหน้าจอแทน
-            let winBtn = document.getElementById('btnGenWin') || document.querySelector('button[onclick*="Win"]');
-            if(winBtn) winBtn.click();
-            showToast(`✨ ประมวลผล [วิน]: ${digits}`);
         }
     }
     else {
