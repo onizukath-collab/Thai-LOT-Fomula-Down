@@ -1890,6 +1890,15 @@ function parseAndApplyFilterVoice(text) {
 let mainTargetRecognition = null;
 let isMainTargetListening = false;
 
+		<!-- ปุ่มไมโครโฟนสำหรับสั่งงาน หลักสิบ / หลักหน่วย / วิน -->
+<div class="flex items-center gap-2 my-2">
+    <button id="micMainTargetBtn" onclick="toggleMainTargetVoiceRecognition()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+        <i class="fa-solid fa-microphone" id="micMainTargetIcon"></i> 
+        <span id="micMainTargetText">🎙️ พูดระบุ หลักสิบ / หน่วย / วิน</span>
+    </button>
+    <span class="text-xs text-slate-400">(เช่น พูดว่า "หลักสิบ 12345" หรือ "วิน 6789")</span>
+</div>
+
 function toggleMainTargetVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
