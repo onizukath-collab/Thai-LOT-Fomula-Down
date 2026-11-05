@@ -1951,7 +1951,7 @@ function parseAndApplyMainTargetVoice(text) {
         return;
     }
 
-    // 3. กระจายคำสั่งลงช่อง
+    // 3. แยกแยะหมวดหมู่คำสั่งให้ชัดเจน (ดักคำว่า "วิน" ไว้ก่อนเลย!)
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
         let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
         if (inputEl) {
@@ -1974,8 +1974,26 @@ function parseAndApplyMainTargetVoice(text) {
             alert(`พูดหลักหน่วย [${digits}] แต่หาช่อง ID หลักหน่วยไม่เจอครับ`);
         }
     }
+    else if (cleaned.includes('วิน') || cleaned.includes('บันได') || cleaned.includes('เบิ้ล')) {
+        // 🎯 บล็อกนี้แหละที่จะจัดการคำว่า "วิน" โดยเฉพาะ!
+        // ลองหาช่องกรอกสำหรับวิน (เช่น ช่อง input หรือ textarea ที่พี่เต้ยใช้ใส่เลขวิน)
+        let winInputEl = document.getElementById('winInput') || 
+                         document.getElementById('win') || 
+                         document.querySelector('[name="win"]') ||
+                         document.querySelector('textarea'); // ถ้ามี textarea อันเดียวในหน้า จะดึงตัวนี้ทันที
+
+        if (winInputEl) {
+            winInputEl.value = digits;
+            winInputEl.dispatchEvent(new Event('input'));
+            winInputEl.dispatchEvent(new Event('change'));
+            if (typeof showToast === 'function') showToast(`✨ บันทึก [ชุดวิน]: ${digits}`);
+        } else {
+            // ถ้าหาช่องไม่เจอ ให้เด้งเตือนบอกเลขวินที่พูดออกมาแทน จะได้ไม่หลุดไปชุดคัดกรอง
+            alert(`สั่งวิน [${digits}] สำเร็จ (แต่ยังไม่ได้ระบุช่อง ID วินบนหน้าจอ)`);
+        }
+    }
     else {
-        // วิน หรือ ชุดคัดกรอง
+        // ถ้าพูดเลขเปล่าๆ โดยไม่ระบุหมวด ค่อยมาลงชุดคัดกรองตรงนี้
         if (typeof addFilterRow === 'function') {
             addFilterRow(digits);
             if (typeof autoProcess === 'function') autoProcess();
