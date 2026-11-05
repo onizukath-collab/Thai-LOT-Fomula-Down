@@ -1970,14 +1970,17 @@ function parseAndApplyMainTargetVoice(text) {
         }
     }
     else if (cleaned.includes('วิน') || cleaned.includes('บันได') || cleaned.includes('เบิ้ล') || cleaned.includes('ประกบ')) {
-        // --- หมวด: ชุดวินขึ้นบันไดรวมเลขเบิ้ล ---
+        // --- หมวด: ชุดวินขึ้นบันไดรวมเลขเบิ้ล (ระบบค้นหาแบบครอบคลุม) ---
         
-        // ค้นหาช่องกรอกสำหรับวินโดยเฉพาะ (เช่น id="win", "winInput", "stairs", ฯลฯ)
+        // ค้นหาช่องกรอกทั้ง input และ textarea ที่เกี่ยวข้องกับ win หรือ วิน
         let winInputEl = document.getElementById('winInput') || 
                          document.getElementById('win') || 
                          document.getElementById('stairsInput') ||
                          document.querySelector('[name="win"]') ||
-                         document.querySelector('input[id*="win" i]');
+                         document.querySelector('input[id*="win" i]') ||
+                         document.querySelector('textarea[id*="win" i]') ||
+                         document.querySelector('textarea[name*="win" i]') ||
+                         document.querySelector('textarea'); // ถ้าไม่เจอจริงๆ จะเลือกช่อง textarea ตัวแรกในหน้า
         
         if (winInputEl) {
             winInputEl.value = digits;
@@ -1985,26 +1988,20 @@ function parseAndApplyMainTargetVoice(text) {
             winInputEl.dispatchEvent(new Event('change'));
             showToast(`✨ ใส่ช่อง [วิน/บันได]: ${digits}`);
         } else {
-            // ถ้าไม่เจอช่อง ให้ลองค้นหาปุ่มสร้างวินแล้วกด หรือแสดงแจ้งเตือน
-            showToast(`✨ คำสั่งวิน [${digits}] (ยังไม่พบช่อง ID วิน แจ้งผมได้ครับ)`);
+            showToast(`✨ คำสั่งวิน [${digits}] (ลองคลิกที่ช่องกรอกวินค้างไว้แล้วลองพูดดูครับ)`);
         }
 
-        // สั่งเรียกฟังก์ชันสร้างวิน (ถ้ามี)
+        // สั่งเรียกฟังก์ชันสร้างวินหรือบันได (รองรับหลายชื่อฟังก์ชันที่เป็นไปได้)
         if (typeof generateWinNumber === 'function') {
             generateWinNumber(digits);
         } else if (typeof makeWin === 'function') {
             makeWin(digits);
+        } else if (typeof calWin === 'function') {
+            calWin(digits);
+        } else if (typeof calculateWin === 'function') {
+            calculateWin(digits);
         }
     }
-    else {
-        // --- กรณีพูดแต่ตัวเลขเปล่าๆ ---
-        if (typeof addFilterRow === 'function') {
-            addFilterRow(digits);
-            if (typeof autoProcess === 'function') autoProcess();
-            showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
-        }
-    }
-}
 		
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
