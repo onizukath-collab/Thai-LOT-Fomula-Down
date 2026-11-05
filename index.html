@@ -20,7 +20,7 @@
         <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-md p-3 text-white border border-indigo-500/30 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2 text-xs">
                 <span id="firebaseStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="firebaseStatusText" class="font-bold text-amber-300">ซิงค์ออนไลน์ (Firebase): พร้อมใช้งาน</span>
+                <span id="firebaseStatusText" class="font-bold text-amber-300">ซิงค์ออนไลน์ (Firebase): กำลังเชื่อมต่อ...</span>
             </div>
             
             <div class="flex items-center gap-2">
@@ -138,12 +138,12 @@
                         <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">ชุดประกบ [สิบ]:</label>
-                                <input type="text" id="tens" oninput="debounceAutoProcess()" placeholder="เช่น 6789" 
+                                <input type="text" id="tens" oninput="debounceAutoProcess()" placeholder="เช่น 456789" value="456789" 
                                     class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-slate-800">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">ชุดประกบ [หน่วย]:</label>
-                                <input type="text" id="units" oninput="debounceAutoProcess()" placeholder="เช่น 56789" 
+                                <input type="text" id="units" oninput="debounceAutoProcess()" placeholder="เช่น 56789" value="56789" 
                                     class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-slate-800">
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                             <label class="block text-xs font-semibold text-blue-900 mb-1 flex items-center gap-1.5">
                                 <i class="fa-solid fa-stairs text-[#1877F2]"></i> ชุดวินขึ้นบันไดรวมเลขเบิ้ล:
                             </label>
-                            <input type="text" id="stairInput" oninput="debounceAutoProcess()" placeholder="เช่น 67890" 
+                            <input type="text" id="stairInput" oninput="debounceAutoProcess()" placeholder="เช่น 67890" value="67890" 
                                 class="w-full px-3 py-1.5 border border-blue-300 bg-white rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-blue-950">
                         </div>
                     </div>
@@ -1335,9 +1335,10 @@
         }
 
         function setFormState(data) {
-            document.getElementById('tens').value = data.tens || '';
-            document.getElementById('units').value = data.units || '';
-            document.getElementById('stairInput').value = data.stairInput || '67890';
+            if (!data) return;
+            document.getElementById('tens').value = data.tens !== undefined ? data.tens : '456789';
+            document.getElementById('units').value = data.units !== undefined ? data.units : '56789';
+            document.getElementById('stairInput').value = data.stairInput !== undefined ? data.stairInput : '67890';
             document.getElementById('excludeInput').value = data.excludeInput || '';
             document.getElementById('sumPointsInput').value = data.sumPointsInput || '';
             document.getElementById('parityFilter').value = data.parityFilter || 'ALL';
@@ -1354,7 +1355,7 @@
             if (saved) { try { setFormState(JSON.parse(saved)); } catch(e) { initDefaultForm(); } } else initDefaultForm();
         }
         function initDefaultForm() {
-            document.getElementById('tens').value = '6789'; document.getElementById('units').value = '56789';
+            document.getElementById('tens').value = '456789'; document.getElementById('units').value = '56789';
             document.getElementById('stairInput').value = '67890'; addFilterRow('24680'); addFilterRow('13579');
         }
         function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
