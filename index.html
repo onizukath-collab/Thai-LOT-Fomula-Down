@@ -1951,7 +1951,7 @@ function parseAndApplyMainTargetVoice(text) {
         return;
     }
 
-    // 3. แยกแยะหมวดหมู่คำสั่งให้ชัดเจน (ดักคำว่า "วิน" ไว้ก่อนเลย!)
+    // 3. แยกแยะหมวดหมู่คำสั่งลงช่องจริง
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
         let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
         if (inputEl) {
@@ -1975,31 +1975,26 @@ function parseAndApplyMainTargetVoice(text) {
         }
     }
     else if (cleaned.includes('วิน') || cleaned.includes('บันได') || cleaned.includes('เบิ้ล')) {
-        // 🎯 บล็อกนี้แหละที่จะจัดการคำว่า "วิน" โดยเฉพาะ!
-        // ลองหาช่องกรอกสำหรับวิน (เช่น ช่อง input หรือ textarea ที่พี่เต้ยใช้ใส่เลขวิน)
-        let winInputEl = document.getElementById('winInput') || 
-                         document.getElementById('win') || 
-                         document.querySelector('[name="win"]') ||
-                         document.querySelector('textarea'); // ถ้ามี textarea อันเดียวในหน้า จะดึงตัวนี้ทันที
+        // 🎯 ส่งตรงเข้าช่อง ID: stairInput
+        let winInputEl = document.getElementById('stairInput');
 
         if (winInputEl) {
             winInputEl.value = digits;
-            winInputEl.dispatchEvent(new Event('input'));
-            winInputEl.dispatchEvent(new Event('change'));
-            if (typeof showToast === 'function') showToast(`✨ บันทึก [ชุดวิน]: ${digits}`);
+            // เรียก event เพื่อให้ฟังก์ชัน debounceAutoProcess() ของพี่เต้ยทำงานต่อทันที
+            winInputEl.dispatchEvent(new Event('input', { bubbles: true }));
+            winInputEl.dispatchEvent(new Event('change', { bubbles: true }));
+            
+            if (typeof showToast === 'function') showToast(`✨ บันทึก [ชุดวินขึ้นบันได]: ${digits}`);
         } else {
-            // ถ้าหาช่องไม่เจอ ให้เด้งเตือนบอกเลขวินที่พูดออกมาแทน จะได้ไม่หลุดไปชุดคัดกรอง
-            alert(`สั่งวิน [${digits}] สำเร็จ (แต่ยังไม่ได้ระบุช่อง ID วินบนหน้าจอ)`);
+            alert(`หาช่อง id="stairInput" ไม่เจอในหน้าเว็บครับ`);
         }
     }
     else {
-        // ถ้าพูดเลขเปล่าๆ โดยไม่ระบุหมวด ค่อยมาลงชุดคัดกรองตรงนี้
+        // กรณีพูดตัวเลขเปล่าๆ
         if (typeof addFilterRow === 'function') {
             addFilterRow(digits);
             if (typeof autoProcess === 'function') autoProcess();
             if (typeof showToast === 'function') showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
-        } else {
-            alert(`เลขที่จับได้คือ: ${digits}`);
         }
     }
 }
