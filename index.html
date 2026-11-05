@@ -1860,12 +1860,15 @@ function parseAndApplyFilterVoice(text) {
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
         .replace(/เก้า/g, '9');
 
-    // 2. แยกชุดตัวเลขตามช่องว่าง คำว่า "ชุด", "และ", หรือเครื่องหมายจุลภาค
-    let parts = cleaned.split(/[\s,และชุด]+/)
-        .map(p => p.replace(/[^0-9]/g, ''))
-        .filter(p => p.length > 0);
+    // 2. แบ่งชุดด้วยคำว่า "ชุด" หรือ "และ" หรือเครื่องหมายจุลภาค
+    let rawParts = cleaned.split(/(?:ชุด|และ|กับ|,|\bชุดที่\b)+/);
+    
+    // 3. ในแต่ละส่วน ให้ลบช่องว่างออกทั้งหมดเพื่อให้เลขที่พูดมาเกาะติดกันเป็นชุดเดียวกัน
+    let validSets = rawParts.map(part => {
+        return part.replace(/[^0-9]/g, ''); // ดึงเฉพาะตัวเลขแล้วรวมเป็นก้อนเดียว
+    }).filter(p => p.length > 0);
 
-    if (parts.length === 0) {
+    if (validSets.length === 0) {
         showToast('❌ ไม่พบชุดตัวเลขในเสียงพูด');
         return;
     }
@@ -1873,15 +1876,14 @@ function parseAndApplyFilterVoice(text) {
     const container = document.getElementById('filterInputsList');
     if (!container) return;
 
-    // เคลียร์ช่องเก่าทิ้ง แล้วนำตัวเลขแต่ละชุดมาใส่ลงช่องคัดกรอง
+    // เคลียร์ช่องเก่าแล้วใส่ชุดเลขที่กรองได้ลงไป
     container.innerHTML = '';
-    
-    parts.forEach(numSet => {
+    validSets.forEach(numSet => {
         addFilterRow(numSet);
     });
 
     autoProcess(); // สั่งรันประมวลผลจับคู่ใหม่ทันที
-    showToast(`✨ เพิ่มชุดคัดกรองจากเสียงพูดสำเร็จ (${parts.length} ชุด)`);
+    showToast(`✨ เพิ่มชุดคัดกรองสำเร็จ (${validSets.length} ชุด)`);
 }
 
     </script>
