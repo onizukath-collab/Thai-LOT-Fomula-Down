@@ -1876,14 +1876,14 @@ function parseAndApplyFilterVoice(text) {
     const container = document.getElementById('filterInputsList');
     if (!container) return;
 
-    // เคลียร์ช่องเก่าแล้วใส่ชุดเลขที่กรองได้ลงไป
-    container.innerHTML = '';
+    // 💡 เปลี่ยนตรงนี้: ไม่ต้องล้างของเก่า (เอา .innerHTML = '' ออก) 
+    // แต่ให้วนลูป addFilterRow ต่อท้ายของเดิมเข้าไปเลยครับ
     validSets.forEach(numSet => {
         addFilterRow(numSet);
     });
 
     autoProcess(); // สั่งรันประมวลผลจับคู่ใหม่ทันที
-    showToast(`✨ เพิ่มชุดคัดกรองสำเร็จ (${validSets.length} ชุด)`);
+    showToast(`✨ เพิ่มชุดคัดกรองต่อท้ายสำเร็จ (${validSets.length} ชุด)`);
 }
 
     </script>
