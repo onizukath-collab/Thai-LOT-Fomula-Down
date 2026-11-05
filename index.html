@@ -1506,5 +1506,34 @@
         <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
     </div>
 </div>
+	
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+  import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBnSA2Qt0E3xgde5MGctOLZjpiZcf2Jdeg",
+    authDomain: "lottery-toey.firebaseapp.com",
+    projectId: "lottery-toey",
+    storageBucket: "lottery-toey.firebasestorage.app",
+    messagingSenderId: "712398530840",
+    appId: "1:712398530840:web:f31a3c1e0f1eeeec60966d",
+    measurementId: "G-DY8EZZVY4X"
+  };
+
+  const app = initializeApp(firebaseConfig);
+
+  isSupported().then((supported) => {
+    if (supported) {
+      const analytics = getAnalytics(app);
+      console.log("Firebase Analytics พร้อมใช้งาน");
+    } else {
+      console.log("เบราว์เซอร์นี้ไม่รองรับ Firebase Analytics");
+    }
+  }).catch((error) => {
+    console.error("Firebase Analytics Error:", error);
+  });
+</script>
+
 </body>
 </html>
