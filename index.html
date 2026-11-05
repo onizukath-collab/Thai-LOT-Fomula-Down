@@ -1890,15 +1890,6 @@ function parseAndApplyFilterVoice(text) {
 let mainTargetRecognition = null;
 let isMainTargetListening = false;
 
-		<!-- ปุ่มไมโครโฟนสำหรับสั่งงาน หลักสิบ / หลักหน่วย / วิน -->
-<div class="flex items-center gap-2 my-2">
-    <button id="micMainTargetBtn" onclick="toggleMainTargetVoiceRecognition()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-        <i class="fa-solid fa-microphone" id="micMainTargetIcon"></i> 
-        <span id="micMainTargetText">🎙️ พูดระบุ หลักสิบ / หน่วย / วิน</span>
-    </button>
-    <span class="text-xs text-slate-400">(เช่น พูดว่า "หลักสิบ 12345" หรือ "วิน 6789")</span>
-</div>
-
 function toggleMainTargetVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -1916,9 +1907,16 @@ function toggleMainTargetVoiceRecognition() {
     mainTargetRecognition.interimResults = false;
     mainTargetRecognition.maxAlternatives = 1;
 
+    const micBtn = document.getElementById('micMainTargetBtn');
+    const micIcon = document.getElementById('micMainTargetIcon');
+    const micText = document.getElementById('micMainTargetText');
+
     mainTargetRecognition.onstart = function() {
         isMainTargetListening = true;
-        showToast('🎙️ กำลังฟังคำสั่ง (เช่น หลักสิบ 123, วิน 456)...');
+        if(micBtn) micBtn.className = "px-3 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm animate-pulse";
+        if(micIcon) micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
+        if(micText) micText.innerText = "กำลังฟังคำสั่ง...";
+        showToast('🎙️ กำลังฟัง... (เช่น หลักสิบ 12345)');
     };
 
     mainTargetRecognition.onresult = function(event) {
@@ -1929,9 +1927,26 @@ function toggleMainTargetVoiceRecognition() {
     mainTargetRecognition.onerror = function(event) {
         console.error('Main target speech error:', event.error);
         showToast('❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง');
+        resetMainTargetMicUI();
+    };
+
+    mainTargetRecognition.onend = function() {
+        resetMainTargetMicUI();
     };
 
     mainTargetRecognition.start();
+}
+
+function resetMainTargetMicUI() {
+    isMainTargetListening = false;
+    const micBtn = document.getElementById('micMainTargetBtn');
+    const micIcon = document.getElementById('micMainTargetIcon');
+    const micText = document.getElementById('micMainTargetText');
+    if(micBtn) {
+        micBtn.className = "px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm";
+        if(micIcon) micIcon.className = "fa-solid fa-microphone";
+        if(micText) micText.innerText = "🎙️ พูดระบุ หลักสิบ / หน่วย / วิน";
+    }
 }
 
 function parseAndApplyMainTargetVoice(text) {
@@ -1950,31 +1965,39 @@ function parseAndApplyMainTargetVoice(text) {
         return;
     }
 
-    // 3. ตรวจสอบว่าพูดระบุหมวดหมู่ไหน
+    // 3. ตรวจสอบหมวดหมู่และค้นหาช่องกรอกในหน้าเว็บอัตโนมัติ
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
-        // --- หมวด: หลักสิบ ---
-        const inputElement = document.getElementById('tensInput') || document.querySelector('[name="tens"]'); // ปรับ ID ตามโครงสร้างหน้าเว็บพี่เต้ย
-        if (inputElement) {
-            inputElement.value = digits;
-            inputElement.dispatchEvent(new Event('input')); // ให้ระบบหน้าเว็บรับรู้การเปลี่ยนแปลง
-            showToast(`✅ บันทึก [หลักสิบ]: ${digits}`);
-        } else {
-            showToast('⚠️ ไม่พบช่องกรอก "หลักสิบ" บนหน้าจอ');
-        }
-    } 
-    else if (cleaned.includes('หน่วย')) {
-        // --- หมวด: หลักหน่วย ---
-        const inputElement = document.getElementById('unitsInput') || document.querySelector('[name="units"]');
+        // ค้นหาช่องหลักสิบจาก ID หรือ Name หลายๆ แบบที่เป็นไปได้
+        const inputElement = document.getElementById('tensInput') || 
+                             document.getElementById('tens') || 
+                             document.querySelector('[name="tens"]') ||
+                             document.querySelector('input[id*="ten" i]');
         if (inputElement) {
             inputElement.value = digits;
             inputElement.dispatchEvent(new Event('input'));
+            inputElement.dispatchEvent(new Event('change'));
+            showToast(`✅ บันทึก [หลักสิบ]: ${digits}`);
+        } else {
+            showToast('⚠️ ไม่พบช่อง "หลักสิบ" บนหน้าจอ (แจ้ง ID ช่องได้ครับ)');
+        }
+    } 
+    else if (cleaned.includes('หน่วย')) {
+        // ค้นหาช่องหลักหน่วยจาก ID หรือ Name หลายๆ แบบ
+        const inputElement = document.getElementById('unitsInput') || 
+                             document.getElementById('units') || 
+                             document.querySelector('[name="units"]') ||
+                             document.querySelector('input[id*="unit" i]');
+        if (inputElement) {
+            inputElement.value = digits;
+            inputElement.dispatchEvent(new Event('input'));
+            inputElement.dispatchEvent(new Event('change'));
             showToast(`✅ บันทึก [หลักหน่วย]: ${digits}`);
         } else {
-            showToast('⚠️ ไม่พบช่องกรอก "หลักหน่วย" บนหน้าจอ');
+            showToast('⚠️ ไม่พบช่อง "หลักหน่วย" บนหน้าจอ (แจ้ง ID ช่องได้ครับ)');
         }
     } 
     else if (cleaned.includes('วิน') || cleaned.includes('ประกบ')) {
-        // --- หมวด: วิน / ประกบ (ใช้ฟังก์ชันเพิ่มแถวชุดคัดกรองเดิมที่พี่เต้ยชอบ) ---
+        // วิน / ประกบ (เพิ่มแถวชุดคัดกรอง)
         if (typeof addFilterRow === 'function') {
             addFilterRow(digits);
             if (typeof autoProcess === 'function') autoProcess();
@@ -1984,7 +2007,7 @@ function parseAndApplyMainTargetVoice(text) {
         }
     } 
     else {
-        // ถ้าไม่ได้ระบุหมวดหมู่ชัดเจน ให้ใส่เป็นชุดวิน/ประกบเริ่มต้น
+        // ค่าเริ่มต้นถ้าไม่ได้พูดระบุหลัก ให้เพิ่มเป็นชุดคัดกรอง
         if (typeof addFilterRow === 'function') {
             addFilterRow(digits);
             if (typeof autoProcess === 'function') autoProcess();
