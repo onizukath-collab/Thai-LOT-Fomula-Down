@@ -1984,7 +1984,7 @@ function parseAndApplyMainTargetVoice(text) {
             winInputEl.dispatchEvent(new Event('input', { bubbles: true }));
             winInputEl.dispatchEvent(new Event('change', { bubbles: true }));
             
-            if (typeof showToast === 'function') showToast(`✨ บันทึก [ชุดวินขึ้นบันได]: ${digits}`);
+            if (typeof showToast === 'function') showToast(`✅ วิน: ${digits}`);
         } else {
             alert(`หาช่อง id="stairInput" ไม่เจอในหน้าเว็บครับ`);
         }
