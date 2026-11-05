@@ -1853,15 +1853,17 @@ function resetFilterMicUI() {
 }
 
 function parseAndApplyFilterVoice(text) {
-    // แปลงคำพูดภาษาไทยตัวเลขให้เป็นตัวเลขดิจิตอล
+    // 1. แปลงคำพูดภาษาไทยตัวเลขให้เป็นตัวเลขดิจิตอล
     let cleaned = text
         .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
         .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
         .replace(/เก้า/g, '9');
 
-    // แยกชุดตัวเลขตามช่องว่าง คำว่า "ชุด", "และ", หรือเครื่องหมายจุลภาค
-    let parts = cleaned.split(/[\s,และชุด]+/).map(p => p.replace(/[^0-9]/g, '')).filter(p => p.length > 0);
+    // 2. แยกชุดตัวเลขตามช่องว่าง คำว่า "ชุด", "และ", หรือเครื่องหมายจุลภาค
+    let parts = cleaned.split(/[\s,และชุด]+/)
+        .map(p => p.replace(/[^0-9]/g, ''))
+        .filter(p => p.length > 0);
 
     if (parts.length === 0) {
         showToast('❌ ไม่พบชุดตัวเลขในเสียงพูด');
@@ -1871,10 +1873,11 @@ function parseAndApplyFilterVoice(text) {
     const container = document.getElementById('filterInputsList');
     if (!container) return;
 
-    // เคลียร์ช่องเก่าแล้วใส่ชุดเลขใหม่ที่พูดเข้ามาทั้งหมดเรียงลงไปทีละชุด
+    // เคลียร์ช่องเก่าทิ้ง แล้วนำตัวเลขแต่ละชุดมาใส่ลงช่องคัดกรอง
     container.innerHTML = '';
-    parts.forEach(numStr => {
-        addFilterRow(numStr);
+    
+    parts.forEach(numSet => {
+        addFilterRow(numSet);
     });
 
     autoProcess(); // สั่งรันประมวลผลจับคู่ใหม่ทันที
