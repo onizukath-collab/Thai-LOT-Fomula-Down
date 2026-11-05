@@ -1886,6 +1886,104 @@ function parseAndApplyFilterVoice(text) {
     showToast(`✨ เพิ่มชุดคัดกรองต่อท้ายสำเร็จ (${validSets.length} ชุด)`);
 }
 
+// --- ระบบ AI ฟังเสียงพูดแยกหมวดหมู่: หลักสิบ / หลักหน่วย / วิน (ประกบ) ---
+let mainTargetRecognition = null;
+let isMainTargetListening = false;
+
+function toggleMainTargetVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง');
+        return;
+    }
+
+    if (isMainTargetListening) {
+        if (mainTargetRecognition) mainTargetRecognition.stop();
+        return;
+    }
+
+    mainTargetRecognition = new SpeechRecognition();
+    mainTargetRecognition.lang = 'th-TH';
+    mainTargetRecognition.interimResults = false;
+    mainTargetRecognition.maxAlternatives = 1;
+
+    mainTargetRecognition.onstart = function() {
+        isMainTargetListening = true;
+        showToast('🎙️ กำลังฟังคำสั่ง (เช่น หลักสิบ 123, วิน 456)...');
+    };
+
+    mainTargetRecognition.onresult = function(event) {
+        const speechText = event.results[0][0].transcript.trim();
+        parseAndApplyMainTargetVoice(speechText);
+    };
+
+    mainTargetRecognition.onerror = function(event) {
+        console.error('Main target speech error:', event.error);
+        showToast('❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง');
+    };
+
+    mainTargetRecognition.start();
+}
+
+function parseAndApplyMainTargetVoice(text) {
+    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก
+    let cleaned = text
+        .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
+        .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
+        .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
+        .replace(/เก้า/g, '9');
+
+    // 2. ดึงเฉพาะตัวเลขทั้งหมดที่อยู่ในประโยค
+    let digits = cleaned.replace(/[^0-9]/g, '');
+
+    if (!digits) {
+        showToast('❌ ไม่พบตัวเลขในคำสั่งเสียง');
+        return;
+    }
+
+    // 3. ตรวจสอบว่าพูดระบุหมวดหมู่ไหน
+    if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
+        // --- หมวด: หลักสิบ ---
+        const inputElement = document.getElementById('tensInput') || document.querySelector('[name="tens"]'); // ปรับ ID ตามโครงสร้างหน้าเว็บพี่เต้ย
+        if (inputElement) {
+            inputElement.value = digits;
+            inputElement.dispatchEvent(new Event('input')); // ให้ระบบหน้าเว็บรับรู้การเปลี่ยนแปลง
+            showToast(`✅ บันทึก [หลักสิบ]: ${digits}`);
+        } else {
+            showToast('⚠️ ไม่พบช่องกรอก "หลักสิบ" บนหน้าจอ');
+        }
+    } 
+    else if (cleaned.includes('หน่วย')) {
+        // --- หมวด: หลักหน่วย ---
+        const inputElement = document.getElementById('unitsInput') || document.querySelector('[name="units"]');
+        if (inputElement) {
+            inputElement.value = digits;
+            inputElement.dispatchEvent(new Event('input'));
+            showToast(`✅ บันทึก [หลักหน่วย]: ${digits}`);
+        } else {
+            showToast('⚠️ ไม่พบช่องกรอก "หลักหน่วย" บนหน้าจอ');
+        }
+    } 
+    else if (cleaned.includes('วิน') || cleaned.includes('ประกบ')) {
+        // --- หมวด: วิน / ประกบ (ใช้ฟังก์ชันเพิ่มแถวชุดคัดกรองเดิมที่พี่เต้ยชอบ) ---
+        if (typeof addFilterRow === 'function') {
+            addFilterRow(digits);
+            if (typeof autoProcess === 'function') autoProcess();
+            showToast(`✨ เพิ่มชุด [วิน/ประกบ]: ${digits}`);
+        } else {
+            showToast('⚠️ ไม่พบฟังก์ชันเพิ่มแถวชุดคัดกรอง');
+        }
+    } 
+    else {
+        // ถ้าไม่ได้ระบุหมวดหมู่ชัดเจน ให้ใส่เป็นชุดวิน/ประกบเริ่มต้น
+        if (typeof addFilterRow === 'function') {
+            addFilterRow(digits);
+            if (typeof autoProcess === 'function') autoProcess();
+            showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
+        }
+    }
+}
+		
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
