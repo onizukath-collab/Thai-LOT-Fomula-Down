@@ -1931,46 +1931,77 @@ function toggleMainTargetVoiceRecognition() {
 }
 
 function parseAndApplyMainTargetVoice(text) {
+    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก
     let cleaned = text
         .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
         .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
         .replace(/เก้า/g, '9');
 
+    // 2. ดึงเฉพาะตัวเลขทั้งหมดที่อยู่ในประโยค
     let digits = cleaned.replace(/[^0-9]/g, '');
+
     if (!digits) {
         showToast('❌ ไม่พบตัวเลขในเสียงพูด');
         return;
     }
 
-    // 1. ตรวจสอบถ้าพูดว่า "หลักสิบ"
+    // 3. ตรวจสอบคำสั่งทีละเงื่อนไข
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
+        // --- หมวด: หลักสิบ ---
         let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
         if (inputEl) {
             inputEl.value = digits;
             inputEl.dispatchEvent(new Event('input'));
             showToast(`✅ บันทึก [หลักสิบ]: ${digits}`);
         } else {
-            showToast(`⚠️ ช่องหลักสิบว่าง (เลขที่พูด: ${digits})`);
+            showToast(`⚠️ ช่องหลักสิบว่าง (เลข: ${digits})`);
         }
     }
-    // 2. ตรวจสอบถ้าพูดว่า "หลักหน่วย"
     else if (cleaned.includes('หน่วย')) {
+        // --- หมวด: หลักหน่วย ---
         let inputEl = document.getElementById('unitsInput') || document.getElementById('units') || document.querySelector('[name="units"]');
         if (inputEl) {
             inputEl.value = digits;
             inputEl.dispatchEvent(new Event('input'));
             showToast(`✅ บันทึก [หลักหน่วย]: ${digits}`);
         } else {
-            showToast(`⚠️ ช่องหลักหน่วยว่าง (เลขที่พูด: ${digits})`);
+            showToast(`⚠️ ช่องหลักหน่วยว่าง (เลข: ${digits})`);
         }
     }
-    // 3. ถ้าพูดว่า "วิน" หรือ "ประกบ" หรือพูดตัวเลขเปล่าๆ ให้เพิ่มเป็นชุดคัดกรองต่อท้าย
+    else if (cleaned.includes('วิน') || cleaned.includes('ประกบ')) {
+        // --- หมวด: วินขึ้นบันไดรวมเลขเบิ้ล (เชื่อมกับฟังก์ชันเดิมของพี่เต้ย) ---
+        
+        // 📌 วิธีที่ 1: ถ้าบนหน้าเว็บมีช่องกรอกสำหรับใส่เลขวินโดยเฉพาะ (เช่น id="winInput" หรือ id="win") ให้เอาเลขไปใส่ช่องนั้นก่อน
+        let winInputEl = document.getElementById('winInput') || document.getElementById('win') || document.querySelector('[name="win"]');
+        if (winInputEl) {
+            winInputEl.value = digits;
+            winInputEl.dispatchEvent(new Event('input'));
+            winInputEl.dispatchEvent(new Event('change'));
+        }
+
+        // 📌 วิธีที่ 2: สั่งเรียกฟังก์ชันสร้างวินขึ้นบันไดของพี่เต้ย (เปลี่ยนชื่อฟังก์ชัน generateWinNumber หรือชื่อจริงที่พี่เต้ยใช้ได้เลยครับ)
+        if (typeof generateWinNumber === 'function') {
+            generateWinNumber(digits); // ส่งเลขไปสร้างวิน
+            showToast(`✨ สร้าง [วินขึ้นบันไดรวมเบิ้ล]: ${digits}`);
+        } 
+        else if (typeof makeWin === 'function') {
+            makeWin(digits);
+            showToast(`✨ สร้าง [วินขึ้นบันไดรวมเบิ้ล]: ${digits}`);
+        }
+        else {
+            // ถ้าหาชื่อฟังก์ชันไม่เจอ ให้ใช้วิธีจำลองการคลิกปุ่ม "สร้างวิน" บนหน้าจอแทน
+            let winBtn = document.getElementById('btnGenWin') || document.querySelector('button[onclick*="Win"]');
+            if(winBtn) winBtn.click();
+            showToast(`✨ ประมวลผล [วิน]: ${digits}`);
+        }
+    }
     else {
+        // --- กรณีพูดแต่ตัวเลขเปล่าๆ ---
         if (typeof addFilterRow === 'function') {
             addFilterRow(digits);
             if (typeof autoProcess === 'function') autoProcess();
-            showToast(`✨ เพิ่มชุดคัดกรอง: ${digits}`);
+            showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
         }
     }
 }
