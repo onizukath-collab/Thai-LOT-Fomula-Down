@@ -1719,7 +1719,7 @@ function resetMicUI() {
     }
 }
 
-// แปลงคำพูดภาษาไทยตามตาราง P1 - P20
+// แปลงคำพูดภาษาไทยตามตาราง P1 - P20 แล้วเพิ่มเข้าคอลัมน์ใหม่
 function parseAndApplyVoiceFormula(text) {
     let cleaned = text.toLowerCase()
         .replace(/บวก/g, '+')
@@ -1752,13 +1752,13 @@ function parseAndApplyVoiceFormula(text) {
         { key: 'หน่วย', val: 'P6' }
     ];
 
-    // แทนที่คำไทยด้วยตัวแปร P (เรียงจากคำยาวไปสั้นเพื่อกันชนกัน)
+    // แทนที่คำไทยด้วยตัวแปร P
     keywordMap.forEach(item => {
         let regex = new RegExp(item.key, 'g');
         cleaned = cleaned.replace(regex, item.val);
     });
 
-    // กรองเอาเฉพาะอักขระที่อนุญาตในสูตร (P, ตัวเลข, เครื่องหมายทางคณิตศาสตร์)
+    // กรองเอาเฉพาะอักขระที่อนุญาตในสูตร
     cleaned = cleaned.toUpperCase().replace(/[^P0-9+\-*/().]/g, '');
 
     if (!cleaned) {
@@ -1766,14 +1766,21 @@ function parseAndApplyVoiceFormula(text) {
         return;
     }
 
-    // นำสูตรที่แปลงได้ไปใส่ในช่องสูตรของคอลัมน์แรกสุด (หรือช่องที่กำลังแก้ไขอยู่)
-    const firstFormulaInput = document.getElementById('col_formula_0');
-    if (firstFormulaInput) {
-        firstFormulaInput.value = cleaned;
-        triggerManualCalculate(); // สั่งรันคำนวณตารางใหม่ทันที
-        showToast(`✨ AI ใส่สูตรสำเร็จ: [ ${cleaned} ]`);
+    // --- ส่วนที่ปรับปรุง: เพิ่มคอลัมน์ใหม่โดยไม่ทับของเดิม ---
+    collectAndSaveDOMFormulas(); // เซฟสูตรในตารางปัจจุบันไว้ก่อน
+    
+    const sheet = excelSheetsData[activeSheetId];
+    if (sheet && sheet.columns) {
+        // เพิ่มสูตรใหม่ต่อท้ายคอลัมน์เดิม
+        const newColName = `ส${sheet.columns.length + 1}`;
+        sheet.columns.push({ name: newColName, formula: cleaned });
+        
+        saveExcelSheetsData(); 
+        processCustomFormulasEngine(); // คำนวณตารางใหม่พร้อมคอลัมน์ใหม่ทันที
+        
+        showToast(`✨ เพิ่มคอลัมน์สูตรใหม่ [${newColName}]: ${cleaned}`);
     } else {
-        showToast('ไม่พบช่องตารางสูตรในหน้าจอ');
+        showToast('ไม่พบข้อมูลตารางสูตร');
     }
 }
 
