@@ -1886,7 +1886,7 @@ function parseAndApplyFilterVoice(text) {
     showToast(`✨ เพิ่มชุดคัดกรองต่อท้ายสำเร็จ (${validSets.length} ชุด)`);
 }
 
-// --- ระบบ AI ฟังเสียงพูดแยกหมวดหมู่: หลักสิบ / หลักหน่วย / วิน (ประกบ) ---
+// --- ระบบ AI ฟังเสียงพูดอัจฉริยะ (แยก หลักสิบ / หลักหน่วย / วิน อัตโนมัติในปุ่มเดียว) ---
 let mainTargetRecognition = null;
 let isMainTargetListening = false;
 
@@ -1907,16 +1907,9 @@ function toggleMainTargetVoiceRecognition() {
     mainTargetRecognition.interimResults = false;
     mainTargetRecognition.maxAlternatives = 1;
 
-    const micBtn = document.getElementById('micMainTargetBtn');
-    const micIcon = document.getElementById('micMainTargetIcon');
-    const micText = document.getElementById('micMainTargetText');
-
     mainTargetRecognition.onstart = function() {
         isMainTargetListening = true;
-        if(micBtn) micBtn.className = "px-3 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm animate-pulse";
-        if(micIcon) micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
-        if(micText) micText.innerText = "กำลังฟังคำสั่ง...";
-        showToast('🎙️ กำลังฟัง... (เช่น หลักสิบ 12345)');
+        showToast('🎙️ กำลังฟัง... (เช่น "หลักสิบ 12345", "หลักหน่วย 678", "วิน 012")');
     };
 
     mainTargetRecognition.onresult = function(event) {
@@ -1925,93 +1918,59 @@ function toggleMainTargetVoiceRecognition() {
     };
 
     mainTargetRecognition.onerror = function(event) {
-        console.error('Main target speech error:', event.error);
-        showToast('❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง');
-        resetMainTargetMicUI();
+        console.error('Speech error:', event.error);
+        showToast('❌ ฟังเสียงไม่ชัด ลองใหม่อีกครั้งครับ');
+        isMainTargetListening = false;
     };
 
     mainTargetRecognition.onend = function() {
-        resetMainTargetMicUI();
+        isMainTargetListening = false;
     };
 
     mainTargetRecognition.start();
 }
 
-function resetMainTargetMicUI() {
-    isMainTargetListening = false;
-    const micBtn = document.getElementById('micMainTargetBtn');
-    const micIcon = document.getElementById('micMainTargetIcon');
-    const micText = document.getElementById('micMainTargetText');
-    if(micBtn) {
-        micBtn.className = "px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm";
-        if(micIcon) micIcon.className = "fa-solid fa-microphone";
-        if(micText) micText.innerText = "🎙️ พูดระบุ หลักสิบ / หน่วย / วิน";
-    }
-}
-
 function parseAndApplyMainTargetVoice(text) {
-    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก
     let cleaned = text
         .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
         .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
         .replace(/เก้า/g, '9');
 
-    // 2. ดึงเฉพาะตัวเลขทั้งหมดที่อยู่ในประโยค
     let digits = cleaned.replace(/[^0-9]/g, '');
-
     if (!digits) {
-        showToast('❌ ไม่พบตัวเลขในคำสั่งเสียง');
+        showToast('❌ ไม่พบตัวเลขในเสียงพูด');
         return;
     }
 
-    // 3. ตรวจสอบหมวดหมู่และค้นหาช่องกรอกในหน้าเว็บอัตโนมัติ
+    // 1. ตรวจสอบถ้าพูดว่า "หลักสิบ"
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
-        // ค้นหาช่องหลักสิบจาก ID หรือ Name หลายๆ แบบที่เป็นไปได้
-        const inputElement = document.getElementById('tensInput') || 
-                             document.getElementById('tens') || 
-                             document.querySelector('[name="tens"]') ||
-                             document.querySelector('input[id*="ten" i]');
-        if (inputElement) {
-            inputElement.value = digits;
-            inputElement.dispatchEvent(new Event('input'));
-            inputElement.dispatchEvent(new Event('change'));
+        let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
+        if (inputEl) {
+            inputEl.value = digits;
+            inputEl.dispatchEvent(new Event('input'));
             showToast(`✅ บันทึก [หลักสิบ]: ${digits}`);
         } else {
-            showToast('⚠️ ไม่พบช่อง "หลักสิบ" บนหน้าจอ (แจ้ง ID ช่องได้ครับ)');
+            showToast(`⚠️ ช่องหลักสิบว่าง (เลขที่พูด: ${digits})`);
         }
-    } 
+    }
+    // 2. ตรวจสอบถ้าพูดว่า "หลักหน่วย"
     else if (cleaned.includes('หน่วย')) {
-        // ค้นหาช่องหลักหน่วยจาก ID หรือ Name หลายๆ แบบ
-        const inputElement = document.getElementById('unitsInput') || 
-                             document.getElementById('units') || 
-                             document.querySelector('[name="units"]') ||
-                             document.querySelector('input[id*="unit" i]');
-        if (inputElement) {
-            inputElement.value = digits;
-            inputElement.dispatchEvent(new Event('input'));
-            inputElement.dispatchEvent(new Event('change'));
+        let inputEl = document.getElementById('unitsInput') || document.getElementById('units') || document.querySelector('[name="units"]');
+        if (inputEl) {
+            inputEl.value = digits;
+            inputEl.dispatchEvent(new Event('input'));
             showToast(`✅ บันทึก [หลักหน่วย]: ${digits}`);
         } else {
-            showToast('⚠️ ไม่พบช่อง "หลักหน่วย" บนหน้าจอ (แจ้ง ID ช่องได้ครับ)');
+            showToast(`⚠️ ช่องหลักหน่วยว่าง (เลขที่พูด: ${digits})`);
         }
-    } 
-    else if (cleaned.includes('วิน') || cleaned.includes('ประกบ')) {
-        // วิน / ประกบ (เพิ่มแถวชุดคัดกรอง)
-        if (typeof addFilterRow === 'function') {
-            addFilterRow(digits);
-            if (typeof autoProcess === 'function') autoProcess();
-            showToast(`✨ เพิ่มชุด [วิน/ประกบ]: ${digits}`);
-        } else {
-            showToast('⚠️ ไม่พบฟังก์ชันเพิ่มแถวชุดคัดกรอง');
-        }
-    } 
+    }
+    // 3. ถ้าพูดว่า "วิน" หรือ "ประกบ" หรือพูดตัวเลขเปล่าๆ ให้เพิ่มเป็นชุดคัดกรองต่อท้าย
     else {
-        // ค่าเริ่มต้นถ้าไม่ได้พูดระบุหลัก ให้เพิ่มเป็นชุดคัดกรอง
         if (typeof addFilterRow === 'function') {
             addFilterRow(digits);
             if (typeof autoProcess === 'function') autoProcess();
-            showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
+            showToast(`✨ เพิ่มชุดคัดกรอง: ${digits}`);
         }
     }
 }
@@ -2060,5 +2019,9 @@ function parseAndApplyMainTargetVoice(text) {
         <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
     </div>
 </div>
+	<!-- ปุ่มไมโครโฟนลอยมุมขวาล่าง สะดวก ไม่เกะกะหน้าจอ -->
+<button onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-6 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-110 active:scale-95" title="กดพูดคำสั่งเสียง">
+    <i class="fa-solid fa-microphone text-xl"></i>
+</button>
 </body>
 </html>
