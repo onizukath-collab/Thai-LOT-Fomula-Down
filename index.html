@@ -306,21 +306,6 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- TAB 2: สถิติ & สูตร EXCEL -->
-        <!-- ========================================== -->
-        <div id="pageCustomEngine" class="space-y-4 hidden">
-            <div class="bg-white rounded-xl p-2 border border-slate-200 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
-                <div id="excelSubTabsContainer" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
-                <div class="flex items-center gap-2">
-                    <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap">
-                        <i class="fa-solid fa-plus"></i> เพิ่มหน้าสถิติใหม่
-                    </button>
-                </div>
-            </div>
-
-
-
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 space-y-3">
@@ -386,7 +371,18 @@
                             <i class="fa-solid fa-paper-plane text-amber-400"></i> 🚀 ส่งเลขสรุปนี้ เข้าช่องคัดกรองหน้าหลัก
                         </button>
                     </div>
-
+   <!-- ========================================== -->
+        <!-- TAB 2: สถิติ & สูตร EXCEL -->
+        <!-- ========================================== -->
+        <div id="pageCustomEngine" class="space-y-4 hidden">
+            <div class="bg-white rounded-xl p-2 border border-slate-200 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
+                <div id="excelSubTabsContainer" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
+                <div class="flex items-center gap-2">
+                    <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap">
+                        <i class="fa-solid fa-plus"></i> เพิ่มหน้าสถิติใหม่
+                    </button>
+                </div>
+            </div>
 <!-- ปุ่มสั่งงานด้วยเสียง AI อัจฉริยะ -->
 <div class="flex items-center gap-2 bg-gradient-to-r from-purple-900 to-indigo-900 p-2 rounded-xl text-white shadow-sm border border-purple-700">
     <button id="micVoiceBtn" onclick="toggleVoiceRecognition()" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow">
