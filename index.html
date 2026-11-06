@@ -100,9 +100,9 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
                         <span class="font-bold text-slate-700">ระบบบันทึกอัตโนมัติ (ทำงานออฟไลน์ในเครื่อง)</span>
                     </div>
-                    <button onclick="clearAllData()" class="px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs rounded-lg transition font-medium flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrows-rotate"></i> ล้างข้อมูลทั้งหมด
-                    </button>
+                   <button onclick="saveEverythingToJson()" style="background-color: #059669; color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+    💾 เซฟทุกอย่างทั้งเพจ (.json)
+</button>
                 </div>
 
                 <!-- แถบเครื่องมือดาวน์โหลด/โหลดไฟล์สำรองข้อมูล (Offline Backup File) -->
@@ -306,6 +306,21 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- TAB 2: สถิติ & สูตร EXCEL -->
+        <!-- ========================================== -->
+        <div id="pageCustomEngine" class="space-y-4 hidden">
+            <div class="bg-white rounded-xl p-2 border border-slate-200 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
+                <div id="excelSubTabsContainer" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
+                <div class="flex items-center gap-2">
+                    <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap">
+                        <i class="fa-solid fa-plus"></i> เพิ่มหน้าสถิติใหม่
+                    </button>
+                </div>
+            </div>
+
+
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 space-y-3">
@@ -371,18 +386,7 @@
                             <i class="fa-solid fa-paper-plane text-amber-400"></i> 🚀 ส่งเลขสรุปนี้ เข้าช่องคัดกรองหน้าหลัก
                         </button>
                     </div>
-   <!-- ========================================== -->
-        <!-- TAB 2: สถิติ & สูตร EXCEL -->
-        <!-- ========================================== -->
-        <div id="pageCustomEngine" class="space-y-4 hidden">
-            <div class="bg-white rounded-xl p-2 border border-slate-200 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
-                <div id="excelSubTabsContainer" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
-                <div class="flex items-center gap-2">
-                    <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap">
-                        <i class="fa-solid fa-plus"></i> เพิ่มหน้าสถิติใหม่
-                    </button>
-                </div>
-            </div>
+
 <!-- ปุ่มสั่งงานด้วยเสียง AI อัจฉริยะ -->
 <div class="flex items-center gap-2 bg-gradient-to-r from-purple-900 to-indigo-900 p-2 rounded-xl text-white shadow-sm border border-purple-700">
     <button id="micVoiceBtn" onclick="toggleVoiceRecognition()" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow">
@@ -2006,7 +2010,36 @@ function parseAndApplyMainTargetVoice(text) {
         }
     }
 }
-		
+	function saveEverythingToJson() {
+    // 1. ดึงข้อมูลล่าสุดบนหน้าจอมารวมกัน
+    if (typeof collectAndSaveDOMFormulas === 'function') {
+        collectAndSaveDOMFormulas();
+    }
+
+    // 2. รวบรวมข้อมูลทุกอย่างในระบบ (ชีท, สูตร, ประวัติ, ข้อมูลจำในเครื่อง)
+    const fullDataBackup = {
+        appTitle: "Lottery Analysis Backup",
+        exportTimestamp: new Date().toISOString(),
+        activeSheetId: typeof activeSheetId !== 'undefined' ? activeSheetId : null,
+        sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
+        localStorageBackup: { ...localStorage }
+    };
+
+    // 3. แปลงข้อมูลเป็นไฟล์ JSON
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDataBackup, null, 2));
+
+    // 4. สั่งดาวน์โหลดลงเครื่องอัตโนมัติ
+    const now = new Date();
+    const timeStamp = now.toISOString().slice(0,10) + "_" + now.getHours() + "-" + now.minutes();
+    
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `Full_Page_Backup_${timeStamp}.json`);
+    
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}	
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
