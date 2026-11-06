@@ -2044,28 +2044,28 @@ function parseAndApplyMainTargetVoice(text) {
 
 function saveEverythingToJson() {
     try {
-        // รวบรวมข้อมูลเท่าที่มีในระบบ
+        alert("กำลังประมวลผลข้อมูลเพื่อเซฟไฟล์...");
         const fullDataBackup = {
             exportTimestamp: new Date().toISOString(),
             sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
             localStorageBackup: { ...localStorage }
         };
-
-        // แปลงเป็นไฟล์ JSON
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDataBackup, null, 2));
-        
-        // สั่งดาวน์โหลด
+        const jsonString = JSON.stringify(fullDataBackup, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
         const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", "Lottery_Backup.json");
+        downloadAnchor.href = url;
+        downloadAnchor.download = "Lottery_Backup.json";
         document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
-        downloadAnchor.remove();
-        
-        console.log("เซฟสำเร็จแล้ว!");
+        setTimeout(() => {
+            document.body.removeChild(downloadAnchor);
+            URL.revokeObjectURL(url);
+        }, 100);
+        alert("เซฟสำเร็จเรียบร้อย! ไปดูที่โฟลเดอร์ Download ได้เลยครับ");
     } catch (err) {
-        console.error("เกิดข้อผิดพลาดตอนเซฟ:", err);
-        alert("เซฟไม่สำเร็จ: " + err.message);
+        alert("เกิดข้อผิดพลาด: " + err.message);
+        console.error(err);
     }
 }
 
