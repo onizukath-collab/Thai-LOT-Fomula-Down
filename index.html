@@ -2043,36 +2043,31 @@ function parseAndApplyMainTargetVoice(text) {
 
 
 function saveEverythingToJson() {
-    // 1. ดึงข้อมูลล่าสุดบนหน้าจอมารวมกัน
-    if (typeof collectAndSaveDOMFormulas === 'function') {
-        collectAndSaveDOMFormulas();
+    try {
+        // รวบรวมข้อมูลเท่าที่มีในระบบ
+        const fullDataBackup = {
+            exportTimestamp: new Date().toISOString(),
+            sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
+            localStorageBackup: { ...localStorage }
+        };
+
+        // แปลงเป็นไฟล์ JSON
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDataBackup, null, 2));
+        
+        // สั่งดาวน์โหลด
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "Lottery_Backup.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        
+        console.log("เซฟสำเร็จแล้ว!");
+    } catch (err) {
+        console.error("เกิดข้อผิดพลาดตอนเซฟ:", err);
+        alert("เซฟไม่สำเร็จ: " + err.message);
     }
-
-    // 2. รวบรวมข้อมูลทุกอย่างในระบบ (ชีท, สูตร, ประวัติ, ข้อมูลจำในเครื่อง)
-    const fullDataBackup = {
-        appTitle: "Lottery Analysis Backup",
-        exportTimestamp: new Date().toISOString(),
-        activeSheetId: typeof activeSheetId !== 'undefined' ? activeSheetId : null,
-        sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
-        localStorageBackup: { ...localStorage }
-    };
-
-    // 3. แปลงข้อมูลเป็นไฟล์ JSON
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDataBackup, null, 2));
-
-    // 4. สั่งดาวน์โหลดลงเครื่องอัตโนมัติ
-    const now = new Date();
-    const timeStamp = now.toISOString().slice(0,10) + "_" + now.getHours() + "-" + now.minutes();
-    
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `Full_Page_Backup_${timeStamp}.json`);
-    
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
 }
-
 
 
     </script>
