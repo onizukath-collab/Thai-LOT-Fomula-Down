@@ -11,6 +11,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Kanit', sans-serif; }
     </style>
+	
 </head>
 <body class="bg-slate-100 min-h-screen py-6 px-3 sm:px-6">
 
@@ -406,7 +407,7 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-medium text-slate-600">แสดงผล:</span>
                                 <select id="outputLengthSelect" onchange="updateOutputLength(this.value)" class="bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-800 outline-none">
-                                    <option value="1">1 หลัก</option><option value="2">2 หลัก</option><option value="3">3 หลัก</option><option value="4">4 หลัก</option><option value="5" selected>5 หลัก</option>
+                                    <option value="1">1 หลัก</option><option value="2">2 หลัก</option><option value="3">3 หลัก</option><option value="4">4 หลัก</option><option value="5" selected>5 หลัก</option><option value="6" selected>6 หลัก</option><option value="7" selected>7 หลัก</option>
                                 </select>
                                 <button onclick="addCustomFormulaColumn()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">+ เพิ่มคอลัมน์สูตร</button>
                             </div>
@@ -1355,44 +1356,74 @@
             return true;
         }
 
-        function exportAllDataToFile() {
-            const bundle = getAllBackupBundle();
-            const jsonStr = JSON.stringify(bundle, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            let filenameInput = document.getElementById('backupFileNameInput');
-            let filename = (filenameInput && filenameInput.value.trim()) ? filenameInput.value.trim() : 'lottery_backup';
-            if (!filename.endsWith('.json')) filename += '.json';
+        function exportDataToJson() {
+    // 1. เช็กก่อนว่ามีฟังก์ชันเก็บค่าจากหน้าจอมั้ย ถ้ามีให้สั่งรวบรวมค่าล่าสุดลง state ก่อน
+    if (typeof collectAndSaveDOMFormulas === 'function') {
+        collectAndSaveDOMFormulas();
+    }
 
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            showToast(`ส่งออกไฟล์สำรอง "${filename}" เรียบร้อย!`);
-        }
+    // 2. ดึงข้อมูลทั้งหมดจากตัวแปรหลักของระบบ (รวมทุกชีท ทุกข้อมูลที่พี่เต้ยเพิ่ม/เปลี่ยนแปลง)
+    const exportData = {
+        version: "1.0",
+        exportDate: new Date().toISOString(),
+        activeSheetId: typeof activeSheetId !== 'undefined' ? activeSheetId : null,
+        sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {}
+    };
 
-        function importDataFromFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+    // 3. แปลงข้อมูลทั้งหมดเป็นข้อความ JSON หน้าตาอ่านง่าย
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    
+    // 4. สร้างลิงก์จำลองเพื่อดาวน์โหลดไฟล์ลงเครื่องอัตโนมัติ
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    
+    // ตั้งชื่อไฟล์ให้มีวันที่และเวลาปัจจุบัน จะได้รู้ว่าเป็นตัวล่าสุด
+    const dateObj = new Date();
+    const dateStr = dateObj.toISOString().slice(0,10).replace(/-/g, "");
+    downloadAnchor.setAttribute("download", `lottery_analysis_backup_${dateStr}.json`);
+    
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const bundle = JSON.parse(e.target.result);
-                    if (applyBackupBundle(bundle)) {
-                        showToast('นำเข้าข้อมูลจากไฟล์สำรองสำเร็จ!');
-                    } else {
-                        alert('รูปแบบไฟล์ไม่ถูกต้อง');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('เกิดข้อผิดพลาดในการอ่านไฟล์');
+        function importDataFromJson(event) {
+    const fileReader = new FileReader();
+    if (event.target.files && event.target.files[0]) {
+        fileReader.readAsText(event.target.files[0], "UTF-8");
+        fileReader.onload = function (e) {
+            try {
+                const parsedData = JSON.parse(e.target.result);
+                
+                // เช็กโครงสร้างว่ามีข้อมูลชีทครบมั้ย
+                if (parsedData.sheetsData) {
+                    excelSheetsData = parsedData.sheetsData;
+                } else {
+                    // เผื่อเป็นไฟล์ฟอร์แมตเก่า ให้ยัดทั้งก้อนลงไปเลย
+                    excelSheetsData = parsedData;
                 }
-            };
+
+                if (parsedData.activeSheetId) {
+                    activeSheetId = parsedData.activeSheetId;
+                }
+
+                // บันทึกลง Storage ของบราวเซอร์ทันที
+                if (typeof saveExcelSheetsData === 'function') {
+                    saveExcelSheetsData();
+                }
+
+                // รีเฟรชหน้าจอแสดงผลใหม่ทั้งหมดให้ดึงข้อมูลที่โหลดเข้ามาโชว์
+                if (typeof processCustomFormulasEngine === 'function') {
+                    processCustomFormulasEngine();
+                }
+
+                alert("โหลดข้อมูลเข้าสู่ระบบสำเร็จเรียบร้อยแล้วครับ!");
+                location.reload(); // รีเฟรชหน้าเว็บทีนึงเพื่อให้ข้อมูลอัปเดตลงตัวเป๊ะ
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการอ่านไฟล์ JSON ครับ ไฟล์อาจจะไม่ถูกต้อง");
+                console.error(error);
+            }
+        };
             reader.readAsText(file);
             event.target.value = '';
         }
