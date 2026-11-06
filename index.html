@@ -627,8 +627,17 @@
             collectAndSaveDOMFormulas();
             const nextIdx = Object.keys(excelSheetsData).length + 1;
             const newId = `sheet_${Date.now()}`;
-            excelSheetsData[newId] = { name: `ตารางสูตรที่ ${nextIdx}`, history: defaultHistoryData, outputLength: 5, columns: [{ name: 'ส1', formula: 'P7+P8+1' }, { name: 'ส2', formula: 'P1+P7+3' }] };
-            activeSheetId = newId; saveExcelSheetsData(); renderSubTabsBar(); loadActiveSheetContent();
+            // 🎯 แก้ไขตรงนี้: เปลี่ยนจากที่มีค่าตั้งต้น ให้เป็นอาเรย์ว่าง [] เพื่อให้ตารางโล่งสนิท
+            excelSheetsData[newId] = { 
+                name: `ตารางสูตรที่ ${nextIdx}`, 
+                history: defaultHistoryData, 
+                outputLength: 5, 
+                columns: [] 
+            };
+            activeSheetId = newId; 
+            saveExcelSheetsData(); 
+            renderSubTabsBar(); 
+            loadActiveSheetContent();
         }
 
         function deleteExcelSheetTab(id, e) {
@@ -690,7 +699,7 @@
         function removeCustomFormulaColumn(idx) { 
             collectAndSaveDOMFormulas();
             const cols = excelSheetsData[activeSheetId].columns; 
-            if (cols.length <= 1) return; 
+         
             cols.splice(idx, 1); 
             saveExcelSheetsData(); 
             processCustomFormulasEngine(); 
