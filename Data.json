@@ -26,7 +26,7 @@
     "filterLogic": "AND"
   },
   "presets": {
-    "16/11/69 ชุดไม่น่ามา": {
+    "16/11/69 ชุดตัดไม่น่ามา": {
       "tens": "456789",
       "units": "1230",
       "stairInput": "4567890",
@@ -53,9 +53,9 @@
       "filterLogic": "AND"
     },
     "16/11/69 ชุด 1359: 2468": {
-      "tens": "1359test",
+      "tens": "1359",
       "units": "2468",
-      "stairInput": "",
+      "stairInput": "2468",
       "excludeInput": "",
       "sumPointsInput": "12345679",
       "parityFilter": "ALL",
