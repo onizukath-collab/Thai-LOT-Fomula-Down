@@ -1715,54 +1715,67 @@ function resetMicUI() {
 }
 
 // แปลงคำพูดภาษาไทยตามตาราง P1 - P20 แล้วเพิ่มเข้าคอลัมน์ใหม่
-// 📌 ฟังก์ชันคำนวณตาราง: แปลงข้อความไทย (สิบล่าง, หน่วยล่าง, แสน...) เป็นรหัส P เพื่อคำนวณตัวเลขจริง
-function evalSingleFormulaStr(formulaStr, d, length = 5) {
-    const getD = (idx) => {
-        let val = d[idx - 1];
-        return (val !== undefined && !isNaN(val)) ? parseInt(val, 10) : 0;
-    };
-
-    // แปลงชื่อหลักภาษาไทยและสัญลักษณ์ให้เป็นรหัสคำนวณหลังบ้าน
-    let expr = formulaStr.toUpperCase()
+function parseAndApplyVoiceFormula(text) {
+    let cleaned = text.toLowerCase()
         .replace(/บวก/g, '+')
         .replace(/ลบ/g, '-')
         .replace(/คูณ/g, '*')
         .replace(/หาร/g, '/')
-        .replace(/สิบล่าง/g, 'P7')
-        .replace(/หน่วยล่าง/g, 'P8')
-        .replace(/แสน/g, 'P1')
-        .replace(/หมื่น/g, 'P2')
-        .replace(/พัน/g, 'P3')
-        .replace(/ร้อย/g, 'P4')
-        .replace(/สิบ/g, 'P5')
-        .replace(/หน่วย/g, 'P6')
-        .replace(/สิบครั้งที่1|สิบ1/g, 'P10')
-        .replace(/หน่วยครั้งที่1|หน่วย1/g, 'P11')
-        .replace(/ร้อยครั้งที่1|ร้อย1/g, 'P9')
-        .replace(/สิบครั้งที่2|สิบ2/g, 'P13')
-        .replace(/หน่วยครั้งที่2|หน่วย2/g, 'P14')
-        .replace(/ร้อยครั้งที่2|ร้อย2/g, 'P12')
-        .replace(/สิบครั้งที่3|สิบ3/g, 'P16')
-        .replace(/หน่วยครั้งที่3|หน่วย3/g, 'P17')
-        .replace(/ร้อยครั้งที่3|ร้อย3/g, 'P15')
-        .replace(/สิบครั้งที่4|สิบ4/g, 'P19')
-        .replace(/หน่วยครั้งที่4|หน่วย4/g, 'P20')
-        .replace(/ร้อยครั้งที่4|ร้อย4/g, 'P18');
+        .replace(/\s+/g, '');
 
-    // แทนที่ P ด้วยตัวเลขสถิติจริงตามงวด
-    expr = expr.replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
+    // พจนานุกรมแปลงคำไทยเป็นรหัส P
+    const keywordMap = [
+        { key: 'สิบล่าง', val: 'P7' },
+        { key: 'หน่วยล่าง', val: 'P8' },
+        { key: 'สิบครั้งที่1', val: 'P10' }, { key: 'สิบ1', val: 'P10' },
+        { key: 'หน่วยครั้งที่1', val: 'P11' }, { key: 'หน่วย1', val: 'P11' },
+        { key: 'ร้อยครั้งที่1', val: 'P9' }, { key: 'ร้อย1', val: 'P9' },
+        { key: 'สิบครั้งที่2', val: 'P13' }, { key: 'สิบ2', val: 'P13' },
+        { key: 'หน่วยครั้งที่2', val: 'P14' }, { key: 'หน่วย2', val: 'P14' },
+        { key: 'ร้อยครั้งที่2', val: 'P12' }, { key: 'ร้อย2', val: 'P12' },
+        { key: 'สิบครั้งที่3', val: 'P16' }, { key: 'สิบ3', val: 'P16' },
+        { key: 'หน่วยครั้งที่3', val: 'P17' }, { key: 'หน่วย3', val: 'P17' },
+        { key: 'ร้อยครั้งที่3', val: 'P15' }, { key: 'ร้อย3', val: 'P15' },
+        { key: 'สิบครั้งที่4', val: 'P19' }, { key: 'สิบ4', val: 'P19' },
+        { key: 'หน่วยครั้งที่4', val: 'P20' }, { key: 'หน่วย4', val: 'P20' },
+        { key: 'ร้อยครั้งที่4', val: 'P18' }, { key: 'ร้อย4', val: 'P18' },
+        { key: 'แสน', val: 'P1' },
+        { key: 'หมื่น', val: 'P2' },
+        { key: 'พัน', val: 'P3' },
+        { key: 'ร้อย', val: 'P4' },
+        { key: 'สิบ', val: 'P5' },
+        { key: 'หน่วย', val: 'P6' }
+    ];
 
-    try {
-        let evaluatedValue = eval(expr);
-        let baseSum = Math.abs(parseInt(evaluatedValue, 10)) % 10; // เอาเฉพาะหลักหน่วย
+    // แทนที่คำไทยด้วยตัวแปร P
+    keywordMap.forEach(item => {
+        let regex = new RegExp(item.key, 'g');
+        cleaned = cleaned.replace(regex, item.val);
+    });
+
+    // กรองเอาเฉพาะอักขระที่อนุญาตในสูตร
+    cleaned = cleaned.toUpperCase().replace(/[^P0-9+\-*/().]/g, '');
+
+    if (!cleaned) {
+        showToast('❌ แปลงสูตรไม่สำเร็จ ลองพูดใหม่อีกครั้ง');
+        return;
+    }
+
+    // --- ส่วนที่ปรับปรุง: เพิ่มคอลัมน์ใหม่โดยไม่ทับของเดิม ---
+    collectAndSaveDOMFormulas(); // เซฟสูตรในตารางปัจจุบันไว้ก่อน
+    
+    const sheet = excelSheetsData[activeSheetId];
+    if (sheet && sheet.columns) {
+        // เพิ่มสูตรใหม่ต่อท้ายคอลัมน์เดิม
+        const newColName = `ส${sheet.columns.length + 1}`;
+        sheet.columns.push({ name: newColName, formula: cleaned });
         
-        let seq = []; 
-        for (let i = 0; i < length; i++) {
-            seq.push((baseSum + i) % 10);
-        }
-        return seq.join('');
-    } catch(e) { 
-        return '-----'; 
+        saveExcelSheetsData(); 
+        processCustomFormulasEngine(); // คำนวณตารางใหม่พร้อมคอลัมน์ใหม่ทันที
+        
+        showToast(`✨ เพิ่มคอลัมน์สูตรใหม่ [${newColName}]: ${cleaned}`);
+    } else {
+        showToast('ไม่พบข้อมูลตารางสูตร');
     }
 }
 
