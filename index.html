@@ -252,8 +252,8 @@ function sendAIChat() {
             </div>
 
             <!-- Input Section -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Column 1 -->
+            <div class="space-y-4">
+                <!-- กล่อง 1 เต็มความกว้าง -->
                 <div class="space-y-4">
                     <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-3">
                         <div class="flex items-center justify-between border-b pb-2">
@@ -286,9 +286,12 @@ function sendAIChat() {
                                 class="w-full px-3 py-1.5 border border-blue-300 bg-white rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-blue-950">
                         </div>
                     </div>
-                    
+                </div>
+
+                <!-- กล่อง 2 และ 3 แสดงคู่กัน ครึ่งจอ -->
+                <div class="grid grid-cols-2 gap-2 sm:gap-4 items-start">
                     <!-- กล่อง 2 -->
-                    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-3">
+                    <div class="min-w-0 bg-white rounded-2xl shadow-sm p-3 sm:p-5 border border-slate-200 space-y-3">
                         <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2 border-b pb-2">
                             <i class="fa-solid fa-ban text-rose-500"></i> 2. เลขดับ & แต้มผลรวม & ตัวกรองคำนวณ
                         </h2>
@@ -338,11 +341,9 @@ function sendAIChat() {
                         </div>
 
                     </div>
-                </div>
 
-                <!-- Column 2 -->
-                <div class="space-y-4">
-                    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-3">
+                    <!-- กล่อง 3 -->
+                    <div class="min-w-0 bg-white rounded-2xl shadow-sm p-3 sm:p-5 border border-slate-200 space-y-3">
                         <div class="flex items-center justify-between border-b pb-2">
                             <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-filter text-[#1877F2]"></i> 3. ชุดคัดกรอง & เลขเด่น
@@ -388,9 +389,9 @@ function sendAIChat() {
             </div>
 
             <!-- Results Section -->
-            <div id="resultArea" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4 hidden">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
-                    <h3 class="text-lg font-bold text-slate-800">ผลลัพธ์การจับคู่ & แสดงเปรียบเทียบ (ซ้าย & ขวา)</h3>
+            <div id="resultArea" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3 sm:p-5 space-y-3 hidden">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">ผลลัพธ์การจับคู่ & แสดงเปรียบเทียบ (ซ้าย & ขวา)</h3>
                     <div class="flex items-center gap-2">
                         <button onclick="copyReversedPassedResults()" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-medium shadow transition flex items-center gap-1.5">
                             <i class="fa-solid fa-right-left"></i> คัดลอกแบบกลับตัวเลข
@@ -401,23 +402,23 @@ function sendAIChat() {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div id="sectionPair" class="space-y-3 p-4 bg-slate-50/70 rounded-2xl border border-slate-200">
-                        <div class="flex items-center justify-between border-b pb-2">
-                            <h4 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-table-cells text-[#1877F2] mr-1.5"></i>1. ชุดประกบ (สิบ x หน่วย)</h4>
-                            <div class="text-xs text-slate-500">ผ่าน: <strong id="statPairPassed" class="text-[#1877F2]">0</strong></div>
+                <div class="grid grid-cols-2 gap-2 sm:gap-4 items-start">
+                    <div id="sectionPair" class="min-w-0 space-y-2 p-2 sm:p-4 bg-slate-50/70 rounded-xl sm:rounded-2xl border border-slate-200">
+                        <div class="flex flex-wrap items-center justify-between gap-1 border-b pb-2">
+                            <h4 class="text-xs sm:text-sm font-bold text-slate-800"><i class="fa-solid fa-table-cells text-[#1877F2] mr-1"></i>1. ชุดประกบ (สิบ x หน่วย)</h4>
+                            <div class="text-[10px] sm:text-xs text-slate-500">ผ่าน: <strong id="statPairPassed" class="text-[#1877F2]">0</strong></div>
                         </div>
-                        <div id="pairResults" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
-                        <div id="summaryPairArea" class="p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-mono font-semibold text-blue-900 flex flex-wrap gap-1 max-h-24 overflow-y-auto"></div>
+                        <div id="pairResults" class="space-y-2 max-h-60 overflow-y-auto overflow-x-auto pr-1"></div>
+                        <div id="summaryPairArea" class="p-2 bg-white rounded-xl border border-slate-200 text-[10px] sm:text-xs font-mono font-semibold text-blue-900 flex flex-wrap gap-1 max-h-24 overflow-y-auto break-all"></div>
                     </div>
 
-                    <div id="sectionStair" class="space-y-3 p-4 bg-blue-50/40 rounded-2xl border border-blue-200">
-                        <div class="flex items-center justify-between border-b border-blue-200 pb-2">
-                            <h4 class="text-sm font-bold text-blue-950"><i class="fa-solid fa-stairs text-[#1877F2] mr-1.5"></i>2. ชุดวินขึ้นบันไดรวมเบิ้ล</h4>
-                            <div class="text-xs text-blue-800">ผ่าน: <strong id="statStairPassed" class="text-[#1877F2]">0</strong></div>
+                    <div id="sectionStair" class="min-w-0 space-y-2 p-2 sm:p-4 bg-blue-50/40 rounded-xl sm:rounded-2xl border border-blue-200">
+                        <div class="flex flex-wrap items-center justify-between gap-1 border-b border-blue-200 pb-2">
+                            <h4 class="text-xs sm:text-sm font-bold text-blue-950"><i class="fa-solid fa-stairs text-[#1877F2] mr-1"></i>2. ชุดวินขึ้นบันไดรวมเบิ้ล</h4>
+                            <div class="text-[10px] sm:text-xs text-blue-800">ผ่าน: <strong id="statStairPassed" class="text-[#1877F2]">0</strong></div>
                         </div>
-                        <div id="stairResults" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
-                        <div id="summaryStairArea" class="p-2.5 bg-white rounded-xl border border-blue-200 text-xs font-mono font-semibold text-blue-900 flex flex-wrap gap-1 max-h-24 overflow-y-auto"></div>
+                        <div id="stairResults" class="space-y-2 max-h-60 overflow-y-auto overflow-x-auto pr-1"></div>
+                        <div id="summaryStairArea" class="p-2 bg-white rounded-xl border border-blue-200 text-[10px] sm:text-xs font-mono font-semibold text-blue-900 flex flex-wrap gap-1 max-h-24 overflow-y-auto break-all"></div>
                     </div>
                 </div>
             </div>
