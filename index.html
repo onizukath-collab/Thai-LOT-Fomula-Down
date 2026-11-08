@@ -686,15 +686,31 @@
             processCustomFormulasEngine(); 
         }
 
-        function evalSingleFormulaStr(formulaStr, d, length = 5) {
-            const getD = (idx) => d[idx - 1] || 0;
-            let expr = formulaStr.toUpperCase().replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
-            try {
-                let baseSum = eval(expr); baseSum = Math.abs(parseInt(baseSum, 10)) % 10;
-                let seq = []; for (let i = 0; i < length; i++) seq.push((baseSum + i) % 10);
-                return seq.join('');
-            } catch(e) { return '-----'; }
+        // 📌 แก้ไขฟังก์ชันประมวลผลสูตร ให้แสดงผลลัพธ์การบวกตัวเลขจริงตามตำแหน่ง P (เช่น สิบล่าง + หน่วยล่าง + 1)
+function evalSingleFormulaStr(formulaStr, d, length = 5) {
+    const getD = (idx) => {
+        let val = d[idx - 1];
+        return (val !== undefined && !isNaN(val)) ? parseInt(val, 10) : 0;
+    };
+
+    // แทนที่ P1, P2, ... ด้วยค่าจริงจากสถิติของงวดนั้นๆ
+    let expr = formulaStr.toUpperCase().replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
+    
+    try {
+        // คำนวณผลลัพธ์ทางคณิตศาสตร์จริงๆ ตามสูตรที่พิมพ์
+        let evaluatedValue = eval(expr);
+        let baseSum = Math.abs(parseInt(evaluatedValue, 10)) % 10; // เอาเฉพาะหลักหน่วยของผลลัพธ์
+        
+        // สร้างชุดตัวเลขเรียงต่อจากผลลัพธ์หลักหน่วยตามความยาว (length) ที่กำหนด
+        let seq = []; 
+        for (let i = 0; i < length; i++) {
+            seq.push((baseSum + i) % 10);
         }
+        return seq.join('');
+    } catch(e) { 
+        return '-----'; 
+    }
+}
 
         function processCustomFormulasEngine() {
             collectAndSaveDOMFormulas();
