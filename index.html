@@ -2071,7 +2071,112 @@ function saveEverythingToJson() {
     }
 }
 
+// ==========================================
+// ระบบเซฟข้อมูลตรงเข้า GitHub API (สำหรับใช้ส่วนตัว)
+// ==========================================
 
+// 1. กำหนดค่าตั้งต้น Repository ของพี่เต้ย
+const GITHUB_CONFIG = {
+    owner: "YOUR_GITHUB_USERNAME", // 👈 เปลี่ยนเป็น Username บน GitHub ของพี่เต้ย
+    repo: "YOUR_REPO_NAME",        // 👈 เปลี่ยนเป็นชื่อ Repository (เช่น lottery-app)
+    filePath: "data/backup.json",   // 👈 พาธไฟล์ที่ต้องการให้ไปบันทึกบน GitHub
+    branch: "main"                 // 👈 ชื่อ Branch (เช่น main หรือ master)
+};
+
+// 2. ฟังก์ชันหลักสำหรับบันทึกข้อมูลเข้า GitHub
+async function saveDirectToGitHub() {
+    try {
+        // ดึง Personal Access Token จากเครื่อง (ถ้ายังไม่มีจะเด้งถาม)
+        let token = localStorage.getItem('gh_personal_token');
+        if (!token) {
+            token = prompt("กรุณากรอก GitHub Personal Access Token (ghp_...):");
+            if (!token) return alert("ยกเลิกการบันทึก: ไม่ได้ใส่ Token");
+            localStorage.setItem('gh_personal_token', token.trim());
+        }
+
+        alert("กำลังประมวลผลและส่งข้อมูลไปที่ GitHub...");
+
+        // รวบรวมข้อมูลสดๆ ทั้งหมดในระบบ
+        if (typeof collectAndSaveDOMFormulas === 'function') {
+            collectAndSaveDOMFormulas();
+        }
+
+        const fullDataBackup = {
+            exportTimestamp: new Date().toISOString(),
+            sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
+            localStorageBackup: { ...localStorage }
+        };
+
+        // แปลงข้อมูลเป็น JSON String และแปลงเป็น Base64 (ตามที่ GitHub API บังคับใช้)
+        const jsonString = JSON.stringify(fullDataBackup, null, 2);
+        // ใช้ UTF-8 encoder ป้องกันปัญหาภาษาไทยเพี้ยน
+        const encoder = new TextEncoder();
+        const dataUint8 = encoder.encode(jsonString);
+        const base64Content = btoa(String.fromCharCode(...dataUint8));
+
+        const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.filePath}`;
+
+        // ดึงข้อมูล SHA ของไฟล์เดิมก่อน (ถ้ามีไฟล์อยู่แล้ว ต้องใช้ SHA ในการ Commit ทับ)
+        let currentSha = null;
+        try {
+            const getFileRes = await fetch(apiUrl, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Accept": "application/vnd.github.v3+json"
+                }
+            });
+            if (getFileRes.ok) {
+                const fileData = await getFileRes.json();
+                currentSha = fileData.sha;
+            }
+        } catch (e) {
+            console.log("ยังไม่มีไฟล์เดิมบน Repo จะเป็นการสร้างไฟล์ใหม่");
+        }
+
+        // ยิง API บันทึก (PUT) เข้า GitHub
+        const payload = {
+            message: `Auto Backup: ${new Date().toLocaleString('th-TH')}`,
+            content: base64Content,
+            branch: GITHUB_CONFIG.branch
+        };
+
+        if (currentSha) {
+            payload.sha = currentSha; // ถ้ามีไฟล์เดิม ใส่ SHA เพื่อ Commit ทับ
+        }
+
+        const response = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.github.v3+json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("🚀 บันทึกข้อมูลตรงเข้า GitHub เรียบร้อยแล้วครับ!");
+        } else {
+            const errData = await response.json();
+            if (response.status === 401) {
+                localStorage.removeItem('gh_personal_token'); // ถ้า Token ผิดให้ลบออกเพื่อให้พิมพ์ใหม่รอบหน้า
+                alert("เกิดข้อผิดพลาด: Token ไม่ถูกต้อง หรือหมดอายุ (ลบ Token เดิมให้แล้ว ลองกดใหม่ครับ)");
+            } else {
+                alert("บันทึกไม่สำเร็จ: " + (errData.message || response.statusText));
+            }
+        }
+
+    } catch (err) {
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + err.message);
+        console.error(err);
+    }
+}
+
+// ฟังก์ชันสำหรับลบ Token ออกจากเครื่อง (กรณีอยากเปลี่ยน Token ใหม่)
+function clearGitHubToken() {
+    localStorage.removeItem('gh_personal_token');
+    alert("ลบรหัส Token จากเครื่องเรียบร้อยครับ");
+}
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
