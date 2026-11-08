@@ -686,31 +686,15 @@
             processCustomFormulasEngine(); 
         }
 
-        // 📌 แก้ไขฟังก์ชันประมวลผลสูตร ให้แสดงผลลัพธ์การบวกตัวเลขจริงตามตำแหน่ง P (เช่น สิบล่าง + หน่วยล่าง + 1)
-function evalSingleFormulaStr(formulaStr, d, length = 5) {
-    const getD = (idx) => {
-        let val = d[idx - 1];
-        return (val !== undefined && !isNaN(val)) ? parseInt(val, 10) : 0;
-    };
-
-    // แทนที่ P1, P2, ... ด้วยค่าจริงจากสถิติของงวดนั้นๆ
-    let expr = formulaStr.toUpperCase().replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
-    
-    try {
-        // คำนวณผลลัพธ์ทางคณิตศาสตร์จริงๆ ตามสูตรที่พิมพ์
-        let evaluatedValue = eval(expr);
-        let baseSum = Math.abs(parseInt(evaluatedValue, 10)) % 10; // เอาเฉพาะหลักหน่วยของผลลัพธ์
-        
-        // สร้างชุดตัวเลขเรียงต่อจากผลลัพธ์หลักหน่วยตามความยาว (length) ที่กำหนด
-        let seq = []; 
-        for (let i = 0; i < length; i++) {
-            seq.push((baseSum + i) % 10);
+        function evalSingleFormulaStr(formulaStr, d, length = 5) {
+            const getD = (idx) => d[idx - 1] || 0;
+            let expr = formulaStr.toUpperCase().replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
+            try {
+                let baseSum = eval(expr); baseSum = Math.abs(parseInt(baseSum, 10)) % 10;
+                let seq = []; for (let i = 0; i < length; i++) seq.push((baseSum + i) % 10);
+                return seq.join('');
+            } catch(e) { return '-----'; }
         }
-        return seq.join('');
-    } catch(e) { 
-        return '-----'; 
-    }
-}
 
         function processCustomFormulasEngine() {
             collectAndSaveDOMFormulas();
@@ -1730,76 +1714,19 @@ function resetMicUI() {
     }
 }
 
-// 📌 ฟังก์ชันแปลงเสียงพูด ให้แสดงผลเป็นชื่อหลักเต็มๆ แทนรหัสย่อ
+// แปลงคำพูดภาษาไทยตามตาราง P1 - P20 แล้วเพิ่มเข้าคอลัมน์ใหม่
+// 📌 1. ฟังก์ชันแปลงเสียงพูด ให้แสดงผลเป็นข้อความไทย (เช่น สิบล่าง+หน่วยล่าง+1) และคำนวณได้จริง
 function parseAndApplyVoiceFormula(text) {
-    let cleaned = text.toLowerCase()
+    let rawText = text.trim();
+    let cleaned = rawText.toLowerCase()
         .replace(/บวก/g, '+')
         .replace(/ลบ/g, '-')
         .replace(/คูณ/g, '*')
         .replace(/หาร/g, '/')
         .replace(/\s+/g, '');
 
-    // เก็บชื่อเต็มสำหรับแสดงผลในช่องหัวตาราง
-    let displayFormula = text.trim();
-
-    // แปลงเสียงพูดให้เป็นชื่อหลักแบบเต็มที่เข้าใจง่าย
-    const friendlyMap = [
-        { key: 'สิบล่าง', val: 'สิบล่าง' },
-        { key: 'หน่วยล่าง', val: 'หน่วยล่าง' },
-        { key: 'สิบครั้งที่1', val: 'สิบครั้งที่1' }, { key: 'สิบ1', val: 'สิบครั้งที่1' },
-        { key: 'หน่วยครั้งที่1', val: 'หน่วยครั้งที่1' }, { key: 'หน่วย1', val: 'หน่วยครั้งที่1' },
-        { key: 'ร้อยครั้งที่1', val: 'ร้อยครั้งที่1' }, { key: 'ร้อย1', val: 'ร้อยครั้งที่1' },
-        { key: 'สิบครั้งที่2', val: 'สิบครั้งที่2' }, { key: 'สิบ2', val: 'สิบครั้งที่2' },
-        { key: 'หน่วยครั้งที่2', val: 'หน่วยครั้งที่2' }, { key: 'หน่วย2', val: 'หน่วยครั้งที่2' },
-        { key: 'ร้อยครั้งที่2', val: 'ร้อยครั้งที่2' }, { key: 'ร้อย2', val: 'ร้อยครั้งที่2' },
-        { key: 'สิบครั้งที่3', val: 'สิบครั้งที่3' }, { key: 'สิบ3', val: 'สิบครั้งที่3' },
-        { key: 'หน่วยครั้งที่3', val: 'หน่วยครั้งที่3' }, { key: 'หน่วย3', val: 'หน่วยครั้งที่3' },
-        { key: 'ร้อยครั้งที่3', val: 'ร้อยครั้งที่3' }, { key: 'ร้อย3', val: 'ร้อยครั้งที่3' },
-        { key: 'สิบครั้งที่4', val: 'สิบครั้งที่4' }, { key: 'สิบ4', val: 'สิบครั้งที่4' },
-        { key: 'หน่วยครั้งที่4', val: 'หน่วยครั้งที่4' }, { key: 'หน่วย4', val: 'หน่วยครั้งที่4' },
-        { key: 'ร้อยครั้งที่4', val: 'ร้อยครั้งที่4' }, { key: 'ร้อย4', val: 'ร้อยครั้งที่4' },
-        { key: 'แสน', val: 'แสน' },
-        { key: 'หมื่น', val: 'หมื่น' },
-        { key: 'พัน', val: 'พัน' },
-        { key: 'ร้อย', val: 'ร้อย' },
-        { key: 'สิบ', val: 'สิบ' },
-        { key: 'หน่วย', val: 'หน่วย' }
-    ];
-
-    // สร้างโค้ดสำหรับระบบหลังบ้านเอาไว้คำนวณจริง (แปลงชื่อเต็มเป็น P7, P8 ฯลฯ)
-    let mathFormula = cleaned;
-    const keywordMap = [
-        { key: 'สิบล่าง', val: 'สิบล่าง' },
-        { key: 'หน่วยล่าง', val: 'หน่วยล่าง' },
-        { key: 'สิบครั้งที่1', val: 'สิบครั้งที่1' }, { key: 'สิบ1', val: 'สิบครั้งที่1' },
-        { key: 'หน่วยครั้งที่1', val: 'หน่วยครั้งที่1' }, { key: 'หน่วย1', val: 'หน่วยครั้งที่1' },
-        { key: 'ร้อยครั้งที่1', val: 'ร้อยครั้งที่1' }, { key: 'ร้อย1', val: 'ร้อยครั้งที่1' },
-        { key: 'สิบครั้งที่2', val: 'สิบครั้งที่2' }, { key: 'สิบ2', val: 'สิบครั้งที่2' },
-        { key: 'หน่วยครั้งที่2', val: 'หน่วยครั้งที่2' }, { key: 'หน่วย2', val: 'หน่วยครั้งที่2' },
-        { key: 'ร้อยครั้งที่2', val: 'ร้อยครั้งที่2' }, { key: 'ร้อย2', val: 'ร้อยครั้งที่2' },
-        { key: 'สิบครั้งที่3', val: 'สิบครั้งที่3' }, { key: 'สิบ3', val: 'สิบครั้งที่3' },
-        { key: 'หน่วยครั้งที่3', val: 'หน่วยครั้งที่3' }, { key: 'หน่วย3', val: 'หน่วยครั้งที่3' },
-        { key: 'ร้อยครั้งที่3', val: 'ร้อยครั้งที่3' }, { key: 'ร้อย3', val: 'ร้อยครั้งที่3' },
-        { key: 'สิบครั้งที่4', val: 'สิบครั้งที่4' }, { key: 'สิบ4', val: 'สิบครั้งที่4' },
-        { key: 'หน่วยครั้งที่4', val: 'หน่วยครั้งที่4' }, { key: 'หน่วย4', val: 'หน่วยครั้งที่4' },
-        { key: 'ร้อยครั้งที่4', val: 'ร้อยครั้งที่4' }, { key: 'ร้อย4', val: 'ร้อยครั้งที่4' },
-        { key: 'แสน', val: 'แสน' },
-        { key: 'หมื่น', val: 'หมื่น' },
-        { key: 'พัน', val: 'พัน' },
-        { key: 'ร้อย', val: 'ร้อย' },
-        { key: 'สิบ', val: 'สิบ' },
-        { key: 'หน่วย', val: 'หน่วย' }
-    ];
-
-    keywordMap.forEach(item => {
-        let regex = new RegExp(item.key, 'g');
-        mathFormula = mathFormula.replace(regex, item.val);
-    });
-
-    mathFormula = mathFormula.toUpperCase().replace(/[^P0-9+\-*/().]/g, '');
-
-    if (!mathFormula) {
-        showToast('❌ แปลงสูตรไม่สำเร็จ ลองพูดใหม่อีกครั้ง');
+    if (!cleaned) {
+        showToast('❌ ไม่พบคำสั่งเสียง ลองใหม่อีกครั้ง');
         return;
     }
 
@@ -1807,11 +1734,82 @@ function parseAndApplyVoiceFormula(text) {
     const sheet = excelSheetsData[activeSheetId];
     if (sheet && sheet.columns) {
         const newColName = `ส${sheet.columns.length + 1}`;
-        // บันทึกเก็บชื่อเต็มไว้แสดงผล (displayFormula) และเก็บสูตรจริงไว้คำนวณ (mathFormula)
-        sheet.columns.push({ name: newColName, formula: mathFormula, displayName: displayFormula });
+        
+        // บันทึกทั้ง formula (สำหรับโชว์ในช่องน้ำเงินเป็นข้อความไทย เช่น สิบล่าง+หน่วยล่าง+1) 
+        // และ mathFormula (สำหรับแปลงเป็น P7+P8+1 ไว้ให้ระบบคำนวณเบื้องหลัง)
+        sheet.columns.push({ 
+            name: newColName, 
+            formula: rawText.replace(/\s+/g, '') // บันทึกข้อความที่พูด (เช่น สิบล่าง+หน่วยล่าง+1) ไปโชว์ในช่องหัวตาราง
+        });
+        
         saveExcelSheetsData(); 
         processCustomFormulasEngine();
-        showToast(`✨ เพิ่มคอลัมน์สูตรใหม่ [${newColName}]: ${displayFormula}`);
+        showToast(`✨ เพิ่มสูตร [${newColName}]: ${rawText}`);
+    } else {
+        showToast('ไม่พบข้อมูลตารางสูตร');
+    }
+}
+
+// 📌 2. ฟังก์ชันคำนวณสูตร ที่แปลงข้อความภาษาไทย (สิบล่าง, หน่วยล่าง, แสน, หมื่น...) เป็นตำแหน่ง P อัตโนมัติ
+function evalSingleFormulaStr(formulaStr, d, length = 5) {
+    const getD = (idx) => {
+        let val = d[idx - 1];
+        return (val !== undefined && !isNaN(val)) ? parseInt(val, 10) : 0;
+    };
+
+    // แปลงชื่อหลักภาษาไทยให้เป็นรหัส P สำหรับคำนวณหลังบ้าน
+    let expr = formulaStr.toUpperCase()
+        .replace(/สิบล่าง/g, 'P7')
+        .replace(/หน่วยล่าง/g, 'P8')
+        .replace(/แสน/g, 'P1')
+        .replace(/หมื่น/g, 'P2')
+        .replace(/พัน/g, 'P3')
+        .replace(/ร้อย/g, 'P4')
+        .replace(/สิบ/g, 'P5')
+        .replace(/หน่วย/g, 'P6')
+        .replace(/สิบครั้งที่1|สิบ1/g, 'P10')
+        .replace(/หน่วยครั้งที่1|หน่วย1/g, 'P11')
+        .replace(/ร้อยครั้งที่1|ร้อย1/g, 'P9')
+        .replace(/สิบครั้งที่2|สิบ2/g, 'P13')
+        .replace(/หน่วยครั้งที่2|หน่วย2/g, 'P14')
+        .replace(/ร้อยครั้งที่2|ร้อย2/g, 'P12')
+        .replace(/สิบครั้งที่3|สิบ3/g, 'P16')
+        .replace(/หน่วยครั้งที่3|หน่วย3/g, 'P17')
+        .replace(/ร้อยครั้งที่3|ร้อย3/g, 'P15')
+        .replace(/สิบครั้งที่4|สิบ4/g, 'P19')
+        .replace(/หน่วยครั้งที่4|หน่วย4/g, 'P20')
+        .replace(/ร้อยครั้งที่4|ร้อย4/g, 'P18');
+
+    // แทนที่ P ด้วยตัวเลขสถิติจริงตามงวด
+    expr = expr.replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
+
+    try {
+        let evaluatedValue = eval(expr);
+        let baseSum = Math.abs(parseInt(evaluatedValue, 10)) % 10; // เอาเฉพาะหลักหน่วยของผลลัพธ์
+        
+        let seq = []; 
+        for (let i = 0; i < length; i++) {
+            seq.push((baseSum + i) % 10);
+        }
+        return seq.join('');
+    } catch(e) { 
+        return '-----'; 
+    }
+}
+
+    // --- ส่วนที่ปรับปรุง: เพิ่มคอลัมน์ใหม่โดยไม่ทับของเดิม ---
+    collectAndSaveDOMFormulas(); // เซฟสูตรในตารางปัจจุบันไว้ก่อน
+    
+    const sheet = excelSheetsData[activeSheetId];
+    if (sheet && sheet.columns) {
+        // เพิ่มสูตรใหม่ต่อท้ายคอลัมน์เดิม
+        const newColName = `ส${sheet.columns.length + 1}`;
+        sheet.columns.push({ name: newColName, formula: cleaned });
+        
+        saveExcelSheetsData(); 
+        processCustomFormulasEngine(); // คำนวณตารางใหม่พร้อมคอลัมน์ใหม่ทันที
+        
+        showToast(`✨ เพิ่มคอลัมน์สูตรใหม่ [${newColName}]: ${cleaned}`);
     } else {
         showToast('ไม่พบข้อมูลตารางสูตร');
     }
