@@ -2085,90 +2085,58 @@ const GITHUB_CONFIG = {
 
 // 2. ฟังก์ชันหลักสำหรับบันทึกข้อมูลเข้า GitHub
 async function saveDirectToGitHub() {
+    // ดึงข้อมูลทั้งหมดในแอปมาแปลงเป็นข้อความ JSON
+    const appData = {
+        formulas: localStorage.getItem('lottery_formulas') || "{}",
+        sheets: localStorage.getItem('lottery_sheets') || "{}",
+        settings: localStorage.getItem('lottery_settings') || "{}"
+    };
+    
+    // แปลงข้อมูลเป็นข้อความ JSON แล้วเข้ารหัสเป็น Base64
+    const jsonString = JSON.stringify(appData, null, 2);
+    const contentEncoded = btoa(unescape(encodeURIComponent(jsonString)));
+
+    // ดึง Token ที่ผู้ใช้เคยบันทึกไว้
+    const token = localStorage.getItem('github_token') || prompt("กรุณากรอก GitHub Personal Access Token (classic):");
+    if (!token) return;
+    localStorage.setItem('github_token', token);
+
+    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.filePath}`;
+
     try {
-        // ดึง Personal Access Token จากเครื่อง (ถ้ายังไม่มีจะเด้งถาม)
-        let token = localStorage.getItem('gh_personal_token');
-        if (!token) {
-            token = prompt("กรุณากรอก GitHub Personal Access Token (ghp_...):");
-            if (!token) return alert("ยกเลิกการบันทึก: ไม่ได้ใส่ Token");
-            localStorage.setItem('gh_personal_token', token.trim());
+        // เช็กว่ามีไฟล์เดิมอยู่ไหม เพื่อเอา SHA มาใช้อัปเดตทับไฟล์เดิม
+        let sha = "";
+        const getRes = await fetch(url, {
+            headers: { "Authorization": `token ${token}` }
+        });
+        if (getRes.ok) {
+            const fileData = await getRes.json();
+            sha = fileData.sha;
         }
 
-        alert("กำลังประมวลผลและส่งข้อมูลไปที่ GitHub...");
-
-        // รวบรวมข้อมูลสดๆ ทั้งหมดในระบบ
-        if (typeof collectAndSaveDOMFormulas === 'function') {
-            collectAndSaveDOMFormulas();
-        }
-
-        const fullDataBackup = {
-            exportTimestamp: new Date().toISOString(),
-            sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
-            localStorageBackup: { ...localStorage }
-        };
-
-        // แปลงข้อมูลเป็น JSON String และแปลงเป็น Base64 (ตามที่ GitHub API บังคับใช้)
-        const jsonString = JSON.stringify(fullDataBackup, null, 2);
-        // ใช้ UTF-8 encoder ป้องกันปัญหาภาษาไทยเพี้ยน
-        const encoder = new TextEncoder();
-        const dataUint8 = encoder.encode(jsonString);
-        const base64Content = btoa(String.fromCharCode(...dataUint8));
-
-        const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.filePath}`;
-
-        // ดึงข้อมูล SHA ของไฟล์เดิมก่อน (ถ้ามีไฟล์อยู่แล้ว ต้องใช้ SHA ในการ Commit ทับ)
-        let currentSha = null;
-        try {
-            const getFileRes = await fetch(apiUrl, {
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Accept": "application/vnd.github.v3+json"
-                }
-            });
-            if (getFileRes.ok) {
-                const fileData = await getFileRes.json();
-                currentSha = fileData.sha;
-            }
-        } catch (e) {
-            console.log("ยังไม่มีไฟล์เดิมบน Repo จะเป็นการสร้างไฟล์ใหม่");
-        }
-
-        // ยิง API บันทึก (PUT) เข้า GitHub
-        const payload = {
-            message: `Auto Backup: ${new Date().toLocaleString('th-TH')}`,
-            content: base64Content,
-            branch: GITHUB_CONFIG.branch
-        };
-
-        if (currentSha) {
-            payload.sha = currentSha; // ถ้ามีไฟล์เดิม ใส่ SHA เพื่อ Commit ทับ
-        }
-
-        const response = await fetch(apiUrl, {
+        // ส่งข้อมูลขึ้น GitHub (ข้อมูลสะอาด ไม่มี Token ปนแน่นอน)
+        const response = await fetch(url, {
             method: "PUT",
             headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-                "Accept": "application/vnd.github.v3+json"
+                "Authorization": `token ${token}`,
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                message: "Auto backup data.json from Web App",
+                content: contentEncoded,
+                sha: sha ? sha : undefined,
+                branch: GITHUB_CONFIG.branch
+            })
         });
 
         if (response.ok) {
-            alert("🚀 บันทึกข้อมูลตรงเข้า GitHub เรียบร้อยแล้วครับ!");
+            alert("บันทึกข้อมูลลง GitHub สำเร็จเรียบร้อยครับ!");
         } else {
-            const errData = await response.json();
-            if (response.status === 401) {
-                localStorage.removeItem('gh_personal_token'); // ถ้า Token ผิดให้ลบออกเพื่อให้พิมพ์ใหม่รอบหน้า
-                alert("เกิดข้อผิดพลาด: Token ไม่ถูกต้อง หรือหมดอายุ (ลบ Token เดิมให้แล้ว ลองกดใหม่ครับ)");
-            } else {
-                alert("บันทึกไม่สำเร็จ: " + (errData.message || response.statusText));
-            }
+            const err = await response.json();
+            alert("บันทึกไม่สำเร็จ: " + (err.message || response.statusText));
         }
-
-    } catch (err) {
-        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + err.message);
-        console.error(err);
+    } catch (error) {
+        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message);
     }
 }
 
