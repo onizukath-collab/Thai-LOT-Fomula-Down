@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>โปรแกรมจับคู่ตัวเลข 2 หลัก & ห้องสูตร Excel</title>
+    <title>โปรแกรมจับคู่ 2 ตัวล่าง</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -39,147 +39,7 @@
         <!-- TAB 1: หน้าหลัก & จับคู่ตัวเลข -->
         <!-- ========================================== -->
         <div id="pageMain" class="space-y-4">
-            
-           <!-- 🤖 พาเนล AI อัจฉริยะ (Smart Mix & AI น้องเต้ย) -->
-<div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 space-y-4">
-    
-    <!-- ส่วนหัวพาเนล -->
-    <div class="flex items-center justify-between border-b pb-2">
-        <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-robot text-purple-600"></i> AI ผู้ช่วยอัจฉริยะ & Smart Mix
-        </h2>
-        <span class="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">Online Assistant</span>
-    </div>
-
-    <!-- 🎲 1. ปุ่มวิเศษ Smart Formula Combiner (กดปุ่มเดียวจบ) -->
-    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-3 text-white space-y-2 shadow-sm">
-        <div class="flex items-center justify-between">
-            <span class="text-xs font-bold flex items-center gap-1.5">
-                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> AI Smart Mix (ชุดเลขวินาทีสุดท้าย)
-            </span>
-            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">สูตรเด่น + ตัดเลขดับ</span>
-        </div>
-        <button onclick="runSmartFormulaMix()" class="w-full py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-dice text-slate-900"></i> 🎯 สุ่มผสมสูตรอัจฉริยะ & คัดเลขเด็ดทันที
-        </button>
-    </div>
-
-    <!-- 🤖 2. กล่องแชท AI น้องเต้ย สมาร์ทโค้ช -->
-    <div class="space-y-2">
-        <label class="block text-xs font-semibold text-slate-700 flex items-center gap-1">
-            <i class="fa-solid fa-comments text-blue-500"></i> พูดคุยกับ "AI น้องเต้ย":
-        </label>
         
-        <!-- หน้าต่างข้อความแชท -->
-        <div id="aiChatBox" class="h-44 bg-slate-50 border border-slate-200 rounded-xl p-3 overflow-y-auto space-y-2 text-xs">
-            <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-slate-700 max-w-[85%] shadow-xs">
-                สวัสดีครับพี่เต้ย! ผม <b>AI น้องเต้ย</b> พร้อมช่วยวิเคราะห์สูตร คัดเลขดับ และสรุปแต้มเด่นให้แล้วครับ พิมพ์ถามหรือเลือกคำถามด้านล่างได้เลยครับ 😊
-            </div>
-        </div>
-
-        <!-- ปุ่มคำถามด่วน (Quick Questions) -->
-        <div class="flex gap-1 overflow-x-auto pb-1 text-[11px]">
-            <button onclick="askAICoach('สูตรไหนเดินดีที่สุด')" class="whitespace-nowrap bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg border border-slate-300">
-                📊 สูตรไหนเดินดีสุด?
-            </button>
-            <button onclick="askAICoach('วิเคราะห์เลขเด่นที่ไม่ติดเลขดับ')" class="whitespace-nowrap bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg border border-slate-300">
-                🎯 สรุปเลขเด่นงวดนี้
-            </button>
-            <button onclick="askAICoach('เช็กแต้มผลรวม')" class="whitespace-nowrap bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg border border-slate-300">
-                🔢 สรุปแต้มผลรวมหลัก
-            </button>
-        </div>
-
-        <!-- ช่องพิมพ์ถาม AI -->
-        <div class="flex gap-1.5">
-            <input type="text" id="aiChatInput" onkeypress="if(event.key==='Enter') sendAIChat()" placeholder="ถาม AI น้องเต้ย... (เช่น สูตรไหนเด่นสุด)" 
-                class="flex-1 px-3 py-1.5 border border-slate-300 bg-white rounded-xl focus:ring-2 focus:ring-purple-500 outline-none text-xs text-slate-800">
-            <button onclick="sendAIChat()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </div>
-
-</div>
-
-<!-- ⚙️ JavaScript สำหรับระบบ AI Smart Mix & AI น้องเต้ย -->
-<script>
-// 🎲 1. ฟังก์ชัน AI Smart Formula Combiner (สุ่มผสมสูตรเด่น)
-function runSmartFormulaMix() {
-    const excludeVal = document.getElementById('excludeInput')?.value.trim() || "ไม่มี";
-    const sumPointsVal = document.getElementById('sumPointsInput')?.value.trim() || "ทั้งหมด";
-    
-    // ดึงสูตรทั้งหมดจากระบบ (หรือสุ่มดึงตัวเลขตัวอย่างหากยังไม่ได้โหลดสูตร)
-    const mockNumbers = ["02", "15", "24", "38", "57", "69", "81", "93"];
-    const randomPick = mockNumbers.sort(() => 0.5 - Math.random()).slice(0, 4).join(", ");
-    
-    const chatBox = document.getElementById('aiChatBox');
-    chatBox.innerHTML += `
-        <div class="flex justify-end">
-            <div class="bg-purple-600 text-white p-2.5 rounded-lg text-xs max-w-[85%]">
-                🎲 สุ่มผสมสูตรอัจฉริยะ (Smart Mix)
-            </div>
-        </div>
-        <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-lg text-xs text-slate-800 space-y-1">
-            <div class="font-bold text-amber-800">✨ ผลลัพธ์ชุดเลขวินาทีสุดท้าย (AI Smart Mix):</div>
-            <div>• <b>ชุดเลขเด็ดเน้นๆ:</b> <span class="text-rose-600 font-extrabold text-sm">${randomPick}</span></div>
-            <div class="text-[11px] text-slate-500">• พิจารณาจากเลขดับ: <b>${excludeVal}</b> | แต้มผลรวม: <b>${sumPointsVal}</b></div>
-        </div>
-    `;
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// 🤖 2. ฟังก์ชัน AI น้องเต้ย (ตอบคำถามจากข้อมูลจริงในระบบ)
-function askAICoach(question) {
-    document.getElementById('aiChatInput').value = question;
-    sendAIChat();
-}
-
-function sendAIChat() {
-    const input = document.getElementById('aiChatInput');
-    const text = input.value.trim();
-    if (!text) return;
-
-    const chatBox = document.getElementById('aiChatBox');
-
-    // แสดงข้อความของผู้ใช้
-    chatBox.innerHTML += `
-        <div class="flex justify-end">
-            <div class="bg-purple-600 text-white p-2.5 rounded-lg text-xs max-w-[85%]">
-                ${text}
-            </div>
-        </div>
-    `;
-    input.value = "";
-
-    // อ่านข้อมูลในระบบเรียลไทม์
-    const excludeVal = document.getElementById('excludeInput')?.value.trim() || "ไม่ได้ระบุ";
-    const sumPointsVal = document.getElementById('sumPointsInput')?.value.trim() || "ไม่ได้ระบุ";
-
-    // AI ประมวลผลคำตอบ
-    let reply = "ผมได้เช็กสถิติในระบบให้แล้วครับ ";
-    if (text.includes("เดินดี") || text.includes("สูตร")) {
-        reply = "📊 จากการวิเคราะห์สถิติในระบบ ตอนนี้ **สูตรแต้มผลรวมหลัก** และ **สูตรเดินดี 4 ตัวชน** มีอัตราแม่นยำสูงสุดในรอบ 5 งวดล่าสุดครับ!";
-    } else if (text.includes("เด่น") || text.includes("สรุป")) {
-        reply = `🎯 สรุปภาพรวมงวดนี้: เลขดับที่คุณตั้งไว้คือ [<b>${excludeVal}</b>] และแต้มคัดกรองคือ [<b>${sumPointsVal}</b>] แนะนำให้เน้นชุดเลขที่ไม่ชนกับเลขดับในข้อ 2 และ 3 ครับ!`;
-    } else if (text.includes("แต้ม")) {
-        reply = `🔢 แต้มผลรวมหลักที่ตั้งไว้คือ <b>${sumPointsVal}</b> แนะนำให้เลือกเฉพาะคู่ชุดที่มีผลรวมตรงกับแต้มนี้เพื่อลดจำนวนชุดลงทุนครับ`;
-    } else {
-        reply = `ผมรับทราบคำถาม "${text}" แล้วครับ! ตอนนี้ระบบพร้อมคัดกรองร่วมกับเลขดับ [<b>${excludeVal}</b>] และแต่งชุดเลขเด่นให้ทันทีครับ`;
-    }
-
-    // ตอบกลับหลัง 300ms ให้รู้สึกเหมือนพิมพ์ตอบจริง
-    setTimeout(() => {
-        chatBox.innerHTML += `
-            <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-slate-700 max-w-[85%] shadow-xs">
-                🤖 ${reply}
-            </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 300);
-}
-</script>
-
             <!-- Preset Manager -->
             <div class="bg-gradient-to-r from-[#1877F2] to-blue-800 rounded-2xl shadow-md p-4 text-white space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-blue-600 pb-2">
