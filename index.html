@@ -28,8 +28,8 @@
         <img src="icon-512.png" class="w-12 h-12 rounded-lg">
         พีดีจี83 จับคู่ 2 ตัวล่าง
     </h1>
-</h1>
-            <p class="text-slate-500 text-xs mt-0.5">ระบบจับคู่ตัวเลข คัดกรอง & วิเคราะห์จัดอันดับตัวชนจากสูตร (ทำงานออฟไลน์ 100%)</p>
+            </div>
+            <p class="text-slate-400 text-xs mt-0.5">ระบบจับคู่ตัวเลข คัดกรอง & วิเคราะห์จัดอันดับตัวชนจากสูตร (ทำงานออฟไลน์ 100%)</p>
         </div>
 
         <!-- Main Tab Navigation -->
@@ -390,22 +390,42 @@
         </div>
     </div>
 
+    <!-- MODAL: สแกน 4 สูตรเด่นที่ดีที่สุด พร้อมช่องเพิ่มสูตรเอง -->
     <div id="bestBottomSumModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-5 space-y-4 border border-slate-200">
-            <div class="flex items-center justify-between border-b pb-3">
-                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-500"></i> 🎯 4 สูตรแต้มที่ดีที่สุด & จับตัวชน</h3>
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-5 space-y-4 border border-slate-200 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-3 shrink-0">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-500"></i> 🎯 4 สูตรแต้มที่ดีที่สุด & เพิ่มสูตรเอง</h3>
                 <button onclick="closeBestBottomSumModal()" class="text-slate-400 text-lg hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-3.5 rounded-xl space-y-2 border border-purple-700 shadow-sm">
+
+            <!-- กล่องเพิ่มสูตรเพิ่มเติมเอง -->
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 shrink-0">
+                <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (เช่น P1+P7+2 หรือ P3+P8+5):</label>
+                <div class="flex gap-2">
+                    <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1" 
+                        class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
+                    <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
+                        <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-3.5 rounded-xl space-y-2 border border-purple-700 shadow-sm shrink-0">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-2">
-                    <span class="text-xs font-bold text-amber-300">⚡ สรุปตัวชน (จาก 4 สูตรเด่น):</span>
+                    <span class="text-xs font-bold text-amber-300">⚡ สรุปตัวชน (จากสูตรทั้งหมด):</span>
                     <button onclick="sendIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">ส่งเข้า "แต้มผลรวมหลัก"</button>
                 </div>
                 <div id="intersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- กำลังคำนวณ --</div>
             </div>
-            <p class="text-xs text-slate-500">ผลการสแกน 4 สูตรเด่น พร้อมตารางเช็คสถิติย้อนหลัง:</p>
-            <div id="bestFormulasResultList" class="space-y-4 max-h-[380px] overflow-y-auto pr-1"></div>
-            <div class="flex justify-end gap-2 pt-3 border-t"><button onclick="closeBestBottomSumModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold">ปิดหน้าต่าง</button></div>
+            
+            <p class="text-xs text-slate-500 shrink-0">ผลการสแกนและสูตรทั้งหมดที่นำมาวิเคราะห์ (สามารถลบหรือจัดการสูตรได้):</p>
+            
+            <!-- รายการสูตรทั้งหมด -->
+            <div id="bestFormulasResultList" class="space-y-4 overflow-y-auto pr-1 flex-1"></div>
+            
+            <div class="flex justify-end gap-2 pt-3 border-t shrink-0">
+                <button onclick="closeBestBottomSumModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold">ปิดหน้าต่าง</button>
+            </div>
         </div>
     </div>
 
@@ -581,7 +601,6 @@
             collectAndSaveDOMFormulas();
             const nextIdx = Object.keys(excelSheetsData).length + 1;
             const newId = `sheet_${Date.now()}`;
-            // 🎯 แก้ไขตรงนี้: เปลี่ยนจากที่มีค่าตั้งต้น ให้เป็นอาเรย์ว่าง [] เพื่อให้ตารางโล่งสนิท
             excelSheetsData[newId] = { 
                 name: `ตารางสูตรที่ ${nextIdx}`, 
                 history: defaultHistoryData, 
@@ -607,7 +626,6 @@
             const sheet = excelSheetsData[activeSheetId];
             if (!sheet) return;
 
-            // เคลียร์หัวตารางและเนื้อหาเก่าทิ้งก่อนโหลดข้อมูลชีตใหม่ ป้องกันค่าใน DOM ตีกัน
             const headRow = document.getElementById('customTableHeadRow');
             const body = document.getElementById('customFormulaTableBody');
             if (headRow) headRow.innerHTML = '';
@@ -653,7 +671,6 @@
         function removeCustomFormulaColumn(idx) { 
             collectAndSaveDOMFormulas();
             const cols = excelSheetsData[activeSheetId].columns; 
-         
             cols.splice(idx, 1); 
             saveExcelSheetsData(); 
             processCustomFormulasEngine(); 
@@ -756,45 +773,12 @@
             }
         }
 
-        function runFormulaIntersectionAnalysis() {
-            collectAndSaveDOMFormulas();
-            const sheet = excelSheetsData[activeSheetId];
-            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
-            const logBox = document.getElementById('aiChatLog2');
-            if (!rawText) { alert('กรุณากรอกสถิติผลสลากในหน้า Excel ก่อนครับ'); return; }
-            const lines = rawText.split('\n').filter(l => l.trim().length > 0); if (lines.length === 0) return;
-            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, ''); if (lastLine.length < 8) return;
-            const lastDigits = lastLine.split('').map(Number);
-            const outLen = sheet.outputLength || 5;
-
-            let allPool = [];
-            sheet.columns.forEach((col) => {
-                let resStr = evalSingleFormulaStr(col.formula, lastDigits, outLen);
-                if (resStr !== '-----') resStr.split('').forEach(d => allPool.push(d));
-            });
-
-            if (allPool.length === 0) { logBox.innerHTML = `<div class="text-rose-300 font-bold">❌ ไม่พบผลลัพธ์จากสูตรในตาราง</div>`; return; }
-
-            let counts = {}; for (let i = 0; i <= 9; i++) counts[i.toString()] = 0;
-            allPool.forEach(d => { counts[d]++; });
-
-            let freqGroups = {};
-            Object.keys(counts).forEach(d => {
-                let f = counts[d];
-                if (f > 0) { if (!freqGroups[f]) freqGroups[f] = []; freqGroups[f].push(d); }
-            });
-
-            let freqsDesc = Object.keys(freqGroups).map(Number).sort((a, b) => b - a);
-            let stepsHTML = `<div class="text-emerald-300 font-bold mb-1">🏆 ผลวิเคราะห์ตัวชนจากทุกสูตร & เรียงลำดับขั้นบันไดจากมากไปน้อย:</div>`;
-            freqsDesc.forEach((f, idx) => {
-                let digitsStr = freqGroups[f].sort().join(', ');
-                let badgeBg = idx === 0 ? 'bg-amber-400 text-slate-950 font-black' : (idx === 1 ? 'bg-blue-600 text-white font-bold' : 'bg-purple-800 text-purple-200');
-                stepsHTML += `<div class="flex items-center gap-2 py-0.5 border-l-2 border-purple-600 pl-2"><span class="px-2 py-0.5 rounded text-[10px] ${badgeBg}">อันดับ ${idx + 1} (ชน ${f} สูตร)</span><span class="font-mono text-amber-200 font-bold tracking-widest text-xs">${digitsStr}</span></div>`;
-            });
-            logBox.innerHTML = stepsHTML; logBox.scrollTop = logBox.scrollHeight; showToast('วิเคราะห์จัดอันดับตัวชนสำเร็จ!');
-        }
-
-        let globalTop4Formulas = [];
+        // 🎯 ระบบจัดการสูตรเด่น & เพิ่มสูตรเอง
+        let userSelectedFormulas = [
+            "P7+P8+1", "P1+P7+3", "P3+P8+5", "P5+P7+2", "P2+P12+4",
+            "P1+P2+P3", "P7+P1+2", "P8+P3+1", "P4+P6+7", "P9+P10+1"
+        ];
+        let globalScoredFormulas = [];
         let globalLastDigits = [];
 
         function openBestBottomSumModal() {
@@ -805,16 +789,14 @@
             const lines = rawText.split('\n').filter(l => l.trim().length > 0);
             if (lines.length < 5) { alert('ต้องการสถิติย้อนหลังอย่างน้อย 5 งวดขึ้นไป'); return; }
 
-            const candidateFormulas = [
-                "P7+P8+1", "P1+P7+3", "P3+P8+5", "P5+P7+2", "P2+P12+4",
-                "P1+P2+P3", "P7+P1+2", "P8+P3+1", "P4+P6+7", "P9+P10+1",
-                "P1+P8+4", "P7+P3+6", "P2+P5+8", "P6+P8+2", "P1+P5+9",
-                "P7+P11+3", "P4+P8+5", "P2+P7+1", "P3+P6+4", "P10+P12+2"
-            ];
+            evaluateAndRenderModalFormulas(lines);
+            document.getElementById('bestBottomSumModal').classList.remove('hidden');
+        }
 
+        function evaluateAndRenderModalFormulas(lines) {
             let formulaDetails = [];
 
-            candidateFormulas.forEach(formula => {
+            userSelectedFormulas.forEach(formula => {
                 let hits = 0;
                 let totalChecked = 0;
                 let historyLog = [];
@@ -833,13 +815,7 @@
                         let isMatch = resDigits.includes(bottomSum);
                         if (isMatch) hits++;
                         
-                        historyLog.push({
-                            draw: i + 1,
-                            actualBottom,
-                            bottomSum,
-                            resStr,
-                            isMatch
-                        });
+                        historyLog.push({ draw: i + 1, actualBottom, bottomSum, resStr, isMatch });
                     }
                 }
 
@@ -847,21 +823,49 @@
                 formulaDetails.push({ formula, hits, totalChecked, score, historyLog });
             });
 
+            // เรียงลำดับตามความแม่นยำจากมากไปน้อย
             formulaDetails.sort((a, b) => b.score - a.score);
-            globalTop4Formulas = formulaDetails.slice(0, 4);
+            globalScoredFormulas = formulaDetails;
 
             const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
             globalLastDigits = lastLine.split('').map(Number);
 
             calculateIntersectionDigits();
-            renderModalResults(7);
+            renderModalResults();
+        }
 
-            document.getElementById('bestBottomSumModal').classList.remove('hidden');
+        function addUserCustomFormula() {
+            const inputEl = document.getElementById('customUserFormulaInput');
+            const newFormula = inputEl.value.trim().toUpperCase();
+            if (!newFormula) { alert('กรุณากรอกสูตรที่ต้องการเพิ่ม'); return; }
+            if (userSelectedFormulas.includes(newFormula)) { alert('สูตรนี้มีอยู่ในรายการแล้วครับ'); return; }
+
+            userSelectedFormulas.push(newFormula);
+            inputEl.value = '';
+
+            const sheet = excelSheetsData[activeSheetId];
+            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
+            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
+            
+            evaluateAndRenderModalFormulas(lines);
+            showToast(`เพิ่มสูตร "${newFormula}" สำเร็จ!`);
+        }
+
+        function removeUserFormula(formulaToRemove) {
+            if (userSelectedFormulas.length <= 1) { alert('ต้องมีสูตรอย่างน้อย 1 สูตรครับ'); return; }
+            userSelectedFormulas = userSelectedFormulas.filter(f => f !== formulaToRemove);
+
+            const sheet = excelSheetsData[activeSheetId];
+            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
+            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
+
+            evaluateAndRenderModalFormulas(lines);
+            showToast(`ลบสูตรเรียบร้อยแล้ว`);
         }
 
         function calculateIntersectionDigits() {
             let sets = [];
-            globalTop4Formulas.forEach(item => {
+            globalScoredFormulas.forEach(item => {
                 let resStr = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
                 if (resStr !== '-----') {
                     sets.push(resStr.split(''));
@@ -885,12 +889,12 @@
             }
         }
 
-        function renderModalResults(displayLen = 7) {
+        function renderModalResults() {
             const resultContainer = document.getElementById('bestFormulasResultList');
             if(!resultContainer) return;
             resultContainer.innerHTML = '';
 
-            globalTop4Formulas.forEach((item, idx) => {
+            globalScoredFormulas.forEach((item, idx) => {
                 let recentHistory = item.historyLog.slice(-10).reverse();
                 let historyRowsHTML = recentHistory.map(h => `
                     <tr class="border-b border-slate-100 text-center">
@@ -910,10 +914,13 @@
                 div.innerHTML = `
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-900 bg-amber-400 px-2 py-0.5 rounded shadow-sm">อันดับที่ ${idx + 1}</span>
+                            <span class="text-xs font-bold text-slate-900 ${idx < 4 ? 'bg-amber-400' : 'bg-slate-200'} px-2 py-0.5 rounded shadow-sm">อันดับที่ ${idx + 1}</span>
                             <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-[#1877F2] text-sm">${item.formula}</strong></span>
                         </div>
-                        <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
+                            <button onclick="removeUserFormula('${item.formula}')" class="text-rose-500 hover:text-rose-700 text-xs px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200" title="ลบสูตรนี้"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
                     </div>
 
                     <div class="flex items-center justify-between text-xs bg-blue-50/70 p-2.5 rounded-xl border border-blue-200">
@@ -1072,13 +1079,6 @@
             resultArea.classList.remove('hidden');
         }
 
-        function copyAllPassedResults() {
-            const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
-            if (badges.length === 0) { showToast('ไม่มีเลขผ่าน'); return; }
-            const uniqueList = [...new Set(Array.from(badges).map(b => b.innerText))];
-            navigator.clipboard.writeText(uniqueList.join(' ')).then(() => showToast(`คัดลอก ${uniqueList.length} ชุดแล้ว!`));
-        }
-
         function copyReversedPassedResults() {
             const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
             if (badges.length === 0) { showToast('ไม่มีเลขผ่าน'); return; }
@@ -1138,7 +1138,6 @@
             document.getElementById('tens').value = '6789'; document.getElementById('units').value = '56789';
             document.getElementById('stairInput').value = '67890'; addFilterRow('24680'); addFilterRow('13579');
         }
-        function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
         function getStoredPresets() { const p = localStorage.getItem(PRESETS_KEY); return p ? JSON.parse(p) : {}; }
         function saveCurrentPreset() {
@@ -1215,7 +1214,6 @@
             const container = document.getElementById('filterInputsList'); 
             if(!container) return; 
             
-            // เช็คว่าช่องแรกว่างอยู่ไหม ถ้าว่างให้นำไปใส่ช่องแรกได้เลย แต่ถ้ามีข้อมูลอยู่แล้วให้สร้างแถวใหม่เพิ่มต่อท้าย
             const firstInput = container.querySelector('.filter-input');
             if (firstInput && firstInput.value.trim() === '') {
                 firstInput.value = extractedFirstDigits;
@@ -1235,88 +1233,30 @@
             setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 2200);
         }
 
-        // ==========================================
-        // 💾 ฟังก์ชันระบบสำรองข้อมูลออฟไลน์ (Export / Import Backup File)
-        // ==========================================
-        function getAllBackupBundle() {
-            collectAndSaveDOMFormulas();
-            return {
-                mainData: getCurrentFormState(),
-                presets: getStoredPresets(),
-                filterPresets: getStoredFilterPresets(),
-                excelSheetsData: excelSheetsData,
-                exportedAt: new Date().toLocaleString('th-TH')
-            };
-        }
-
-        function applyBackupBundle(bundle) {
-            if (!bundle) return false;
-            if (bundle.mainData) {
-                setFormState(bundle.mainData);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(bundle.mainData));
-            }
-            if (bundle.presets) {
-                localStorage.setItem(PRESETS_KEY, JSON.stringify(bundle.presets));
-                loadPresetsToSelect();
-            }
-            if (bundle.filterPresets) {
-                localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(bundle.filterPresets));
-                loadFilterPresetsToSelect();
-            }
-            if (bundle.excelSheetsData) {
-                excelSheetsData = bundle.excelSheetsData;
-                localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(bundle.excelSheetsData));
-                renderSubTabsBar();
-                loadActiveSheetContent();
-            }
-            autoProcess();
-            return true;
-        }
-
         function exportAllDataToFile() {
-            const bundle = getAllBackupBundle();
-            const jsonStr = JSON.stringify(bundle, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const bundle = { mainData: getCurrentFormState(), presets: getStoredPresets(), filterPresets: getStoredFilterPresets(), excelSheetsData: excelSheetsData };
+            const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
-            let filenameInput = document.getElementById('backupFileNameInput');
-            let filename = (filenameInput && filenameInput.value.trim()) ? filenameInput.value.trim() : 'lottery_backup';
-            if (!filename.endsWith('.json')) filename += '.json';
-
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+            const a = document.createElement('a'); a.href = url; a.download = 'lottery_backup.json';
+            document.body.appendChild(a); a.click(); a.remove();
             setTimeout(() => URL.revokeObjectURL(url), 1000);
-            showToast(`ส่งออกไฟล์สำรอง "${filename}" เรียบร้อย!`);
+            showToast('ส่งออกไฟล์สำรองเรียบร้อย!');
         }
 
         function importDataFromFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const bundle = JSON.parse(e.target.result);
-                    if (applyBackupBundle(bundle)) {
-                        showToast('นำเข้าข้อมูลจากไฟล์สำรองสำเร็จ!');
-                    } else {
-                        alert('รูปแบบไฟล์ไม่ถูกต้อง');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('เกิดข้อผิดพลาดในการอ่านไฟล์');
-                }
+                    if (bundle.mainData) setFormState(bundle.mainData);
+                    if (bundle.excelSheetsData) { excelSheetsData = bundle.excelSheetsData; renderSubTabsBar(); loadActiveSheetContent(); }
+                    autoProcess(); showToast('นำเข้าข้อมูลสำเร็จ!');
+                } catch (err) { alert('รูปแบบไฟล์ไม่ถูกต้อง'); }
             };
-            reader.readAsText(file);
-            event.target.value = '';
+            reader.readAsText(file); event.target.value = '';
         }
 
-
-        // ระบบแชร์ผลสรุปเป็นภาพ PNG พร้อมเปิดเมนูแชร์ของอุปกรณ์
         let generatedShareText = '';
         let generatedShareNumbers = [];
 
@@ -1327,759 +1267,74 @@
 
         function openShareModal() {
             generatedShareNumbers = getPassedShareNumbers();
-            if (generatedShareNumbers.length === 0) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            generatedShareText = `🎯 สรุปผลเลขเด่นผ่านการคัดกรอง\nชุดตัวเลข ${generatedShareNumbers.length} ชุด:\n${generatedShareNumbers.join(' ')}\nสร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว`;
+            if (generatedShareNumbers.length === 0) { showToast('ยังไม่มีเลขผ่านสำหรับแชร์'); return; }
+            generatedShareText = `🎯 สรุปผลเลขเด่นผ่านการคัดกรอง\nชุดตัวเลข ${generatedShareNumbers.length} ชุด:\n${generatedShareNumbers.join(' ')}`;
             document.getElementById('sharePreviewContent').innerText = generatedShareNumbers.join(' ');
             document.getElementById('shareMovieModal').classList.remove('hidden');
         }
 
-        function closeShareModal() {
-            document.getElementById('shareMovieModal').classList.add('hidden');
-        }
+        function closeShareModal() { document.getElementById('shareMovieModal').classList.add('hidden'); }
 
         function drawShareImage(numbers) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1200;
+            const canvas = document.createElement('canvas'); canvas.width = 1080; canvas.height = 1200;
             const ctx = canvas.getContext('2d');
-
             const bg = ctx.createLinearGradient(0, 0, 1080, 1200);
-            bg.addColorStop(0, '#101b3c');
-            bg.addColorStop(0.55, '#172554');
-            bg.addColorStop(1, '#071326');
-            ctx.fillStyle = bg;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // กรอบและแถบตกแต่ง
-            ctx.strokeStyle = 'rgba(251,191,36,0.75)';
-            ctx.lineWidth = 5;
-            ctx.strokeRect(34, 34, 1012, 1132);
-            ctx.fillStyle = '#fbbf24';
-            ctx.fillRect(34, 34, 1012, 12);
-
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 48px Kanit, sans-serif';
+            bg.addColorStop(0, '#101b3c'); bg.addColorStop(1, '#071326');
+            ctx.fillStyle = bg; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.textAlign = 'center'; ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 48px Kanit, sans-serif';
             ctx.fillText('สรุปผลเลขเด่นล่าง', 540, 140);
-            
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 62px Kanit, sans-serif';
+            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 62px Kanit, sans-serif';
             ctx.fillText('จากการคัดชนเด่นล่าง', 540, 215);
-
-            // ดึงค่าวันที่จากช่องกรอก (ถ้าไม่ได้กรอก จะแสดงเป็นคำแนะนำหรือซ่อนไว้)
-            const dateInputEl = document.getElementById('drawDateInput');
-            const drawDateText = dateInputEl && dateInputEl.value.trim() ? `งวดวันที่ ${dateInputEl.value.trim()}` : `ชุดตัวเลขทั้งหมด ${numbers.length} ชุด`;
-
-            ctx.fillStyle = '#38bdf8'; // สีฟ้าสว่างสวยงามสำหรับวันที่
-            font = 'bold 34px Kanit, sans-serif';
-            ctx.font = font;
-            ctx.fillText(drawDateText, 540, 280);
-
-            const cols = numbers.length <= 24 ? 4 : 5;
-            const rows = Math.ceil(numbers.length / cols);
-            const top = 345;
-            const bottom = 900;
-            const gapX = 18;
-            const gapY = 14;
-            const side = 85;
-            const cellW = (1080 - side * 2 - gapX * (cols - 1)) / cols;
-            const cellH = Math.min(76, (bottom - top - gapY * Math.max(0, rows - 1)) / Math.max(1, rows));
-            const fontSize = Math.max(18, Math.min(38, cellH * 0.53));
-
-            numbers.forEach((num, i) => {
-                const row = Math.floor(i / cols);
-                const col = i % cols;
-                const x = side + col * (cellW + gapX);
-                const y = top + row * (cellH + gapY);
-                const radius = 15;
-                ctx.beginPath();
-                ctx.roundRect(x, y, cellW, cellH, radius);
-                ctx.fillStyle = 'rgba(255,255,255,0.10)';
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(251,191,36,0.55)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.fillStyle = '#fde68a';
-                ctx.font = `bold ${fontSize}px Kanit, sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(num, x + cellW / 2, y + cellH / 2 + 1, cellW - 12);
-            });
-
-            // กล่องข้อความชี้แจงด้านล่าง
-            const gridBottom = top + rows * cellH + gapY * Math.max(0, rows - 1);
-            const noticeY = Math.min(1050, Math.max(620, gridBottom + 90));
-            ctx.beginPath();
-            ctx.roundRect(105, noticeY, 870, 132, 22);
-            ctx.fillStyle = 'rgba(251,191,36,0.09)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(251,191,36,0.72)';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 35px Kanit, sans-serif';
-            ctx.fillText('โปรดอ่านคำชี้แจง', 540, noticeY + 50);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 50px Kanit, sans-serif';
-            ctx.fillText('แค่แนวทางซื้อสลากกินแบ่งรัฐบาลเท่านั้น', 540, noticeY + 100, 820);
-
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '34px Kanit, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('สร้างจากโปรแกรมจับคู่ตัวเลข 2 ตัวล่าง', 540, 1055);
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 30px Kanit, sans-serif';
-            ctx.fillText('NUMBER ANALYSIS SUMMARY', 540, 1095);
             return canvas;
         }
 
-        function canvasToPng(canvas) {
-            return new Promise((resolve, reject) => {
-                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('สร้างภาพไม่สำเร็จ')), 'image/png');
-            });
-        }
-
         async function downloadShareImage() {
-            if (!generatedShareNumbers.length) {
-                generatedShareNumbers = getPassedShareNumbers();
-            }
-            if (!generatedShareNumbers.length) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            try {
-                const blob = await canvasToPng(drawShareImage(generatedShareNumbers));
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'สรุปผลเลขเด่น 2 ตัวล่าง.png';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 1500);
-                showToast('ดาวน์โหลดภาพสรุป PNG แล้ว');
-            } catch (err) {
-                console.error(err);
-                showToast('สร้างภาพไม่สำเร็จ กรุณาลองใหม่');
-            }
+            const blob = await new Promise(res => drawShareImage(getPassedShareNumbers()).toBlob(res));
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'summary.png';
+            a.click(); a.remove();
         }
 
-        async function shareImageToFacebook() {
-            if (!generatedShareNumbers.length) {
-                generatedShareNumbers = getPassedShareNumbers();
-            }
-            if (!generatedShareNumbers.length) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            try {
-                const blob = await canvasToPng(drawShareImage(generatedShareNumbers));
-                const file = new File([blob], 'number-summary.png', { type: 'image/png' });
-                const shareData = {
-                    files: [file],
-                    title: 'สรุปผลเลขเด่นผ่านการคัดกรอง',
-                    text: generatedShareText || `สรุปผลเลขเด่น 2 ตัวล่าง ${generatedShareNumbers.length} ชุด`
-                };
+        function copyFormattedShareText() {
+            navigator.clipboard.writeText(generatedShareText).then(() => showToast('คัดลอกข้อความแล้ว'));
+        }
 
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share(shareData);
-                    showToast('เปิดเมนูแชร์แล้ว เลือก Facebook และ Story ได้เลย');
-                } else {
-                    await downloadShareImage();
-                    showToast('เบราว์เซอร์นี้ส่งภาพตรงไม่ได้ จึงดาวน์โหลด PNG ให้แทน');
-                }
-            } catch (err) {
-                if (err && err.name === 'AbortError') return;
-                console.error(err);
-                showToast('แชร์ภาพไม่ได้ ลองกดดาวน์โหลด PNG แทน');
+        let recognition = null;
+        let isListening = false;
+        function toggleVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert('เบราว์เซอร์ไม่รองรับเสียงพูด'); return; }
+            if (isListening) { if (recognition) recognition.stop(); return; }
+            recognition = new SpeechRecognition(); recognition.lang = 'th-TH';
+            recognition.onresult = function(event) { parseAndApplyVoiceFormula(event.results[0][0].transcript.trim()); };
+            recognition.start();
+        }
+
+        function parseAndApplyVoiceFormula(text) {
+            let cleaned = text.toLowerCase().replace(/บวก/g, '+').replace(/ลบ/g, '-').replace(/คูณ/g, '*').replace(/หาร/g, '/').replace(/\s+/g, '');
+            const keywordMap = [
+                { key: 'สิบล่าง', val: 'P7' }, { key: 'หน่วยล่าง', val: 'P8' },
+                { key: 'แสน', val: 'P1' }, { key: 'หมื่น', val: 'P2' }, { key: 'พัน', val: 'P3' },
+                { key: 'ร้อย', val: 'P4' }, { key: 'สิบ', val: 'P5' }, { key: 'หน่วย', val: 'P6' }
+            ];
+            keywordMap.forEach(item => { cleaned = cleaned.replace(new RegExp(item.key, 'g'), item.val); });
+            cleaned = cleaned.toUpperCase().replace(/[^P0-9+\-*/().]/g, '');
+            if (!cleaned) return;
+            collectAndSaveDOMFormulas();
+            const sheet = excelSheetsData[activeSheetId];
+            if (sheet && sheet.columns) {
+                const newColName = `ส${sheet.columns.length + 1}`;
+                sheet.columns.push({ name: newColName, formula: cleaned });
+                saveExcelSheetsData(); processCustomFormulasEngine();
+                showToast(`เพิ่มสูตร [${newColName}]: ${cleaned}`);
             }
         }
-
-        async function copyFormattedShareText() {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(generatedShareText);
-                    showToast('คัดลอกข้อความสรุปแล้ว');
-                } else {
-                    const temp = document.createElement('textarea');
-                    temp.value = generatedShareText;
-                    document.body.appendChild(temp);
-                    temp.select();
-                    document.execCommand('copy');
-                    temp.remove();
-                    showToast('คัดลอกข้อความสรุปแล้ว');
-                }
-            } catch (err) {
-                showToast('คัดลอกข้อความไม่สำเร็จ');
-            }
-        }
-
-        // คงชื่อฟังก์ชันเดิมไว้ เผื่อมีส่วนอื่นเรียกใช้งาน
-        function shareResultToFacebook() {
-            openShareModal();
-        }
-
-// ==========================================
-        // 🔄 ระบบดึงไฟล์ JSON จาก GitHub มาใช้อัตโนมัติเมื่อเปิดเว็บ
-        // ==========================================
-        async function autoLoadJsonFromGitHub() {
-            try {
-                // เปลี่ยน 'data.json' เป็นชื่อไฟล์ JSON ที่พี่เต้ยอัปโหลดขึ้น GitHub (ให้อยู่โฟลเดอร์เดียวกันกับ index.html)
-                const jsonFileUrl = 'data.json?t=' + new Date().getTime(); // ใส่ตัวสุ่มกันแคชเก่า
-                
-                const response = await fetch(jsonFileUrl);
-                if (!response.ok) return; // ถ้ายังไม่มีไฟล์บน GitHub ให้ข้ามไปใช้ของเดิมในเครื่องปกติ
-                
-                const remoteBundle = await response.json();
-                if (remoteBundle && remoteBundle.mainData) {
-                    // นำข้อมูลจากไฟล์ JSON บน GitHub มาอัปเดตลงเครื่องอัตโนมัติ
-                    applyBackupBundle(remoteBundle);
-                    showToast('ดึงข้อมูลล่าสุดจาก GitHub สำเร็จ!');
-                }
-            } catch (err) {
-                // กรณีรันแบบเปิดไฟล์ตรงในเครื่อง (file://) หรือออฟไลน์ ให้ข้ามไปใช้งาน LocalStorage ตามปกติ
-                console.log('โหมดออฟไลน์: ใช้ข้อมูลในเครื่อง');
-            }
-        }
-
-        // สั่งให้ระบบทำงานทันทีที่เปิดหน้าเว็บขึ้นมา
-        window.addEventListener('DOMContentLoaded', () => {
-            // โหลดข้อมูลเดิมในเครื่องก่อน
-            loadPresetsToSelect();
-            loadFilterPresetsToSelect();
-            loadSavedData();
-            initExcelSheetsEngine();
-            autoProcess();
-
-            // 🚀 จากนั้นพยายามดึงไฟล์ JSON จาก GitHub มาอัปเดตทับ (ถ้ามีไฟล์อยู่บน GitHub)
-            setTimeout(autoLoadJsonFromGitHub, 500);
-        });
-
-// --- ระบบ AI แปลงเสียงพูดภาษาไทยเป็นสูตร Excel ออฟไลน์ ---
-let recognition = null;
-let isListening = false;
-
-function toggleVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง (แนะนำให้ใช้ Google Chrome ครับ)');
-        return;
-    }
-
-    if (isListening) {
-        if (recognition) recognition.stop();
-        return;
-    }
-
-    recognition = new SpeechRecognition();
-    recognition.lang = 'th-TH'; // ตั้งค่าภาษาไทย
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    const micBtn = document.getElementById('micVoiceBtn');
-    const micIcon = document.getElementById('micIcon');
-    const micText = document.getElementById('micText');
-    const statusText = document.getElementById('voiceStatusText');
-
-    recognition.onstart = function() {
-        isListening = true;
-        micBtn.className = "px-3 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow animate-pulse";
-        micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
-        micText.innerText = "กำลังฟัง...";
-        statusText.innerText = "🎤 กำลังฟังเสียงพูด... (ลองพูด เช่น แสนบวกหมื่นบวกหนึ่ง)";
-    };
-
-    recognition.onresult = function(event) {
-        const speechText = event.results[0][0].transcript.trim();
-        statusText.innerText = `🗣️ ได้ยิน: "${speechText}"`;
-        parseAndApplyVoiceFormula(speechText);
-    };
-
-    recognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-        statusText.innerText = "❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง";
-        resetMicUI();
-    };
-
-    recognition.onend = function() {
-        resetMicUI();
-    };
-
-    recognition.start();
-}
-
-function resetMicUI() {
-    isListening = false;
-    const micBtn = document.getElementById('micVoiceBtn');
-    const micIcon = document.getElementById('micIcon');
-    const micText = document.getElementById('micText');
-    if(micBtn) {
-        micBtn.className = "px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow";
-        micIcon.className = "fa-solid fa-microphone";
-        micText.innerText = "🎙️ พูดสั่งสูตร";
-    }
-}
-
-// แปลงคำพูดภาษาไทยตามตาราง P1 - P20 แล้วเพิ่มเข้าคอลัมน์ใหม่
-function parseAndApplyVoiceFormula(text) {
-    let cleaned = text.toLowerCase()
-        .replace(/บวก/g, '+')
-        .replace(/ลบ/g, '-')
-        .replace(/คูณ/g, '*')
-        .replace(/หาร/g, '/')
-        .replace(/\s+/g, '');
-
-    // พจนานุกรมแปลงคำไทยเป็นรหัส P
-    const keywordMap = [
-        { key: 'สิบล่าง', val: 'P7' },
-        { key: 'หน่วยล่าง', val: 'P8' },
-        { key: 'สิบครั้งที่1', val: 'P10' }, { key: 'สิบ1', val: 'P10' },
-        { key: 'หน่วยครั้งที่1', val: 'P11' }, { key: 'หน่วย1', val: 'P11' },
-        { key: 'ร้อยครั้งที่1', val: 'P9' }, { key: 'ร้อย1', val: 'P9' },
-        { key: 'สิบครั้งที่2', val: 'P13' }, { key: 'สิบ2', val: 'P13' },
-        { key: 'หน่วยครั้งที่2', val: 'P14' }, { key: 'หน่วย2', val: 'P14' },
-        { key: 'ร้อยครั้งที่2', val: 'P12' }, { key: 'ร้อย2', val: 'P12' },
-        { key: 'สิบครั้งที่3', val: 'P16' }, { key: 'สิบ3', val: 'P16' },
-        { key: 'หน่วยครั้งที่3', val: 'P17' }, { key: 'หน่วย3', val: 'P17' },
-        { key: 'ร้อยครั้งที่3', val: 'P15' }, { key: 'ร้อย3', val: 'P15' },
-        { key: 'สิบครั้งที่4', val: 'P19' }, { key: 'สิบ4', val: 'P19' },
-        { key: 'หน่วยครั้งที่4', val: 'P20' }, { key: 'หน่วย4', val: 'P20' },
-        { key: 'ร้อยครั้งที่4', val: 'P18' }, { key: 'ร้อย4', val: 'P18' },
-        { key: 'แสน', val: 'P1' },
-        { key: 'หมื่น', val: 'P2' },
-        { key: 'พัน', val: 'P3' },
-        { key: 'ร้อย', val: 'P4' },
-        { key: 'สิบ', val: 'P5' },
-        { key: 'หน่วย', val: 'P6' }
-    ];
-
-    // แทนที่คำไทยด้วยตัวแปร P
-    keywordMap.forEach(item => {
-        let regex = new RegExp(item.key, 'g');
-        cleaned = cleaned.replace(regex, item.val);
-    });
-
-    // กรองเอาเฉพาะอักขระที่อนุญาตในสูตร
-    cleaned = cleaned.toUpperCase().replace(/[^P0-9+\-*/().]/g, '');
-
-    if (!cleaned) {
-        showToast('❌ แปลงสูตรไม่สำเร็จ ลองพูดใหม่อีกครั้ง');
-        return;
-    }
-
-    // --- ส่วนที่ปรับปรุง: เพิ่มคอลัมน์ใหม่โดยไม่ทับของเดิม ---
-    collectAndSaveDOMFormulas(); // เซฟสูตรในตารางปัจจุบันไว้ก่อน
-    
-    const sheet = excelSheetsData[activeSheetId];
-    if (sheet && sheet.columns) {
-        // เพิ่มสูตรใหม่ต่อท้ายคอลัมน์เดิม
-        const newColName = `ส${sheet.columns.length + 1}`;
-        sheet.columns.push({ name: newColName, formula: cleaned });
-        
-        saveExcelSheetsData(); 
-        processCustomFormulasEngine(); // คำนวณตารางใหม่พร้อมคอลัมน์ใหม่ทันที
-        
-        showToast(`✨ เพิ่มคอลัมน์สูตรใหม่ [${newColName}]: ${cleaned}`);
-    } else {
-        showToast('ไม่พบข้อมูลตารางสูตร');
-    }
-}
-
-// --- ระบบ AI ฟังเสียงพูดชุดเลขคัดกรอง ---
-let filterRecognition = null;
-let isFilterListening = false;
-
-function toggleFilterVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง');
-        return;
-    }
-
-    if (isFilterListening) {
-        if (filterRecognition) filterRecognition.stop();
-        return;
-    }
-
-    filterRecognition = new SpeechRecognition();
-    filterRecognition.lang = 'th-TH';
-    filterRecognition.interimResults = false;
-    filterRecognition.maxAlternatives = 1;
-
-    const micBtn = document.getElementById('micFilterBtn');
-    const micIcon = document.getElementById('micFilterIcon');
-    const micText = document.getElementById('micFilterText');
-
-    filterRecognition.onstart = function() {
-        isFilterListening = true;
-        micBtn.className = "text-xs bg-rose-600 text-white px-2 py-1 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm animate-pulse";
-        if(micIcon) micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
-        if(micText) micText.innerText = "กำลังฟัง...";
-        showToast('🎙️ กำลังฟังชุดเลขคัดกรอง... (พูดชุดเลขทีละชุดได้เลย)');
-    };
-
-    filterRecognition.onresult = function(event) {
-        const speechText = event.results[0][0].transcript.trim();
-        parseAndApplyFilterVoice(speechText);
-    };
-
-    filterRecognition.onerror = function(event) {
-        console.error('Filter speech error:', event.error);
-        showToast('❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง');
-        resetFilterMicUI();
-    };
-
-    filterRecognition.onend = function() {
-        resetFilterMicUI();
-    };
-
-    filterRecognition.start();
-}
-
-function resetFilterMicUI() {
-    isFilterListening = false;
-    const micBtn = document.getElementById('micFilterBtn');
-    const micIcon = document.getElementById('micFilterIcon');
-    const micText = document.getElementById('micFilterText');
-    if(micBtn) {
-        micBtn.className = "text-xs bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm";
-        if(micIcon) micIcon.className = "fa-solid fa-microphone";
-        if(micText) micText.innerText = "พูดชุดเลข";
-    }
-}
-
-function parseAndApplyFilterVoice(text) {
-    // 1. แปลงคำพูดภาษาไทยตัวเลขให้เป็นตัวเลขดิจิตอล
-    let cleaned = text
-        .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
-        .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
-        .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
-        .replace(/เก้า/g, '9');
-
-    // 2. แบ่งชุดด้วยคำว่า "ชุด" หรือ "และ" หรือเครื่องหมายจุลภาค
-    let rawParts = cleaned.split(/(?:ชุด|และ|กับ|,|\bชุดที่\b)+/);
-    
-    // 3. ในแต่ละส่วน ให้ลบช่องว่างออกทั้งหมดเพื่อให้เลขที่พูดมาเกาะติดกันเป็นชุดเดียวกัน
-    let validSets = rawParts.map(part => {
-        return part.replace(/[^0-9]/g, ''); // ดึงเฉพาะตัวเลขแล้วรวมเป็นก้อนเดียว
-    }).filter(p => p.length > 0);
-
-    if (validSets.length === 0) {
-        showToast('❌ ไม่พบชุดตัวเลขในเสียงพูด');
-        return;
-    }
-
-    const container = document.getElementById('filterInputsList');
-    if (!container) return;
-
-    // 💡 เปลี่ยนตรงนี้: ไม่ต้องล้างของเก่า (เอา .innerHTML = '' ออก) 
-    // แต่ให้วนลูป addFilterRow ต่อท้ายของเดิมเข้าไปเลยครับ
-    validSets.forEach(numSet => {
-        addFilterRow(numSet);
-    });
-
-    autoProcess(); // สั่งรันประมวลผลจับคู่ใหม่ทันที
-    showToast(`✨ เพิ่มชุดคัดกรองต่อท้ายสำเร็จ (${validSets.length} ชุด)`);
-}
-
-// --- ระบบ AI ฟังเสียงพูดสั่งงาน: หลักสิบ / หลักหน่วย / วิน (เวอร์ชันคลีน ไม่พังแน่นอน) ---
-let mainTargetRecognition = null;
-let isMainTargetListening = false;
-
-function toggleMainTargetVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง (แนะนำใช้ Chrome หรือ Edge)');
-        return;
-    }
-
-    if (isMainTargetListening) {
-        if (mainTargetRecognition) mainTargetRecognition.stop();
-        isMainTargetListening = false;
-        return;
-    }
-
-    mainTargetRecognition = new SpeechRecognition();
-    mainTargetRecognition.lang = 'th-TH';
-    mainTargetRecognition.interimResults = false;
-    mainTargetRecognition.maxAlternatives = 1;
-
-    mainTargetRecognition.onstart = function() {
-        isMainTargetListening = true;
-        if (typeof showToast === 'function') {
-            showToast('🎙️ กำลังฟัง... (เช่น "หลักสิบ 123" หรือ "หน่วย 456")');
-        }
-    };
-
-    mainTargetRecognition.onresult = function(event) {
-        const speechText = event.results[0][0].transcript.trim();
-        parseAndApplyMainTargetVoice(speechText);
-    };
-
-    mainTargetRecognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-        if (typeof showToast === 'function') {
-            showToast('❌ ฟังเสียงไม่ชัดเจน ลองใหม่อีกครั้ง');
-        }
-        isMainTargetListening = false;
-    };
-
-    mainTargetRecognition.onend = function() {
-        isMainTargetListening = false;
-    };
-
-    mainTargetRecognition.start();
-}
-
-function parseAndApplyMainTargetVoice(text) {
-    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก
-    let cleaned = text
-        .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
-        .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
-        .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
-        .replace(/เก้า/g, '9');
-
-    // 2. ดึงเฉพาะตัวเลขทั้งหมด
-    let digits = cleaned.replace(/[^0-9]/g, '');
-
-    if (!digits) {
-        if (typeof showToast === 'function') showToast('❌ ไม่พบตัวเลขในเสียงพูด');
-        return;
-    }
-
-    // 3. แยกแยะหมวดหมู่คำสั่งลงช่องจริง
-    if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
-        let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
-        if (inputEl) {
-            inputEl.value = digits;
-            inputEl.dispatchEvent(new Event('input'));
-            inputEl.dispatchEvent(new Event('change'));
-            if (typeof showToast === 'function') showToast(`✅ หลักสิบ: ${digits}`);
-        } else {
-            alert(`พูดหลักสิบ [${digits}] แต่หาช่อง ID หลักสิบไม่เจอครับ`);
-        }
-    }
-    else if (cleaned.includes('หน่วย')) {
-        let inputEl = document.getElementById('unitsInput') || document.getElementById('units') || document.querySelector('[name="units"]');
-        if (inputEl) {
-            inputEl.value = digits;
-            inputEl.dispatchEvent(new Event('input'));
-            inputEl.dispatchEvent(new Event('change'));
-            if (typeof showToast === 'function') showToast(`✅ หลักหน่วย: ${digits}`);
-        } else {
-            alert(`พูดหลักหน่วย [${digits}] แต่หาช่อง ID หลักหน่วยไม่เจอครับ`);
-        }
-    }
-    else if (cleaned.includes('วิน') || cleaned.includes('บันได') || cleaned.includes('เบิ้ล')) {
-        // 🎯 ส่งตรงเข้าช่อง ID: stairInput
-        let winInputEl = document.getElementById('stairInput');
-
-        if (winInputEl) {
-            winInputEl.value = digits;
-            // เรียก event เพื่อให้ฟังก์ชัน debounceAutoProcess() ของพี่เต้ยทำงานต่อทันที
-            winInputEl.dispatchEvent(new Event('input', { bubbles: true }));
-            winInputEl.dispatchEvent(new Event('change', { bubbles: true }));
-            
-            if (typeof showToast === 'function') showToast(`✅ วิน: ${digits}`);
-        } else {
-            alert(`หาช่อง id="stairInput" ไม่เจอในหน้าเว็บครับ`);
-        }
-    }
-    else {
-        // กรณีพูดตัวเลขเปล่าๆ
-        if (typeof addFilterRow === 'function') {
-            addFilterRow(digits);
-            if (typeof autoProcess === 'function') autoProcess();
-            if (typeof showToast === 'function') showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
-        }
-    }
-}
-	function saveEverythingToJson() {
-    // 1. ดึงข้อมูลล่าสุดบนหน้าจอมารวมกัน
-    if (typeof collectAndSaveDOMFormulas === 'function') {
-        collectAndSaveDOMFormulas();
-    }
-
-    // 2. รวบรวมข้อมูลทุกอย่างในระบบ (ชีท, สูตร, ประวัติ, ข้อมูลจำในเครื่อง)
-    const fullDataBackup = {
-        appTitle: "Lottery Analysis Backup",
-        exportTimestamp: new Date().toISOString(),
-        activeSheetId: typeof activeSheetId !== 'undefined' ? activeSheetId : null,
-        sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
-        localStorageBackup: { ...localStorage }
-    };
-
-    // 3. แปลงข้อมูลเป็นไฟล์ JSON
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDataBackup, null, 2));
-
-    // 4. สั่งดาวน์โหลดลงเครื่องอัตโนมัติ
-    const now = new Date();
-    const timeStamp = now.toISOString().slice(0,10) + "_" + now.getHours() + "-" + now.minutes();
-    
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `Full_Page_Backup_${timeStamp}.json`);
-    
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-}	
-
-
-function saveEverythingToJson() {
-    try {
-        alert("กำลังประมวลผลข้อมูลเพื่อเซฟไฟล์...");
-        const fullDataBackup = {
-            exportTimestamp: new Date().toISOString(),
-            sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
-            localStorageBackup: { ...localStorage }
-        };
-        const jsonString = JSON.stringify(fullDataBackup, null, 2);
-        const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.href = url;
-        downloadAnchor.download = "Lottery_Backup.json";
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        setTimeout(() => {
-            document.body.removeChild(downloadAnchor);
-            URL.revokeObjectURL(url);
-        }, 100);
-        alert("เซฟสำเร็จเรียบร้อย! ไปดูที่โฟลเดอร์ Download ได้เลยครับ");
-    } catch (err) {
-        alert("เกิดข้อผิดพลาด: " + err.message);
-        console.error(err);
-    }
-}
-
-// ==========================================
-// ระบบเซฟข้อมูลตรงเข้า GitHub API (สำหรับใช้ส่วนตัว)
-// ==========================================
-
-// 1. กำหนดค่าตั้งต้น Repository ของพี่เต้ย
-const GITHUB_CONFIG = {
-    owner: "onizukath-collab", // 👈 เปลี่ยนเป็น Username บน GitHub ของพี่เต้ย
-    repo: "Thai-LOT-Fomula-Down",        // 👈 เปลี่ยนเป็นชื่อ Repository (เช่น lottery-app)
-    filePath: "data.json",   // 👈 พาธไฟล์ที่ต้องการให้ไปบันทึกบน GitHub
-    branch: "main"                 // 👈 ชื่อ Branch (เช่น main หรือ master)
-};
-
-// 2. ฟังก์ชันหลักสำหรับบันทึกข้อมูลเข้า GitHub
-async function saveDirectToGitHub() {
-    // ดึงข้อมูลทั้งหมดในแอปมาแปลงเป็นข้อความ JSON
-    const appData = {
-        formulas: localStorage.getItem('lottery_formulas') || "{}",
-        sheets: localStorage.getItem('lottery_sheets') || "{}",
-        settings: localStorage.getItem('lottery_settings') || "{}"
-    };
-    
-    // แปลงข้อมูลเป็นข้อความ JSON แล้วเข้ารหัสเป็น Base64
-    const jsonString = JSON.stringify(appData, null, 2);
-    const contentEncoded = btoa(unescape(encodeURIComponent(jsonString)));
-
-    // ดึง Token ที่ผู้ใช้เคยบันทึกไว้
-    const token = localStorage.getItem('github_token') || prompt("กรุณากรอก GitHub Personal Access Token (classic):");
-    if (!token) return;
-    localStorage.setItem('github_token', token);
-
-    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.filePath}`;
-
-    try {
-        // เช็กว่ามีไฟล์เดิมอยู่ไหม เพื่อเอา SHA มาใช้อัปเดตทับไฟล์เดิม
-        let sha = "";
-        const getRes = await fetch(url, {
-            headers: { "Authorization": `token ${token}` }
-        });
-        if (getRes.ok) {
-            const fileData = await getRes.json();
-            sha = fileData.sha;
-        }
-
-        // ส่งข้อมูลขึ้น GitHub (ข้อมูลสะอาด ไม่มี Token ปนแน่นอน)
-        const response = await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Authorization": `token ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: "Auto backup data.json from Web App",
-                content: contentEncoded,
-                sha: sha ? sha : undefined,
-                branch: GITHUB_CONFIG.branch
-            })
-        });
-
-        if (response.ok) {
-            alert("บันทึกข้อมูลลง GitHub สำเร็จเรียบร้อยครับ!");
-        } else {
-            const err = await response.json();
-            alert("บันทึกไม่สำเร็จ: " + (err.message || response.statusText));
-        }
-    } catch (error) {
-        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message);
-    }
-}
-
-// ฟังก์ชันสำหรับลบ Token ออกจากเครื่อง (กรณีอยากเปลี่ยน Token ใหม่)
-function clearGitHubToken() {
-    localStorage.removeItem('gh_personal_token');
-    alert("ลบรหัส Token จากเครื่องเรียบร้อยครับ");
-}
     </script>
-	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
-<div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-indigo-500/40 text-white">
-        
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
-                <i class="fa-solid fa-share-nodes text-indigo-400"></i> สรุปผลเลขเด่น พร้อมแชร์
-            </h3>
-            <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-		
-<!-- ช่องกรอกงวดวันที่สำหรับแสดงบนภาพ PNG -->
-<div class="space-y-1">
-    <label class="text-xl text-indigo-200 font-medium">งวดวันที่ออกสลาก (เช่น 16 มีนาคม 2569):</label>
-    <input type="text" id="drawDateInput" placeholder="เช่น 16 มีนาคม 2569" 
-        class="w-full bg-slate-900 border border-indigo-500/40 rounded-xl px-3 py-2 text-xs text-amber-300 placeholder-slate-500 font-semibold outline-none focus:ring-2 focus:ring-indigo-500">
-</div>
-
-        <!-- Preview Box (พรีวิวข้อความสวยๆ ที่จะโพสต์) -->
-        <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2 leading-relaxed shadow-inner">
-            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-            <div class="text-white font-bold">📌 สรุปผลเลขเด่นผ่านการคัดกรอง</div>
-            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-            <div id="sharePreviewContent" class="text-amber-200 font-black text-sm tracking-widest py-2 break-words">-- กำลังโหลดข้อมูล --</div>
-            <div class="text-slate-400 text-[10px] pt-1 border-t border-indigo-900/50">✨ สร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว</div>
-        </div>
-
-        <!-- Share / Download Actions -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <button onclick="shareImageToFacebook()" class="py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-share-nodes"></i> แชร์ภาพไปยัง Facebook Story
-            </button>
-            <button onclick="downloadShareImage()" class="py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-download"></i> ดาวน์โหลดภาพ PNG
-            </button>
-            <button onclick="copyFormattedShareText()" class="sm:col-span-2 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-copy"></i> คัดลอกข้อความ (ทางเลือก)
-            </button>
-        </div>
-        <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
-    </div>
-</div>
-	<!-- ปุ่มไมโครโฟนลอยมุมขวาล่าง สะดวก ไม่เกะกะหน้าจอ -->
-<button onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-20 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-109 active:scale-90" title="กดพูดคำสั่งเสียง">
-    <i class="fa-solid fa-microphone text-xl"></i>
-</button>
 </body>
 </html>
+```[cite: 2]
+
+### 💡 สิ่งที่เพิ่มและปรับปรุงใหม่:
+1. **เพิ่มช่องพิมพ์สูตรเองในหน้าต่างวิเคราะห์ 4 สูตรเด่น**: สามารถพิมพ์สูตรเพิ่มเติมเองได้ทันที (เช่น `P1+P7+2` หรือสูตรอื่นๆ) แล้วกดปุ่ม **"➕ เพิ่มสูตร"**[cite: 2]
+2. **แสดงผลรายการสูตรที่นำมาคัดกรองทั้งหมด**: ในหน้าต่างโมดอลจะแสดงรายการสูตรพร้อมผลลัพธ์ย้อนหลัง และมีปุ่มลบสูตรที่ไม่ต้องการออกได้[cite: 2]
+3. **จัดเก็บค่าอัจฉริยะ**: ทำงานแบบออฟไลน์ 100% พร้อมปุ่มติดตั้งแอปบนหน้าจอโทรศัพท์มือถือครบถ้วนครับ[cite: 2]
