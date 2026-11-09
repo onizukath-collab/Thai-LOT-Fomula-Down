@@ -2160,17 +2160,37 @@ function clearGitHubToken() {
 }
 
 // ==========================================
-// ระบบล็อก/ปลดล็อกตัวปรับขนาดตัวเลขสถิติ
 // ==========================================
+// ระบบจำขนาดตัวเลขและสถานะล็อกสถิติ
+// ==========================================
+
 let isHistoryFontSizeLocked = false;
 
-function toggleHistoryFontSizeLock() {
+const HISTORY_FONT_SIZE_KEY = 'historyFontSize';
+const HISTORY_FONT_LOCK_KEY = 'historyFontSizeLocked';
+
+// ปรับขนาดตัวเลขและบันทึกค่า
+function updateHistoryFontSize(value) {
+    const input = document.getElementById('customHistoryInput');
+
+    if (!input) return;
+
+    input.style.fontSize = value + 'px';
+    input.style.letterSpacing = (value * 0.1) + 'px';
+
+    try {
+        localStorage.setItem(HISTORY_FONT_SIZE_KEY, value);
+    } catch (e) {
+        console.warn('ไม่สามารถบันทึกขนาดตัวเลขได้', e);
+    }
+}
+
+// อัปเดตหน้าตาปุ่มล็อก
+function updateHistoryFontSizeLockUI() {
     const slider = document.getElementById('historyFontSizeSlider');
     const button = document.getElementById('historyFontSizeLockBtn');
 
     if (!slider || !button) return;
-
-    isHistoryFontSizeLocked = !isHistoryFontSizeLocked;
 
     slider.disabled = isHistoryFontSizeLocked;
 
@@ -2178,7 +2198,6 @@ function toggleHistoryFontSizeLock() {
         button.innerHTML = '<i class="fa-solid fa-lock"></i> ปลดล็อก';
         button.className =
             'whitespace-nowrap px-2 py-1 rounded-md bg-rose-100 text-rose-700 border border-rose-200 hover:bg-rose-200';
-        button.title = 'ปลดล็อกเพื่อปรับขนาดตัวเลข';
 
         slider.classList.add('opacity-40', 'cursor-not-allowed');
         slider.classList.remove('cursor-pointer');
@@ -2186,11 +2205,69 @@ function toggleHistoryFontSizeLock() {
         button.innerHTML = '<i class="fa-solid fa-lock-open"></i> ล็อก';
         button.className =
             'whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200';
-        button.title = 'ล็อก/ปลดล็อกขนาดตัวเลข';
 
         slider.classList.remove('opacity-40', 'cursor-not-allowed');
         slider.classList.add('cursor-pointer');
     }
+}
+
+// กดล็อก / ปลดล็อก
+function toggleHistoryFontSizeLock() {
+    isHistoryFontSizeLocked = !isHistoryFontSizeLocked;
+
+    try {
+        localStorage.setItem(
+            HISTORY_FONT_LOCK_KEY,
+            isHistoryFontSizeLocked ? 'true' : 'false'
+        );
+    } catch (e) {
+        console.warn('ไม่สามารถบันทึกสถานะล็อกได้', e);
+    }
+
+    updateHistoryFontSizeLockUI();
+}
+
+// โหลดค่าที่บันทึกไว้เมื่อเปิดหน้าเว็บ
+function loadHistoryFontSizeSettings() {
+    const slider = document.getElementById('historyFontSizeSlider');
+
+    if (!slider) return;
+
+    try {
+        const savedSize = localStorage.getItem(HISTORY_FONT_SIZE_KEY);
+        const savedLock = localStorage.getItem(HISTORY_FONT_LOCK_KEY);
+
+        // โหลดขนาดตัวเลขเดิม
+        if (savedSize !== null) {
+            const size = Number(savedSize);
+
+            if (Number.isFinite(size) && size >= 16 && size <= 32) {
+                slider.value = size;
+            }
+        }
+
+        // โหลดสถานะล็อกเดิม
+        isHistoryFontSizeLocked = savedLock === 'true';
+
+    } catch (e) {
+        console.warn('ไม่สามารถโหลดการตั้งค่าได้', e);
+    }
+
+    // นำขนาดที่โหลดมาใช้กับช่องสถิติ
+    updateHistoryFontSize(slider.value);
+
+    // แสดงสถานะล็อกที่ถูกต้อง
+    updateHistoryFontSizeLockUI();
+}
+
+// เรียกใช้งานเมื่อหน้าเว็บพร้อม
+if (document.readyState === 'loading') {
+    document.addEventListener(
+        'DOMContentLoaded',
+        loadHistoryFontSizeSettings
+    );
+} else {
+    loadHistoryFontSizeSettings();
 }
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
