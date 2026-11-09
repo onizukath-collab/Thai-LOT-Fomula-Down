@@ -271,6 +271,13 @@
                             <h2 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                                 <i class="fa-solid fa-clock-rotate-left text-purple-600"></i> สถิติผลสลาก
                             </h2>
+							<!-- 🎚️ ตัวเลื่อนปรับขนาดตัวอักษรช่องสถิติ -->
+<div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
+    <span class="text-slate-600 font-medium">ขนาดตัวเลข:</span>
+    <input type="range" min="16" max="32" value="22" step="1" 
+        oninput="document.getElementById('customHistoryInput').style.fontSize = this.value + 'px'; document.getElementById('customHistoryInput').style.letterSpacing = (this.value * 0.1) + 'px';" 
+        class="w-full accent-purple-600 cursor-pointer">
+</div>
                             <button onclick="clearCustomHistoryInput()" id="clearHistoryBtn" class="text-[11px] text-rose-500 hover:underline">ล้างสถิติ</button>
                         </div>
                         <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl border border-slate-200">
