@@ -287,11 +287,29 @@
                                 <i class="fa-solid fa-clock-rotate-left text-purple-600"></i> สถิติผลสลาก
                             </h2>
 							<!-- 🎚️ ตัวเลื่อนปรับขนาดตัวอักษรช่องสถิติ -->
+<!-- 🎚️ ปรับขนาดตัวเลข พร้อมระบบจำค่าและล็อก -->
 <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
-    <span class="text-slate-600 font-medium">ขนาดตัวเลข:</span>
-    <input type="range" min="16" max="32" value="22" step="1" 
-        oninput="document.getElementById('customHistoryInput').style.fontSize = this.value + 'px'; document.getElementById('customHistoryInput').style.letterSpacing = (this.value * 0.1) + 'px';" 
-        class="w-full accent-purple-600 cursor-pointer">
+    <span class="text-slate-600 font-medium whitespace-nowrap">ขนาดตัวเลข:</span>
+
+    <input
+        type="range"
+        id="historyFontSizeSlider"
+        min="16"
+        max="32"
+        value="22"
+        step="1"
+        oninput="updateHistoryFontSize(this.value)"
+        class="w-full accent-purple-600 cursor-pointer"
+    >
+
+    <button
+        type="button"
+        id="historyFontSizeLockBtn"
+        onclick="toggleHistoryFontSizeLock()"
+        class="whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200"
+    >
+        <i class="fa-solid fa-lock-open"></i> ล็อก
+    </button>
 </div>
                             <button onclick="clearCustomHistoryInput()" id="clearHistoryBtn" class="text-[11px] text-rose-500 hover:underline">ล้างสถิติ</button>
                         </div>
@@ -2139,6 +2157,40 @@ async function saveDirectToGitHub() {
 function clearGitHubToken() {
     localStorage.removeItem('gh_personal_token');
     alert("ลบรหัส Token จากเครื่องเรียบร้อยครับ");
+}
+
+// ==========================================
+// ระบบล็อก/ปลดล็อกตัวปรับขนาดตัวเลขสถิติ
+// ==========================================
+let isHistoryFontSizeLocked = false;
+
+function toggleHistoryFontSizeLock() {
+    const slider = document.getElementById('historyFontSizeSlider');
+    const button = document.getElementById('historyFontSizeLockBtn');
+
+    if (!slider || !button) return;
+
+    isHistoryFontSizeLocked = !isHistoryFontSizeLocked;
+
+    slider.disabled = isHistoryFontSizeLocked;
+
+    if (isHistoryFontSizeLocked) {
+        button.innerHTML = '<i class="fa-solid fa-lock"></i> ปลดล็อก';
+        button.className =
+            'whitespace-nowrap px-2 py-1 rounded-md bg-rose-100 text-rose-700 border border-rose-200 hover:bg-rose-200';
+        button.title = 'ปลดล็อกเพื่อปรับขนาดตัวเลข';
+
+        slider.classList.add('opacity-40', 'cursor-not-allowed');
+        slider.classList.remove('cursor-pointer');
+    } else {
+        button.innerHTML = '<i class="fa-solid fa-lock-open"></i> ล็อก';
+        button.className =
+            'whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200';
+        button.title = 'ล็อก/ปลดล็อกขนาดตัวเลข';
+
+        slider.classList.remove('opacity-40', 'cursor-not-allowed');
+        slider.classList.add('cursor-pointer');
+    }
 }
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
