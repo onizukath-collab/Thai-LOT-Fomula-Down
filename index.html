@@ -174,7 +174,22 @@
                                 class="w-full px-3 py-1.5 border border-blue-200 bg-blue-50/40 rounded-xl focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-blue-900">
                         </div>
 
-
+                        <!-- สรุปคู่ซ้ำจากสูตรที่บันทึกไว้ -->
+                        <div id="allPresetPairSummary" class="mt-3 p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2">
+                            <div class="flex items-center justify-between gap-2 border-b border-indigo-200 pb-2">
+                                <div class="min-w-0">
+                                    <h3 class="text-xs sm:text-sm font-bold text-indigo-950"><i class="fa-solid fa-layer-group mr-1 text-indigo-600"></i> สรุปคู่ซ้ำจากทุกสูตรที่บันทึก</h3>
+                                    <p id="presetPairSummaryMeta" class="text-[10px] text-indigo-700 mt-0.5">กำลังตรวจสอบสูตร...</p>
+                                </div>
+                                <button type="button" onclick="renderPresetPairCollisionSummary()" class="shrink-0 px-2 py-1 bg-white border border-indigo-200 hover:bg-indigo-100 rounded-lg text-[10px] font-semibold text-indigo-800">
+                                    <i class="fa-solid fa-rotate mr-1"></i> รีเฟรช
+                                </button>
+                            </div>
+                            <div id="presetPairSummaryContent" class="space-y-1.5 text-xs max-h-48 overflow-y-auto pr-1">
+                                <p class="text-slate-500">กำลังโหลดข้อมูล...</p>
+                            </div>
+                            <p class="text-[10px] text-slate-500 border-t border-indigo-100 pt-1.5">นับคู่กลับเป็นคู่เดียวกัน เช่น 25 และ 52 และนับแต่ละคู่ไม่เกิน 1 ครั้งต่อสูตร</p>
+                        </div>
 
                     </div>
 
@@ -272,30 +287,11 @@
                                 <i class="fa-solid fa-clock-rotate-left text-purple-600"></i> สถิติผลสลาก
                             </h2>
 							<!-- 🎚️ ตัวเลื่อนปรับขนาดตัวอักษรช่องสถิติ -->
-<!-- 🎚️ ปรับขนาดตัวเลข พร้อมปุ่มล็อกแยก -->
-<!-- 🎚️ ปรับขนาดตัวเลข พร้อมระบบจำค่าและล็อก -->
 <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
-    <span class="text-slate-600 font-medium whitespace-nowrap">ขนาดตัวเลข:</span>
-
-    <input
-        type="range"
-        id="historyFontSizeSlider"
-        min="16"
-        max="32"
-        value="22"
-        step="1"
-        oninput="updateHistoryFontSize(this.value)"
-        class="w-full accent-purple-600 cursor-pointer"
-    >
-
-    <button
-        type="button"
-        id="historyFontSizeLockBtn"
-        onclick="toggleHistoryFontSizeLock()"
-        class="whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200"
-    >
-        <i class="fa-solid fa-lock-open"></i> ล็อก
-    </button>
+    <span class="text-slate-600 font-medium">ขนาดตัวเลข:</span>
+    <input type="range" min="16" max="32" value="22" step="1" 
+        oninput="document.getElementById('customHistoryInput').style.fontSize = this.value + 'px'; document.getElementById('customHistoryInput').style.letterSpacing = (this.value * 0.1) + 'px';" 
+        class="w-full accent-purple-600 cursor-pointer">
 </div>
                             <button onclick="clearCustomHistoryInput()" id="clearHistoryBtn" class="text-[11px] text-rose-500 hover:underline">ล้างสถิติ</button>
                         </div>
@@ -1166,7 +1162,91 @@
         }
         function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
-        function getStoredPresets() { const p = localStorage.getItem(PRESETS_KEY); return p ? JSON.parse(p) : {}; }
+        function getStoredPresets() {
+            try { const p = localStorage.getItem(PRESETS_KEY); return p ? JSON.parse(p) : {}; }
+            catch (e) { console.warn('อ่านสูตรที่บันทึกไว้ไม่สำเร็จ', e); return {}; }
+        }
+
+        // แปลงคู่กลับให้เป็นคีย์เดียวกัน เช่น 25 และ 52 จะได้คีย์ 25
+        function normalizePairForPresetCompare(pair) {
+            const digits = String(pair).replace(/[^0-9]/g, '');
+            if (digits.length !== 2) return '';
+            return digits.split('').sort().join('');
+        }
+
+        // คำนวณผลคู่ที่ผ่านเงื่อนไขของสูตรที่บันทึก โดยไม่เปลี่ยนค่าบนหน้าจอปัจจุบัน
+        function getPassedPairsFromPresetState(data) {
+            if (!data || typeof data !== 'object') return new Set();
+            const tens = [...new Set(String(data.tens || '').replace(/[^0-9]/g, '').split(''))];
+            const units = [...new Set(String(data.units || '').replace(/[^0-9]/g, '').split(''))];
+            const stair = [...new Set(String(data.stairInput || '').replace(/[^0-9]/g, '').split(''))];
+            const exclude = [...new Set(String(data.excludeInput || '').replace(/[^0-9]/g, '').split(''))];
+            const allowedSums = [...new Set(String(data.sumPointsInput || '').replace(/[^0-9]/g, '').split(''))].map(Number);
+            const filterSets = (Array.isArray(data.filterInputs) ? data.filterInputs : [])
+                .map(value => [...new Set(String(value || '').replace(/[^0-9]/g, '').split(''))])
+                .filter(set => set.length > 0);
+            const passed = new Set();
+
+            const testPair = (a, b) => {
+                if (exclude.length && (exclude.includes(a) || exclude.includes(b))) return;
+                const sumPoint = (Number(a) + Number(b)) % 10;
+                if (allowedSums.length && !allowedSums.includes(sumPoint)) return;
+                const digits = [a, b];
+                // หน้าหลักกำหนดเงื่อนไขชุดคัดกรองเป็น AND
+                if (filterSets.length && !filterSets.every(set => digits.some(d => set.includes(d)))) return;
+                const normalized = normalizePairForPresetCompare(a + b);
+                if (normalized) passed.add(normalized);
+            };
+
+            if (tens.length && units.length) {
+                tens.forEach(t => units.forEach(u => testPair(t, u)));
+            }
+            if (stair.length) {
+                for (let i = 0; i < stair.length; i++) {
+                    for (let j = i; j < stair.length; j++) testPair(stair[i], stair[j]);
+                }
+            }
+            return passed;
+        }
+
+        function renderPresetPairCollisionSummary() {
+            const meta = document.getElementById('presetPairSummaryMeta');
+            const content = document.getElementById('presetPairSummaryContent');
+            if (!meta || !content) return;
+            const presets = getStoredPresets();
+            const names = Object.keys(presets);
+            if (!names.length) {
+                meta.textContent = 'ยังไม่มีสูตรที่บันทึกไว้';
+                content.innerHTML = '<p class="text-slate-500">บันทึกสูตรอย่างน้อย 1 สูตร แล้วจึงจะแสดงผลเปรียบเทียบ</p>';
+                return;
+            }
+
+            const counts = new Map();
+            names.forEach(name => {
+                const pairsInThisPreset = getPassedPairsFromPresetState(presets[name]);
+                pairsInThisPreset.forEach(pair => counts.set(pair, (counts.get(pair) || 0) + 1));
+            });
+            const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+            meta.textContent = `นำมาเปรียบเทียบ ${names.length} สูตร · พบคู่ที่ผ่านอย่างน้อย 1 สูตร ${ranked.length} คู่`;
+            if (!ranked.length) {
+                content.innerHTML = '<p class="text-slate-500">ยังไม่พบคู่ที่ผ่านเงื่อนไขจากสูตรที่บันทึกไว้</p>';
+                return;
+            }
+
+            content.innerHTML = ranked.map(([pair, count], index) => {
+                const rankStyle = index === 0
+                    ? 'bg-amber-100 border-amber-300 text-amber-950'
+                    : 'bg-white border-indigo-100 text-indigo-950';
+                return `<div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border ${rankStyle}">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-[10px] text-slate-500 w-5 shrink-0">${index + 1}.</span>
+                        <strong class="font-mono text-sm tracking-wider">${pair}</strong>
+                    </div>
+                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">พบ ${count} สูตร</span>
+                </div>`;
+            }).join('');
+        }
+
         function saveCurrentPreset() {
             const select = document.getElementById('presetSelect');
             let name = document.getElementById('presetNameInput').value.trim() || select.value; if (!name) return;
@@ -1178,6 +1258,7 @@
             const select = document.getElementById('presetSelect'); if(!select) return;
             const presets = getStoredPresets(); select.innerHTML = '<option value="">-- งานปัจจุบัน (Auto Saved) --</option>';
             for (let name in presets) select.innerHTML += `<option value="${name}">📁 ${name}</option>`;
+            renderPresetPairCollisionSummary();
         }
         function loadSelectedPreset() {
             const name = document.getElementById('presetSelect').value; if (!name) { loadSavedData(); autoProcess(); return; }
@@ -2058,117 +2139,6 @@ async function saveDirectToGitHub() {
 function clearGitHubToken() {
     localStorage.removeItem('gh_personal_token');
     alert("ลบรหัส Token จากเครื่องเรียบร้อยครับ");
-}
-
-// ==========================================
-// ==========================================
-// ระบบจำขนาดตัวเลขและสถานะล็อกสถิติ
-// ==========================================
-
-let isHistoryFontSizeLocked = false;
-
-const HISTORY_FONT_SIZE_KEY = 'historyFontSize';
-const HISTORY_FONT_LOCK_KEY = 'historyFontSizeLocked';
-
-// ปรับขนาดตัวเลขและบันทึกค่า
-function updateHistoryFontSize(value) {
-    const input = document.getElementById('customHistoryInput');
-
-    if (!input) return;
-
-    input.style.fontSize = value + 'px';
-    input.style.letterSpacing = (value * 0.1) + 'px';
-
-    try {
-        localStorage.setItem(HISTORY_FONT_SIZE_KEY, value);
-    } catch (e) {
-        console.warn('ไม่สามารถบันทึกขนาดตัวเลขได้', e);
-    }
-}
-
-// อัปเดตหน้าตาปุ่มล็อก
-function updateHistoryFontSizeLockUI() {
-    const slider = document.getElementById('historyFontSizeSlider');
-    const button = document.getElementById('historyFontSizeLockBtn');
-
-    if (!slider || !button) return;
-
-    slider.disabled = isHistoryFontSizeLocked;
-
-    if (isHistoryFontSizeLocked) {
-        button.innerHTML = '<i class="fa-solid fa-lock"></i> ปลดล็อก';
-        button.className =
-            'whitespace-nowrap px-2 py-1 rounded-md bg-rose-100 text-rose-700 border border-rose-200 hover:bg-rose-200';
-
-        slider.classList.add('opacity-40', 'cursor-not-allowed');
-        slider.classList.remove('cursor-pointer');
-    } else {
-        button.innerHTML = '<i class="fa-solid fa-lock-open"></i> ล็อก';
-        button.className =
-            'whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200';
-
-        slider.classList.remove('opacity-40', 'cursor-not-allowed');
-        slider.classList.add('cursor-pointer');
-    }
-}
-
-// กดล็อก / ปลดล็อก
-function toggleHistoryFontSizeLock() {
-    isHistoryFontSizeLocked = !isHistoryFontSizeLocked;
-
-    try {
-        localStorage.setItem(
-            HISTORY_FONT_LOCK_KEY,
-            isHistoryFontSizeLocked ? 'true' : 'false'
-        );
-    } catch (e) {
-        console.warn('ไม่สามารถบันทึกสถานะล็อกได้', e);
-    }
-
-    updateHistoryFontSizeLockUI();
-}
-
-// โหลดค่าที่บันทึกไว้เมื่อเปิดหน้าเว็บ
-function loadHistoryFontSizeSettings() {
-    const slider = document.getElementById('historyFontSizeSlider');
-
-    if (!slider) return;
-
-    try {
-        const savedSize = localStorage.getItem(HISTORY_FONT_SIZE_KEY);
-        const savedLock = localStorage.getItem(HISTORY_FONT_LOCK_KEY);
-
-        // โหลดขนาดตัวเลขเดิม
-        if (savedSize !== null) {
-            const size = Number(savedSize);
-
-            if (Number.isFinite(size) && size >= 16 && size <= 32) {
-                slider.value = size;
-            }
-        }
-
-        // โหลดสถานะล็อกเดิม
-        isHistoryFontSizeLocked = savedLock === 'true';
-
-    } catch (e) {
-        console.warn('ไม่สามารถโหลดการตั้งค่าได้', e);
-    }
-
-    // นำขนาดที่โหลดมาใช้กับช่องสถิติ
-    updateHistoryFontSize(slider.value);
-
-    // แสดงสถานะล็อกที่ถูกต้อง
-    updateHistoryFontSizeLockUI();
-}
-
-// เรียกใช้งานเมื่อหน้าเว็บพร้อม
-if (document.readyState === 'loading') {
-    document.addEventListener(
-        'DOMContentLoaded',
-        loadHistoryFontSizeSettings
-    );
-} else {
-    loadHistoryFontSizeSettings();
 }
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
