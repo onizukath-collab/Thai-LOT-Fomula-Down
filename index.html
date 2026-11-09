@@ -97,26 +97,15 @@
 </div>
 
                 <!-- แถบเครื่องมือดาวน์โหลด/โหลดไฟล์สำรองข้อมูล (Offline Backup File) -->
-                <div class="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
-                    <div class="flex flex-wrap items-center gap-2 flex-1">
-                        <span class="font-bold text-slate-700 whitespace-nowrap"><i class="fa-solid fa-box-archive text-amber-500 mr-1"></i>สำรอง/ย้ายข้อมูล:</span>
-                        <input type="text" id="backupFileNameInput" placeholder="ตั้งชื่อไฟล์สำรอง" value=" lottery_backup" class="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 outline-none w-32 font-semibold">
-                        <button onclick="exportAllDataToFile()" class="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg transition flex items-center gap-1 shadow-sm">
-                            <i class="fa-solid fa-file-export"></i> ส่งออกไฟล์ (.json)
-                        </button>
-                        <label class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition flex items-center gap-1 shadow-sm cursor-pointer">
-                            <i class="fa-solid fa-file-import"></i> โหลดไฟล์เข้า
-                            <input type="file" id="importFileInput" accept=".json" onchange="importDataFromFile(event)" class="hidden">
-                        </label>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="copyDataCodeToClipboard()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition flex items-center gap-1 border">
-                            <i class="fa-solid fa-copy"></i> คัดลอกรหัสข้อมูล
-                        </button>
-                        <button onclick="pasteDataCodeFromPrompt()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition flex items-center gap-1 border">
-                            <i class="fa-solid fa-paste"></i> วางรหัสข้อมูล
-                        </button>
-                    </div>
+                <div class="flex flex-nowrap items-center gap-2 pt-1 text-xs w-full min-w-0">
+                    <input type="text" id="backupFileNameInput" placeholder="ชื่อไฟล์" value="lottery_backup" class="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 outline-none flex-1 min-w-0 w-0 font-semibold">
+                    <button onclick="exportAllDataToFile()" class="shrink-0 whitespace-nowrap px-2 sm:px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-file-export"></i> ส่งออกไฟล์ (.json)
+                    </button>
+                    <label class="shrink-0 whitespace-nowrap px-2 sm:px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition flex items-center gap-1 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-file-import"></i> โหลดไฟล์เข้า
+                        <input type="file" id="importFileInput" accept=".json" onchange="importDataFromFile(event)" class="hidden">
+                    </label>
                 </div>
             </div>
 
@@ -134,25 +123,24 @@
                             </button>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">ชุดประกบ [สิบ]:</label>
-                                <input type="text" id="tens" oninput="debounceAutoProcess()" placeholder="เช่น 6789" 
-                                    class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-slate-800">
+                        <div class="grid grid-cols-3 gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <div class="min-w-0">
+                                <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">ชุดประกบ [สิบ]:</label>
+                                <input type="text" id="tens" oninput="debounceAutoProcess()" placeholder="เช่น 6789"
+                                    class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
                             </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">ชุดประกบ [หน่วย]:</label>
-                                <input type="text" id="units" oninput="debounceAutoProcess()" placeholder="เช่น 56789" 
-                                    class="w-full px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-slate-800">
+                            <div class="min-w-0">
+                                <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">ชุดประกบ [หน่วย]:</label>
+                                <input type="text" id="units" oninput="debounceAutoProcess()" placeholder="เช่น 56789"
+                                    class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
                             </div>
-                        </div>
-
-                        <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-200">
-                            <label class="block text-xs font-semibold text-blue-900 mb-1 flex items-center gap-1.5">
-                                <i class="fa-solid fa-stairs text-[#1877F2]"></i> ชุดวินขึ้นบันไดรวมเลขเบิ้ล:
-                            </label>
-                            <input type="text" id="stairInput" oninput="debounceAutoProcess()" placeholder="เช่น 67890" 
-                                class="w-full px-3 py-1.5 border border-blue-300 bg-white rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-blue-950">
+                            <div class="min-w-0">
+                                <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">
+                                    <i class="fa-solid fa-stairs text-[#1877F2]"></i> ชุดวินขึ้นบันไดรวมเลขเบิ้ล:
+                                </label>
+                                <input type="text" id="stairInput" oninput="debounceAutoProcess()" placeholder="เช่น 67890"
+                                    class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -246,13 +234,10 @@
                             </button>
                         </div>
 
-                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
-                            <span>เงื่อนไขชุดเลขเด่น:</span>
-                            <select id="filterLogic" onchange="autoProcess()" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-700 font-medium">
-                                <option value="AND">ต้องมีอยู่ใน "ทุกชุด" (AND)</option>
-                                <option value="OR">มีอยู่ใน "อย่างน้อย 1 ชุด" (OR)</option>
-                            </select>
-                        </div>
+                        <!-- ล็อกเงื่อนไขชุดเลขเด่นเป็น AND โดยซ่อนตัวเลือกจากหน้าจอ -->
+                        <select id="filterLogic" class="hidden" aria-hidden="true" tabindex="-1">
+                            <option value="AND" selected>ต้องมีอยู่ใน "ทุกชุด" (AND)</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -1024,7 +1009,7 @@
                 const digits = input.value.replace(/[^0-9]/g, '');
                 if (digits.length > 0) filterSets.push([...new Set(digits.split(''))]);
             });
-            const filterLogic = document.getElementById('filterLogic').value;
+            const filterLogic = 'AND';
 
             // Pair Section
             const pairResultsDiv = document.getElementById('pairResults');
@@ -1158,8 +1143,8 @@
             const container = document.getElementById('filterInputsList'); if(!container) return;
             const index = container.children.length + 1;
             const rowId = `filter_input_${Date.now()}_${index}`;
-            const div = document.createElement('div'); div.className = "flex items-center gap-2 filter-row";
-            div.innerHTML = `<span class="text-xs text-slate-400 font-mono w-6 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" oninput="debounceAutoProcess()" placeholder="ชุดเลขเด่น ${index}" class="filter-input flex-1 px-3 py-1 border border-slate-200 rounded-lg text-xs font-medium"><button onclick="removeFilterRow(this)" class="text-slate-400 p-1"><i class="fa-solid fa-xmark"></i></button>`;
+            const div = document.createElement('div'); div.className = "flex items-center gap-1.5 min-w-0 w-full filter-row";
+            div.innerHTML = `<span class="shrink-0 text-xs text-slate-400 font-mono w-5 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" oninput="debounceAutoProcess()" placeholder="ชุดเลขเด่น ${index}" class="filter-input min-w-0 w-0 flex-1 px-2 py-1 border border-slate-200 rounded-lg text-xs font-medium"><button type="button" onclick="removeFilterRow(this)" aria-label="ลบชุดคัดกรอง" class="shrink-0 text-slate-500 hover:text-rose-600 p-1.5"><i class="fa-solid fa-xmark"></i></button>`;
             container.appendChild(div); reindexFilterRows();
         }
 
@@ -1180,7 +1165,7 @@
                 sumPointsInput: document.getElementById('sumPointsInput').value,
                 parityFilter: document.getElementById('parityFilter').value,
                 hiLoFilter: document.getElementById('hiLoFilter').value,
-                filterInputs, filterLogic: document.getElementById('filterLogic').value
+                filterInputs, filterLogic: 'AND'
             };
         }
 
@@ -1192,7 +1177,7 @@
             document.getElementById('sumPointsInput').value = data.sumPointsInput || '';
             document.getElementById('parityFilter').value = data.parityFilter || 'ALL';
             document.getElementById('hiLoFilter').value = data.hiLoFilter || 'ALL';
-            document.getElementById('filterLogic').value = data.filterLogic || 'AND';
+            document.getElementById('filterLogic').value = 'AND';
             const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
             if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
             else { addFilterRow('24680'); addFilterRow('13579'); }
@@ -1239,7 +1224,7 @@
             const select = document.getElementById('filterPresetSelect');
             let name = document.getElementById('filterPresetNameInput').value.trim() || select.value; if (!name) return;
             let filterInputs = []; document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
-            const presets = getStoredFilterPresets(); presets[name] = { filterInputs, filterLogic: document.getElementById('filterLogic').value };
+            const presets = getStoredFilterPresets(); presets[name] = { filterInputs, filterLogic: 'AND' };
             localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect(); select.value = name;
         }
         function loadFilterPresetsToSelect() {
@@ -1251,7 +1236,7 @@
             const name = document.getElementById('filterPresetSelect').value; if (!name) return;
             const presets = getStoredFilterPresets();
             if (presets[name]) {
-                const data = presets[name]; document.getElementById('filterLogic').value = data.filterLogic || 'AND';
+                const data = presets[name]; document.getElementById('filterLogic').value = 'AND';
                 const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
                 if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
                 autoProcess();
@@ -1384,35 +1369,7 @@
             event.target.value = '';
         }
 
-        function copyDataCodeToClipboard() {
-            const bundle = getAllBackupBundle();
-            const codeStr = btoa(unescape(encodeURIComponent(JSON.stringify(bundle))));
-            navigator.clipboard.writeText(codeStr).then(() => {
-                showToast('คัดลอกรหัสข้อมูลลงคลิปบอร์ดแล้ว!');
-            }).catch(() => {
-                alert('ไม่สามารถคัดลอกรหัสได้');
-            });
-        }
 
-        function pasteDataCodeFromPrompt() {
-            const codeStr = prompt('วางรหัสข้อมูลสำรองที่นี่:');
-            if (!codeStr || !codeStr.trim()) return;
-
-            try {
-                const jsonStr = decodeURIComponent(escape(atob(codeStr.trim())));
-                const bundle = JSON.parse(jsonStr);
-                if (applyBackupBundle(bundle)) {
-                    showToast('ถอดรหัสและโหลดข้อมูลเรียบร้อย!');
-                } else {
-                    alert('รหัสข้อมูลไม่ถูกต้อง');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('รหัสข้อมูลไม่ถูกต้องหรือเสียหาย');
-            }
-        }
-		
-		
         // ระบบแชร์ผลสรุปเป็นภาพ PNG พร้อมเปิดเมนูแชร์ของอุปกรณ์
         let generatedShareText = '';
         let generatedShareNumbers = [];
