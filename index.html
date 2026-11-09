@@ -1330,6 +1330,53 @@
             }
         }
     </script>
+<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
+<div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-indigo-500/40 text-white">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                <i class="fa-solid fa-share-nodes text-indigo-400"></i> สรุปผลเลขเด่น พร้อมแชร์
+            </h3>
+            <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+		
+<!-- ช่องกรอกงวดวันที่สำหรับแสดงบนภาพ PNG -->
+<div class="space-y-1">
+    <label class="text-xl text-indigo-200 font-medium">งวดวันที่ออกสลาก (เช่น 16 มีนาคม 2569):</label>
+    <input type="text" id="drawDateInput" placeholder="เช่น 16 มีนาคม 2569" 
+        class="w-full bg-slate-900 border border-indigo-500/40 rounded-xl px-3 py-2 text-xs text-amber-300 placeholder-slate-500 font-semibold outline-none focus:ring-2 focus:ring-indigo-500">
+</div>
+
+        <!-- Preview Box (พรีวิวข้อความสวยๆ ที่จะโพสต์) -->
+        <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2 leading-relaxed shadow-inner">
+            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
+            <div class="text-white font-bold">📌 สรุปผลเลขเด่นผ่านการคัดกรอง</div>
+            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
+            <div id="sharePreviewContent" class="text-amber-200 font-black text-sm tracking-widest py-2 break-words">-- กำลังโหลดข้อมูล --</div>
+            <div class="text-slate-400 text-[10px] pt-1 border-t border-indigo-900/50">✨ สร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว</div>
+        </div>
+
+        <!-- Share / Download Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <button onclick="shareImageToFacebook()" class="py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-share-nodes"></i> แชร์ภาพไปยัง Facebook Story
+            </button>
+            <button onclick="downloadShareImage()" class="py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-download"></i> ดาวน์โหลดภาพ PNG
+            </button>
+            <button onclick="copyFormattedShareText()" class="sm:col-span-2 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-copy"></i> คัดลอกข้อความ (ทางเลือก)
+            </button>
+        </div>
+        <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
+    </div>
+</div>
+	<!-- ปุ่มไมโครโฟนลอยมุมขวาล่าง สะดวก ไม่เกะกะหน้าจอ -->
+<button onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-20 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-109 active:scale-90" title="กดพูดคำสั่งเสียง">
+    <i class="fa-solid fa-microphone text-xl"></i>
+</button>
 </body>
 </html>
 
