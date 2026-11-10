@@ -84,11 +84,24 @@
             <span id="activePeriodFolderLabel" class="text-amber-300 font-bold">ยังไม่ได้เลือก</span>
         </div>
 
-        <button onclick="deleteActivePeriodFolder()"
-            class="text-xs text-rose-300 hover:text-rose-200">
-            <i class="fa-solid fa-trash"></i> ลบแฟ้มนี้
-        </button>
-    </div>
+        <div class="flex items-center gap-2">
+
+    <button
+        type="button"
+        onclick="renameActivePeriodFolder()"
+        class="text-xs text-blue-300 hover:text-blue-200">
+        ✏️ เปลี่ยนชื่อแฟ้ม
+    </button>
+
+    <button
+        type="button"
+        onclick="deleteActivePeriodFolder()"
+        class="text-xs text-rose-300 hover:text-rose-200">
+        <i class="fa-solid fa-trash"></i> ลบแฟ้มนี้
+    </button>
+
+</div>
+
 </div>
 
             <div class="bg-gradient-to-r from-[#1877F2] to-blue-800 rounded-2xl shadow-md p-4 text-white space-y-3">
@@ -2451,6 +2464,44 @@ function switchPeriodFolder() {
     showToast('เปลี่ยนมาใช้แฟ้ม "' + name + '" แล้ว');
 }
 
+// ฟังก์ชันเปลี่ยนชื่อแฟ้ม
+function renameActivePeriodFolder() {
+    const oldName = getActivePeriodFolder();
+    if (!oldName) return;
+
+    const newName = prompt('กรุณาระบุชื่อแฟ้มใหม่:', oldName);
+    if (newName === null) return;
+
+    const name = newName.trim();
+
+    if (!name) {
+        alert('กรุณาระบุชื่อแฟ้มใหม่ครับ');
+        return;
+    }
+
+    if (name === oldName) return;
+
+    const folders = getStoredFolders();
+
+    if (folders[name]) {
+        alert('มีแฟ้มชื่อนี้อยู่แล้วครับ');
+        return;
+    }
+
+    folders[name] = folders[oldName];
+    delete folders[oldName];
+
+    saveStoredFolders(folders);
+    localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
+
+    refreshPeriodFolderSelect();
+    loadPresetsToSelect();
+
+    showToast('เปลี่ยนชื่อแฟ้มเป็น "' + name + '" เรียบร้อยแล้ว');
+}
+
+
+// ฟังก์ชันลบแฟ้ม
 function deleteActivePeriodFolder() {
     const name = getActivePeriodFolder();
 
@@ -2589,7 +2640,7 @@ function deleteSelectedPreset() {
 // เริ่มต้นระบบแฟ้ม
 initPeriodFolders();
 
-		
+
 // ==========================================
 // กู้คืนสูตรเดิมจากระบบก่อนหน้า
 // ==========================================
