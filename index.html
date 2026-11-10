@@ -478,37 +478,69 @@
         </div>
     </div>
 
-        <div id="bestBottomSumModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-5 space-y-4 border border-slate-200 max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between border-b pb-3 shrink-0">
-                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-500"></i> 🎯 4 สูตรแต้มที่ดีที่สุด & เพิ่มสูตรเอง</h3>
-                <button onclick="closeBestBottomSumModal()" class="text-slate-400 text-lg hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <!-- กล่องเพิ่มสูตรเพิ่มเติมเอง -->
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 shrink-0">
-                <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (เช่น P1+P7+2 หรือ P3+P8+5):</label>
-                <div class="flex gap-2">
-                    <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1" 
-                        class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
-                    <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
-                        <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
+        <div <!-- MODAL: วิเคราะห์ 20 สูตรแต้ม & สูตรสร้างเอง -->
+    <div id="bestBottomSumModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-5 space-y-4 border border-slate-200 max-h-[90vh] flex flex-col">
+            
+            <!-- Header & Tab Switcher -->
+            <div class="flex flex-wrap items-center justify-between border-b pb-3 shrink-0 gap-2">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-500"></i> 🎯 ระบบวิเคราะห์ 20 สูตรแต้ม & สูตรสร้างเอง
+                </h3>
+                <div class="flex items-center gap-2">
+                    <button id="viewSysFormulasBtn" onclick="switchBestSumViewMode('system')" class="px-3.5 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs shadow transition">
+                        📊 20 สูตรหลักระบบ
                     </button>
+                    <button id="viewCustomFormulasBtn" onclick="switchBestSumViewMode('custom')" class="px-3.5 py-1.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-lg text-xs transition">
+                        🧪 แถบวิเคราะห์สูตรสร้างเอง
+                    </button>
+                    <button onclick="closeBestBottomSumModal()" class="text-slate-400 text-lg hover:text-slate-600 ml-2"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-3.5 rounded-xl space-y-2 border border-purple-700 shadow-sm shrink-0">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-2">
-                    <span class="text-xs font-bold text-amber-300">⚡ สรุปตัวชน (จากสูตรทั้งหมด):</span>
-                    <button onclick="sendIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">ส่งเข้า "แต้มผลรวมหลัก"</button>
+            <!-- VIEW 1: 20 สูตรหลักระบบ -->
+            <div id="bestSumSysView" class="space-y-4 overflow-y-auto pr-1 flex-1">
+                <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-3.5 rounded-xl space-y-2 border border-purple-700 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-2">
+                        <span class="text-xs font-bold text-amber-300">⚡ สรุปตัวชน (จาก 4 สูตรหลักที่แม่นที่สุด):</span>
+                        <button onclick="sendIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">🚀 ส่งเข้า "แต้มผลรวมหลัก"</button>
+                    </div>
+                    <div id="intersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- กำลังคำนวณ --</div>
                 </div>
-                <div id="intersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- กำลังคำนวณ --</div>
+                
+                <p class="text-xs font-bold text-slate-700">📊 รายการสถิติ 20 สูตรตั้งต้นในฐานข้อมูล (เรียงตามความแม่นยำ):</p>
+                <div id="bestFormulasResultList" class="space-y-3"></div>
             </div>
-            
-            <p class="text-xs text-slate-500 shrink-0">ผลการสแกนและสูตรทั้งหมดที่นำมาวิเคราะห์ (สามารถลบหรือจัดการสูตรได้):</p>
-            
-            <!-- รายการสูตรทั้งหมด -->
-            <div id="bestFormulasResultList" class="space-y-4 overflow-y-auto pr-1 flex-1"></div>
+
+            <!-- VIEW 2: แถบวิเคราะห์ชุดสูตรสร้างเอง -->
+            <div id="bestSumCustomView" class="space-y-4 overflow-y-auto pr-1 flex-1 hidden">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                    <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (เช่น P1+P7+2 หรือ P3+P8+5):</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1" 
+                            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
+                        <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
+                            <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-3.5 rounded-xl space-y-2 border border-emerald-700 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-800 pb-2">
+                        <span class="text-xs font-bold text-emerald-300">⚡ สรุปตัวชน (จากสูตรสร้างเองทั้งหมด):</span>
+                        <div class="flex gap-2">
+                            <button onclick="clearUserCustomFormulas()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold">ลบสูตรทั้งหมด</button>
+                            <button onclick="sendCustomIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">🚀 ส่งเข้า "แต้มผลรวมหลัก"</button>
+                        </div>
+                    </div>
+                    <div id="customIntersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- พิมพ์หรือเพิ่มสูตรด้านบนเพื่อสแกนตัวชน --</div>
+                </div>
+
+                <p class="text-xs font-bold text-slate-700">🧪 ตารางสถิติย้อนหลังชุดสูตรสร้างเอง (เรียงตามความแม่นยำ):</p>
+                <div id="userCustomFormulasResultList" class="space-y-3">
+                    <p class="text-xs text-slate-400 italic bg-slate-50 p-4 rounded-xl text-center border">ยังไม่มีสูตรสร้างเองที่ถูกเพิ่มเข้าวิเคราะห์</p>
+                </div>
+            </div>
             
             <div class="flex justify-end gap-2 pt-3 border-t shrink-0">
                 <button onclick="closeBestBottomSumModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold">ปิดหน้าต่าง</button>
@@ -907,6 +939,31 @@
         let globalTop4Formulas = [];
         let globalLastDigits = [];
 
+        let myCreatedCustomFormulas = [];
+        let customIntersectionDigits = [];
+
+        // ฟังก์ชันสลับมุมมองใน Modal (ระหว่าง 20 สูตรหลัก กับ สูตรสร้างเอง)
+        function switchBestSumViewMode(mode) {
+            const sysView = document.getElementById('bestSumSysView');
+            const customView = document.getElementById('bestSumCustomView');
+            const sysBtn = document.getElementById('viewSysFormulasBtn');
+            const customBtn = document.getElementById('viewCustomFormulasBtn');
+
+            if (mode === 'system') {
+                sysView.classList.remove('hidden');
+                customView.classList.add('hidden');
+                sysBtn.className = "px-3.5 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs shadow transition";
+                customBtn.className = "px-3.5 py-1.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-lg text-xs transition";
+            } else {
+                sysView.classList.add('hidden');
+                customView.classList.remove('hidden');
+                customBtn.className = "px-3.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs shadow transition";
+                sysBtn.className = "px-3.5 py-1.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-lg text-xs transition";
+                processUserCustomFormulasAnalysis();
+            }
+        }
+
+        // ฟังก์ชันเปิด Modal พร้อมโหลด 20 สูตรหลักเต็มรูปแบบ
         function openBestBottomSumModal() {
             collectAndSaveDOMFormulas();
             const sheet = excelSheetsData[activeSheetId];
@@ -915,6 +972,7 @@
             const lines = rawText.split('\n').filter(l => l.trim().length > 0);
             if (lines.length < 5) { alert('ต้องการสถิติย้อนหลังอย่างน้อย 5 งวดขึ้นไป'); return; }
 
+            // 🎯 กำหนด 20 สูตรตั้งต้นในฐานข้อมูล
             const candidateFormulas = [
                 "P7+P8+1", "P1+P7+3", "P3+P8+5", "P5+P7+2", "P2+P12+4",
                 "P1+P2+P3", "P7+P1+2", "P8+P3+1", "P4+P6+7", "P9+P10+1",
@@ -923,12 +981,8 @@
             ];
 
             let formulaDetails = [];
-
             candidateFormulas.forEach(formula => {
-                let hits = 0;
-                let totalChecked = 0;
-                let historyLog = [];
-
+                let hits = 0, totalChecked = 0, historyLog = [];
                 for (let i = 1; i < lines.length; i++) {
                     const prevDigits = lines[i - 1].replace(/[^0-9]/g, '').split('').map(Number);
                     const cleanCurr = lines[i].replace(/[^0-9]/g, '');
@@ -942,23 +996,16 @@
                         let resDigits = resStr.split('').map(Number);
                         let isMatch = resDigits.includes(bottomSum);
                         if (isMatch) hits++;
-                        
-                        historyLog.push({
-                            draw: i + 1,
-                            actualBottom,
-                            bottomSum,
-                            resStr,
-                            isMatch
-                        });
+                        historyLog.push({ draw: i + 1, actualBottom, bottomSum, resStr, isMatch });
                     }
                 }
-
                 let score = totalChecked > 0 ? (hits / totalChecked) * 100 : 0;
                 formulaDetails.push({ formula, hits, totalChecked, score, historyLog });
             });
 
+            // เรียงลำดับจากความแม่นยำมากไปน้อย (แสดงครบทั้ง 20 สูตร)
             formulaDetails.sort((a, b) => b.score - a.score);
-            globalTop4Formulas = formulaDetails.slice(0, 4);
+            globalTop4Formulas = formulaDetails;
 
             const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
             globalLastDigits = lastLine.split('').map(Number);
@@ -969,18 +1016,17 @@
             document.getElementById('bestBottomSumModal').classList.remove('hidden');
         }
 
+        // คำนวณตัวชนจาก 4 สูตรแรกที่แม่นที่สุด
         function calculateIntersectionDigits() {
             let sets = [];
-            globalTop4Formulas.forEach(item => {
+            const top4 = globalTop4Formulas.slice(0, 4);
+            top4.forEach(item => {
                 let resStr = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
-                if (resStr !== '-----') {
-                    sets.push(resStr.split(''));
-                }
+                if (resStr !== '-----') sets.push(resStr.split(''));
             });
 
-            if (sets.length === 0) {
-                currentIntersectionDigits = [];
-            } else {
+            if (sets.length === 0) currentIntersectionDigits = [];
+            else {
                 let intersection = sets.reduce((acc, curr) => acc.filter(x => curr.includes(x)));
                 if (intersection.length === 0) {
                     let allPool = [].concat(...sets);
@@ -995,6 +1041,7 @@
             }
         }
 
+        // แสดงผลรายการ 20 สูตรใน Modal
         function renderModalResults(displayLen = 7) {
             const resultContainer = document.getElementById('bestFormulasResultList');
             if(!resultContainer) return;
@@ -1016,36 +1063,34 @@
                 let nextRes7 = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
 
                 const div = document.createElement('div');
-                div.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 shadow-sm";
+                div.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 shadow-sm";
                 div.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-1.5">
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-900 bg-amber-400 px-2 py-0.5 rounded shadow-sm">อันดับที่ ${idx + 1}</span>
+                            <span class="text-[11px] font-bold ${idx < 4 ? 'text-slate-900 bg-amber-400' : 'text-white bg-slate-600'} px-2 py-0.5 rounded shadow-sm">อันดับที่ ${idx + 1}</span>
                             <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-[#1877F2] text-sm">${item.formula}</strong></span>
                         </div>
-                        <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
+                        <span class="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
                     </div>
 
-                    <div class="flex items-center justify-between text-xs bg-blue-50/70 p-2.5 rounded-xl border border-blue-200">
+                    <div class="flex items-center justify-between text-xs bg-blue-50/70 p-2 rounded-lg border border-blue-200">
                         <span class="font-semibold text-blue-950">📌 ผลลัพธ์สูตร (7 ตัวเรียง):</span>
-                        <span class="font-mono font-black text-rose-600 tracking-widest text-base">${nextRes7.split('').join(' ')}</span>
+                        <span class="font-mono font-black text-rose-600 tracking-widest text-sm">${nextRes7.split('').join(' ')}</span>
                     </div>
 
                     <div class="space-y-1">
-                        <div class="text-[11px] font-bold text-slate-600">📊 สถิติย้อนหลัง 10 งวดล่าสุด (ผลสูตร 7 ตัว):</div>
-                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden max-h-36 overflow-y-auto">
-                            <table class="w-full text-xs">
+                        <div class="text-[10px] font-bold text-slate-600">📊 สถิติย้อนหลัง 10 งวดล่าสุด:</div>
+                        <div class="bg-white rounded-lg border border-slate-200 overflow-hidden max-h-28 overflow-y-auto">
+                            <table class="w-full text-[11px]">
                                 <thead class="bg-slate-100 text-slate-600 font-semibold border-b">
                                     <tr>
-                                        <th class="py-1 px-1">งวด</th>
-                                        <th class="py-1 px-1">2 ล่าง</th>
-                                        <th class="py-1 px-1">ผลสูตร (7ตัวเรียง)</th>
-                                        <th class="py-1 px-1">สถานะ</th>
+                                        <th class="py-0.5 px-1">งวด</th>
+                                        <th class="py-0.5 px-1">2 ล่าง</th>
+                                        <th class="py-0.5 px-1">ผลสูตร (7ตัว)</th>
+                                        <th class="py-0.5 px-1">สถานะ</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    ${historyRowsHTML}
-                                </tbody>
+                                <tbody class="divide-y divide-slate-100">${historyRowsHTML}</tbody>
                             </table>
                         </div>
                     </div>
@@ -1054,8 +1099,154 @@
             });
         }
 
-        function closeBestBottomSumModal() {
-            document.getElementById('bestBottomSumModal').classList.add('hidden');
+        // ระบบเพิ่มสูตรวิเคราะห์เอง
+        function addUserCustomFormula() {
+            const input = document.getElementById('customUserFormulaInput');
+            if (input && input.value.trim()) {
+                const val = input.value.trim().toUpperCase();
+                if (!myCreatedCustomFormulas.includes(val)) {
+                    myCreatedCustomFormulas.push(val);
+                    showToast(`เพิ่มสูตร "${val}" เรียบร้อย`);
+                    processUserCustomFormulasAnalysis();
+                }
+                input.value = '';
+            }
+        }
+
+        function clearUserCustomFormulas() {
+            myCreatedCustomFormulas = [];
+            processUserCustomFormulasAnalysis();
+            showToast('ลบสูตรสร้างเองทั้งหมดแล้ว');
+        }
+
+        function processUserCustomFormulasAnalysis() {
+            const container = document.getElementById('userCustomFormulasResultList');
+            const displayEl = document.getElementById('customIntersectionDigitsDisplay');
+            if (!container) return;
+
+            if (myCreatedCustomFormulas.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic bg-slate-50 p-4 rounded-xl text-center border">ยังไม่มีสูตรสร้างเองที่ถูกเพิ่มเข้าวิเคราะห์</p>';
+                if (displayEl) displayEl.innerText = '-- พิมพ์หรือเพิ่มสูตรด้านบนเพื่อสแกนตัวชน --';
+                customIntersectionDigits = [];
+                return;
+            }
+
+            const sheet = excelSheetsData[activeSheetId];
+            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
+            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
+
+            let formulaDetails = [];
+            myCreatedCustomFormulas.forEach(formula => {
+                let hits = 0, totalChecked = 0, historyLog = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const prevDigits = lines[i - 1].replace(/[^0-9]/g, '').split('').map(Number);
+                    const cleanCurr = lines[i].replace(/[^0-9]/g, '');
+                    if (cleanCurr.length < 8) continue;
+                    let bottomSum = (parseInt(cleanCurr[6], 10) + parseInt(cleanCurr[7], 10)) % 10;
+                    let actualBottom = cleanCurr.slice(6, 8);
+
+                    let resStr = evalSingleFormulaStr(formula, prevDigits, 7);
+                    if (resStr !== '-----') {
+                        totalChecked++;
+                        let resDigits = resStr.split('').map(Number);
+                        let isMatch = resDigits.includes(bottomSum);
+                        if (isMatch) hits++;
+                        historyLog.push({ draw: i + 1, actualBottom, bottomSum, resStr, isMatch });
+                    }
+                }
+                let score = totalChecked > 0 ? (hits / totalChecked) * 100 : 0;
+                formulaDetails.push({ formula, hits, totalChecked, score, historyLog });
+            });
+
+            formulaDetails.sort((a, b) => b.score - a.score);
+
+            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
+            const lastDigits = lastLine.split('').map(Number);
+
+            let sets = [];
+            formulaDetails.forEach(item => {
+                let resStr = evalSingleFormulaStr(item.formula, lastDigits, 7);
+                if (resStr !== '-----') sets.push(resStr.split(''));
+            });
+
+            if (sets.length === 0) customIntersectionDigits = [];
+            else {
+                let intersection = sets.reduce((acc, curr) => acc.filter(x => curr.includes(x)));
+                if (intersection.length === 0) {
+                    let allPool = [].concat(...sets);
+                    intersection = [...new Set(allPool)].sort();
+                }
+                customIntersectionDigits = intersection;
+            }
+
+            if (displayEl) {
+                displayEl.innerText = customIntersectionDigits.length > 0 ? customIntersectionDigits.join(' ') : '--- ไม่มีตัวชน --';
+            }
+
+            container.innerHTML = '';
+            formulaDetails.forEach((item, idx) => {
+                let recentHistory = item.historyLog.slice(-10).reverse();
+                let historyRowsHTML = recentHistory.map(h => `
+                    <tr class="border-b border-slate-100 text-center">
+                        <td class="py-1 px-1 text-slate-500">งวดที่ ${h.draw}</td>
+                        <td class="py-1 px-1 font-bold text-slate-800">${h.actualBottom} (แต้ม ${h.bottomSum})</td>
+                        <td class="py-1 px-1 font-mono text-blue-600 tracking-wider">${h.resStr}</td>
+                        <td class="py-1 px-1 font-bold">
+                            ${h.isMatch ? '<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">✔ เข้า</span>' : '<span class="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">✘ หลุด</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+
+                let nextRes7 = evalSingleFormulaStr(item.formula, lastDigits, 7);
+
+                const div = document.createElement('div');
+                div.className = "p-3 bg-white border border-slate-200 rounded-xl space-y-2 shadow-sm";
+                div.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[11px] font-bold text-white bg-emerald-600 px-2 py-0.5 rounded shadow-sm">สูตรสร้างเอง #${idx + 1}</span>
+                            <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-emerald-700 text-sm">${item.formula}</strong></span>
+                        </div>
+                        <span class="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs bg-emerald-50/80 p-2 rounded-lg border border-emerald-200">
+                        <span class="font-semibold text-emerald-950">📌 ผลลัพธ์สูตร (7 ตัวเรียง):</span>
+                        <span class="font-mono font-black text-rose-600 tracking-widest text-sm">${nextRes7.split('').join(' ')}</span>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="text-[10px] font-bold text-slate-600">📊 สถิติย้อนหลัง 10 งวดล่าสุด:</div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 overflow-hidden max-h-28 overflow-y-auto">
+                            <table class="w-full text-[11px]">
+                                <thead class="bg-slate-100 text-slate-600 font-semibold border-b">
+                                    <tr>
+                                        <th class="py-0.5 px-1">งวด</th>
+                                        <th class="py-0.5 px-1">2 ล่าง</th>
+                                        <th class="py-0.5 px-1">ผลสูตร (7ตัว)</th>
+                                        <th class="py-0.5 px-1">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">${historyRowsHTML}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function sendCustomIntersectionToSumPoints() {
+            if (!customIntersectionDigits || customIntersectionDigits.length === 0) {
+                showToast('ยังไม่มีตัวเลขตัวชนจากสูตรสร้างเอง');
+                return;
+            }
+            const formattedSumPoints = customIntersectionDigits.join(', ');
+            document.getElementById('sumPointsInput').value = formattedSumPoints;
+            autoProcess();
+            switchPageTab('main');
+            closeBestBottomSumModal();
+            showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
         }
 
         function sendIntersectionToSumPoints() {
@@ -1070,6 +1261,7 @@
             closeBestBottomSumModal();
             showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
         }
+		
 
         function autoProcess() {
             saveToLocalStorage();
@@ -2701,7 +2893,47 @@ function restoreOldPresets() {
     }
 }
 
+// ฟังก์ชันสำหรับปิดหน้าต่าง Modal แต้มผลรวม
+        function closeBestBottomSumModal() {
+            const modal = document.getElementById('bestBottomSumModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
 
+        // ฟังก์ชันส่งตัวชนจากสูตรสร้างเองเข้าช่องแต้มผลรวมหลัก
+        function sendCustomIntersectionToSumPoints() {
+            if (!customIntersectionDigits || customIntersectionDigits.length === 0) {
+                showToast('ยังไม่มีตัวเลขตัวชนจากสูตรสร้างเอง');
+                return;
+            }
+            const formattedSumPoints = customIntersectionDigits.join(', ');
+            const sumInput = document.getElementById('sumPointsInput');
+            if (sumInput) {
+                sumInput.value = formattedSumPoints;
+            }
+            if (typeof autoProcess === 'function') autoProcess();
+            if (typeof switchPageTab === 'function') switchPageTab('main');
+            closeBestBottomSumModal();
+            showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
+        }
+
+        // ฟังก์ชันส่งตัวชนจาก 20 สูตรหลักเข้าช่องแต้มผลรวมหลัก
+        function sendIntersectionToSumPoints() {
+            if (!currentIntersectionDigits || currentIntersectionDigits.length === 0) {
+                showToast('ยังไม่มีตัวเลขตัวชนสำหรับส่ง');
+                return;
+            }
+            const formattedSumPoints = currentIntersectionDigits.join(', ');
+            const sumInput = document.getElementById('sumPointsInput');
+            if (sumInput) {
+                sumInput.value = formattedSumPoints;
+            }
+            if (typeof autoProcess === 'function') autoProcess();
+            if (typeof switchPageTab === 'function') switchPageTab('main');
+            closeBestBottomSumModal();
+            showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
+        }
 
 
     </script>
