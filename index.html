@@ -478,7 +478,7 @@
         </div>
     </div>
 
-        <div <!-- MODAL: วิเคราะห์ 20 สูตรแต้ม & สูตรสร้างเอง -->
+        <!-- MODAL: วิเคราะห์ 20 สูตรแต้ม & สูตรสร้างเอง -->
     <div id="bestBottomSumModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-5 space-y-4 border border-slate-200 max-h-[90vh] flex flex-col">
             
@@ -512,33 +512,36 @@
                 <div id="bestFormulasResultList" class="space-y-3"></div>
             </div>
 
-            <!-- VIEW 2: แถบวิเคราะห์ชุดสูตรสร้างเอง -->
-            <!-- 🧪 แถบวิเคราะห์สูตรสร้างเอง (อัปเดตเพิ่มปุ่มไมโครโฟนสั่งเสียง) -->
-<div id="bestSumCustomView" class="space-y-4 overflow-y-auto pr-1 flex-1 hidden">
-    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
-        <div class="flex items-center justify-between">
-            <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (พิมพ์ หรือใช้เสียงพูด):</label>
-            <!-- 🎤 ปุ่มไมโครโฟนสั่งงานด้วยเสียงสำหรับหน้าวิเคราะห์สูตร -->
-            <button id="micBestSumBtn" onclick="toggleBestSumVoiceRecognition()" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-microphone" id="micBestSumIcon"></i> <span id="micBestSumText">🎙️ พูดบอกสูตร</span>
-            </button>
-        </div>
-        <div class="flex gap-2">
-            <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1 หรือกดพูด" 
-                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
-            <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
-                <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
-            </button>
-        </div>
-        <div id="bestSumVoiceStatus" class="text-[11px] text-purple-700 font-mono italic">สถานะเสียง: พร้อมฟัง (คลิกปุ่มไมโครโฟนแล้วพูด เช่น "พีเจ็ดบวกพีแปดบวกหนึ่ง")</div>
-    </div>
+            <!-- VIEW 2: แถบวิเคราะห์สูตรสร้างเอง (มีปุ่มไมโครโฟนสั่งเสียงแล้ว) -->
+            <div id="bestSumCustomView" class="space-y-4 overflow-y-auto pr-1 flex-1 hidden">
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (พิมพ์ หรือใช้เสียงพูด):</label>
+                        <!-- 🎤 ปุ่มไมโครโฟนสั่งเสียง -->
+                        <button id="micBestSumBtn" onclick="toggleBestSumVoiceRecognition()" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-microphone" id="micBestSumIcon"></i> <span id="micBestSumText">🎙️ พูดบอกสูตร</span>
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1 หรือกดพูด" 
+                            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
+                        <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
+                            <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
+                        </button>
+                    </div>
+                    <div id="bestSumVoiceStatus" class="text-[11px] text-purple-700 font-mono italic">สถานะเสียง: พร้อมฟัง (คลิกปุ่มไมโครโฟนแล้วพูด เช่น "พีเจ็ดบวกพีแปดบวกหนึ่ง")</div>
+                </div>
 
-    <!-- ส่วนแสดงผลตัวชนและตารางด้านล่างตามเดิม -->
-    <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-3.5 rounded-xl space-y-2 border border-emerald-700 shadow-sm">
-        <!-- ... (ส่วนสรุปตัวชนเดิม) ... -->
-    </div>
-    <div id="userCustomFormulasResultList" class="space-y-3"></div>
-</div>
+                <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-3.5 rounded-xl space-y-2 border border-emerald-700 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-800 pb-2">
+                        <span class="text-xs font-bold text-emerald-300">⚡ สรุปตัวชน (จากสูตรสร้างเองทั้งหมด):</span>
+                        <div class="flex gap-2">
+                            <button onclick="clearUserCustomFormulas()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold">ลบสูตรทั้งหมด</button>
+                            <button onclick="sendCustomIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">🚀 ส่งเข้า "แต้มผลรวมหลัก"</button>
+                        </div>
+                    </div>
+                    <div id="customIntersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- พิมพ์หรือเพิ่มสูตรด้านบนเพื่อสแกนตัวชน --</div>
+                </div>
 
                 <p class="text-xs font-bold text-slate-700">🧪 ตารางสถิติย้อนหลังชุดสูตรสร้างเอง (เรียงตามความแม่นยำ):</p>
                 <div id="userCustomFormulasResultList" class="space-y-3">
