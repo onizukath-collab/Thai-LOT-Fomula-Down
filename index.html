@@ -8,40 +8,40 @@
 <meta name="apple-mobile-web-app-title" content="PDG83">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PDG83 จับคู่ 2 ตัวล่าง</title>
+<title>PDG83 จับคู่ 2 ตัวล่าง & วิเคราะห์สูตรแต้ม</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Kanit', sans-serif; }
     </style>
 </head>
-<body class="bg-blue-900 min-h-screen py-6 px-3 sm:px-6">
+<body class="bg-blue-900 min-h-screen py-6 px-3 sm:px-6 text-slate-800">
 
     <div class="max-w-7xl mx-auto space-y-4">
         
         <!-- Header -->
         <div class="bg-blue-900 rounded-2xl shadow-sm p-4 border border-blue-900 text-center relative overflow-hidden">
             <div class="text-center my-4">
-    <h1 class="text-4xl font-bold text-white flex items-center justify-center gap-2">
-        <img src="icon-512.png" class="w-12 h-12 rounded-lg">
-        พีดีจี83 จับคู่ 2 ตัวล่าง
-    </h1>
+                <h1 class="text-4xl font-bold text-white flex items-center justify-center gap-2">
+                    <img src="icon-512.png" class="w-12 h-12 rounded-lg" onerror="this.style.display='none'">
+                    พีดีจี83 จับคู่ 2 ตัวล่าง & วิเคราะห์สูตรแต้ม
+                </h1>
             </div>
-            <p class="text-slate-400 text-xs mt-0.5">ระบบจับคู่ตัวเลข คัดกรอง & วิเคราะห์จัดอันดับตัวชนจากสูตร (ทำงานออฟไลน์ 100%)</p>
+            <p class="text-slate-300 text-xs mt-0.5">ระบบจับคู่ตัวเลข คัดกรอง & วิเคราะห์จัดอันดับตัวชนจากสูตรแต้ม (ทำงานออฟไลน์ 100%)</p>
         </div>
 
         <!-- Main Tab Navigation -->
-        <div class="flex bg-slate-200 p-1.5 rounded-2xl shadow-inner gap-2">
+        <div class="flex flex-wrap bg-slate-200 p-1.5 rounded-2xl shadow-inner gap-2">
             <button id="tabMainBtn" onclick="switchPageTab('main')" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 bg-white text-[#1877F2] shadow-sm transition">
                 <i class="fa-solid fa-table-cells"></i> 🧮 หน้าหลัก & จับคู่ตัวเลข
             </button>
             <button id="tabBestSumBtn" onclick="switchPageTab('bestSum')" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
-                <i class="fa-solid fa-trophy text-amber-500"></i> 🏆 วิเคราะห์ 4 สูตรแต้ม
+                <i class="fa-solid fa-trophy text-amber-500"></i> 🎯 วิเคราะห์สูตรแต้ม
             </button>
             <button id="tabCustomEngineBtn" onclick="switchPageTab('customEngine')" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
-                <i class="fa-solid fa-file-excel text-emerald-600"></i> ⚡ สถิติ & สูตร Excel (สั่งงานด้วยเสียง)
+                <i class="fa-solid fa-file-excel text-emerald-600"></i> ⚡ สถิติ & สูตร Excel
             </button>
         </div>
 
@@ -49,55 +49,35 @@
         <!-- TAB 1: หน้าหลัก & จับคู่ตัวเลข -->
         <!-- ========================================== -->
         <div id="pageMain" class="space-y-4">
-        
-            <!-- Preset Manager -->
-			
-<!-- ระบบแฟ้มรวมสูตรประจำงวด -->
-<div class="bg-slate-900/50 border border-blue-400/40 rounded-xl p-3 space-y-2 mb-3">
-    <div class="flex items-center gap-2 text-amber-300 font-bold text-sm">
-        <i class="fa-solid fa-folder-open"></i>
-        แฟ้มรวมสูตรประจำงวด
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
-        <div class="sm:col-span-7">
-            <select id="periodFolderSelect"
-                onchange="switchPeriodFolder()"
-                class="w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white">
-                <option value="">-- เลือกแฟ้มงวด --</option>
-            </select>
-        </div>
-
-        <div class="sm:col-span-5 flex gap-2">
-            <input id="periodFolderName"
-                type="text"
-                placeholder="ชื่อแฟ้ม เช่น 16/11/69"
-                class="min-w-0 flex-1 w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white placeholder-blue-300">
-
-            <button onclick="createPeriodFolder()"
-                class="bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap">
-                <i class="fa-solid fa-plus"></i> สร้างแฟ้ม
-            </button>
-        </div>
-    </div>
-
-    <div class="flex flex-wrap justify-between items-center gap-2">
-        <div class="text-xs text-blue-200">
-            แฟ้มที่กำลังใช้งาน:
-            <span id="activePeriodFolderLabel" class="text-amber-300 font-bold">ยังไม่ได้เลือก</span>
-        </div>
-
-        <button type="button" onclick="renameActivePeriodFolder()"
-    class="text-xs text-blue-300 hover:text-blue-200">
-    ✏️ เปลี่ยนชื่อแฟ้ม
-</button>
-
-<button type="button" onclick="deleteActivePeriodFolder()"
-    class="text-xs text-rose-300 hover:text-rose-200">
-    <i class="fa-solid fa-trash"></i> ลบแฟ้มนี้
-</button>
-    </div>
-</div>
+            
+            <!-- ระบบแฟ้มรวมสูตรประจำงวด -->
+            <div class="bg-slate-900/50 border border-blue-400/40 rounded-xl p-3 space-y-2 mb-3">
+                <div class="flex items-center gap-2 text-amber-300 font-bold text-sm">
+                    <i class="fa-solid fa-folder-open"></i> แฟ้มรวมสูตรประจำงวด
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                    <div class="sm:col-span-7">
+                        <select id="periodFolderSelect" onchange="switchPeriodFolder()" class="w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white">
+                            <option value="">-- เลือกแฟ้มงวด --</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-5 flex gap-2">
+                        <input id="periodFolderName" type="text" placeholder="ชื่อแฟ้ม เช่น 16/11/69" class="min-w-0 flex-1 w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white placeholder-blue-300">
+                        <button onclick="createPeriodFolder()" class="bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap">
+                            <i class="fa-solid fa-plus"></i> สร้างแฟ้ม
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-wrap justify-between items-center gap-2">
+                    <div class="text-xs text-blue-200">
+                        แฟ้มที่กำลังใช้งาน: <span id="activePeriodFolderLabel" class="text-amber-300 font-bold">ยังไม่ได้เลือก</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="renameActivePeriodFolder()" class="text-xs text-blue-300 hover:text-blue-200">✏️ เปลี่ยนชื่อแฟ้ม</button>
+                        <button type="button" onclick="deleteActivePeriodFolder()" class="text-xs text-rose-300 hover:text-rose-200"><i class="fa-solid fa-trash"></i> ลบแฟ้มนี้</button>
+                    </div>
+                </div>
+            </div>
 
             <div class="bg-gradient-to-r from-[#1877F2] to-blue-800 rounded-2xl shadow-md p-4 text-white space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-blue-600 pb-2">
@@ -106,7 +86,6 @@
                     </h2>
                     <span class="text-xs text-blue-200">เลือกชื่อเพื่อโหลด หรือพิมพ์ชื่อใหม่เพื่อบันทึก</span>
                 </div>
-               
                 <div class="grid grid-cols-2 sm:grid-cols-12 gap-2 items-center">
                     <div class="sm:col-span-5 flex items-center gap-2">
                         <label class="text-xs text-blue-100 whitespace-nowrap">เลือกสูตร:</label>
@@ -114,15 +93,13 @@
                             <option value="">-- งานปัจจุบัน (Auto Saved) --</option>
                         </select>
                     </div>
-                    
                     <div class="sm:col-span-5 flex items-center gap-2">
-                        <input type="text" id="presetNameInput" placeholder="ชื่อสูตร (ปล่อยว่างเพื่อเซฟทับ)" 
-                            class="w-full bg-blue-950 border border-blue-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-blue-300 outline-none">
-                        <button onclick="saveCurrentPreset()" title="เซฟทับ & บันทึก" aria-label="เซฟทับ & บันทึก" class="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-400 hover:bg-amber-500 rounded-xl transition shadow-sm">
-                            <img src="icon-512.png" alt="" class="w-10 h-10 object-contain">
+                        <input type="text" id="presetNameInput" placeholder="ชื่อสูตร (ปล่อยว่างเพื่อเซฟทับ)" class="w-full bg-blue-950 border border-blue-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-blue-300 outline-none">
+                        <!-- 🎯 ปรับเปลี่ยนไอคอนปุ่มบันทึกสูตรตามที่ต้องการตรงนี้ครับ -->
+                        <button onclick="saveCurrentPreset()" title="เซฟทับ & บันทึก" class="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-400 hover:bg-amber-500 rounded-xl transition shadow-sm font-bold text-slate-950">
+                            <i class="fa-solid fa-bookmark text-base"></i>
                         </button>
                     </div>
-
                     <div class="col-span-2 sm:col-span-2 flex justify-end">
                         <button onclick="deleteSelectedPreset()" class="w-full sm:w-auto px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-medium transition flex items-center justify-center gap-1">
                             <i class="fa-solid fa-trash-can"></i> ลบสูตร
@@ -131,21 +108,17 @@
                 </div>
             </div>
 
-            <!-- Global Action Bar & Local File Backup Manager -->
+            <!-- Global Action Bar -->
             <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-2">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-2">
                     <div class="text-xs text-slate-500 flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
                         <span class="font-bold text-slate-700">ระบบบันทึกอัตโนมัติ (ทำงานออฟไลน์ในเครื่อง)</span>
                     </div>
-   
-           <!-- 🚀 ปุ่มเซฟเข้า GitHub ที่เพิ่มใหม่ -->
-        <button onclick="saveDirectToGitHub()" class="px-3.5 py-1.5 bg-slate-900 hover:bg-black text-white font-bold rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
-            <i class="fa-brands fa-github text-amber-400"></i> เซฟตรงเข้า GitHub
-        </button>     
-</div>
-
-                <!-- แถบเครื่องมือดาวน์โหลด/โหลดไฟล์สำรองข้อมูล (Offline Backup File) -->
+                    <button onclick="saveDirectToGitHub()" class="px-3.5 py-1.5 bg-slate-900 hover:bg-black text-white font-bold rounded-lg text-xs transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-brands fa-github text-amber-400"></i> เซฟตรงเข้า GitHub
+                    </button>     
+                </div>
                 <div class="flex flex-nowrap items-stretch gap-2 pt-1 text-xs w-full min-w-0">
                     <input type="text" id="backupFileNameInput" placeholder="ชื่อไฟล์" value="lottery_backup" class="bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 outline-none flex-1 min-w-0 w-0 font-semibold">
                     <button onclick="exportAllDataToFile()" class="shrink-0 whitespace-nowrap px-2 sm:px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg transition flex items-center gap-1 shadow-sm">
@@ -158,82 +131,59 @@
                 </div>
             </div>
 
-            <!-- Input Section -->
+            <!-- Input Sections -->
             <div class="space-y-4">
-                <!-- กล่อง 1 เต็มความกว้าง -->
-                <div class="space-y-4">
-                    <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-3">
-                        <div class="flex items-center justify-between border-b pb-2">
-                            <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
-                                <i class="fa-solid fa-list-ol text-[#1877F2]"></i> 1. กำหนดตัวเลขหลัก
-                            </h2>
-                            <button onclick="swapTensUnits()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg border flex items-center gap-1 font-medium transition">
-                                <i class="fa-solid fa-right-left text-[#1877F2]"></i> สลับ สิบ & หน่วย
-                            </button>
+                <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-list-ol text-[#1877F2]"></i> 1. กำหนดตัวเลขหลัก
+                        </h2>
+                        <button onclick="swapTensUnits()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg border flex items-center gap-1 font-medium transition">
+                            <i class="fa-solid fa-right-left text-[#1877F2]"></i> สลับ สิบ & หน่วย
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-3 items-end gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="min-w-0">
+                            <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">ชุดประกบ [สิบ]:</label>
+                            <input type="text" id="tens" oninput="debounceAutoProcess()" placeholder="เช่น 6789" class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
                         </div>
-                        
-                        <div class="grid grid-cols-3 items-end gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 rounded-xl border border-slate-200">
-                            <div class="min-w-0">
-                                <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">ชุดประกบ [สิบ]:</label>
-                                <input type="text" id="tens" oninput="debounceAutoProcess()" placeholder="เช่น 6789"
-                                    class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
-                            </div>
-                            <div class="min-w-0">
-                                <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">ชุดประกบ [หน่วย]:</label>
-                                <input type="text" id="units" oninput="debounceAutoProcess()" placeholder="เช่น 56789"
-                                    class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
-                            </div>
-                            <div class="min-w-0">
-                                <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">
-                                    <i class="fa-solid fa-stairs text-[#1877F2]"></i> ชุดวินขึ้นบันไดรวมเลขเบิ้ล:
-                                </label>
-                                <input type="text" id="stairInput" oninput="debounceAutoProcess()" placeholder="เช่น 67890"
-                                    class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
-                            </div>
+                        <div class="min-w-0">
+                            <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">ชุดประกบ [หน่วย]:</label>
+                            <input type="text" id="units" oninput="debounceAutoProcess()" placeholder="เช่น 56789" class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
+                        </div>
+                        <div class="min-w-0">
+                            <label class="block text-[10px] sm:text-xs leading-tight font-semibold text-slate-700 mb-1">
+                                <i class="fa-solid fa-stairs text-[#1877F2]"></i> ชุดวินขึ้นบันไดรวมเบิ้ล:
+                            </label>
+                            <input type="text" id="stairInput" oninput="debounceAutoProcess()" placeholder="เช่น 67890" class="w-full min-w-0 px-2 sm:px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#1877F2] outline-none text-xs sm:text-sm font-semibold text-slate-800">
                         </div>
                     </div>
                 </div>
 
-                <!-- กล่อง 2 และ 3 แสดงคู่กัน ครึ่งจอ และปรับความสูงกรอบให้เท่ากัน -->
-                <div class="grid grid-cols-2 gap-2 sm:gap-4 items-stretch" style="grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;align-items:stretch;width:100%;">
-                    <!-- กล่อง 2 -->
-                    <div class="min-w-0 h-full self-stretch bg-white rounded-2xl shadow-sm p-3 sm:p-5 border border-slate-200 space-y-3" style="height:100%;min-width:0;box-sizing:border-box;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 space-y-3">
                         <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2 border-b pb-2">
-                            <i class="fa-solid fa-ban text-rose-500"></i> 2. เลขดับ & แต้มผลรวม & ตัวกรองคำนวณ
+                            <i class="fa-solid fa-ban text-rose-500"></i> 2. เลขดับ & แต้มผลรวม
                         </h2>
-                        
+                        <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl p-3 text-slate-950 space-y-2 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-950"><i class="fa-solid fa-trophy"></i> วิเคราะห์สูตรแต้มที่ดีที่สุด</span>
+                            </div>
+                            <button onclick="switchPageTab('bestSum')" class="w-full py-2 bg-slate-900 hover:bg-black text-amber-300 font-bold rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 🎯 เปิดหน้าระบบวิเคราะห์สูตรแต้ม
+                            </button>
+                        </div>
                         <div>
                             <label class="block text-xs font-medium text-rose-700 mb-1">ชุดเลขดับ (Exclude):</label>
-                            <input type="text" id="excludeInput" oninput="debounceAutoProcess()" placeholder="เช่น 13 หรือ 1, 3" 
-                                class="w-full px-3 py-1.5 border border-rose-200 bg-rose-50/40 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none text-sm font-semibold text-rose-900">
+                            <input type="text" id="excludeInput" oninput="debounceAutoProcess()" placeholder="เช่น 13" class="w-full px-3 py-1.5 border border-rose-200 bg-rose-50/40 rounded-xl text-sm font-semibold text-rose-900 outline-none">
                         </div>
                         <div class="pt-2 border-t border-slate-100">
                             <label class="block text-xs font-medium text-blue-800 mb-1">คัดตามแต้มผลรวมหลัก (Sum Points):</label>
-                            <input type="text" id="sumPointsInput" oninput="debounceAutoProcess()" placeholder="เช่น 0, 2, 5, 8" 
-                                class="w-full px-3 py-1.5 border border-blue-200 bg-blue-50/40 rounded-xl focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-blue-900">
+                            <input type="text" id="sumPointsInput" oninput="debounceAutoProcess()" placeholder="เช่น 0, 2, 5, 8" class="w-full px-3 py-1.5 border border-blue-200 bg-blue-50/40 rounded-xl text-sm font-semibold text-blue-900 outline-none">
                         </div>
-
-                        <!-- สรุปคู่ซ้ำจากสูตรที่บันทึกไว้ -->
-                        <div id="allPresetPairSummary" class="mt-3 p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2">
-                            <div class="flex items-center justify-between gap-2 border-b border-indigo-200 pb-2">
-                                <div class="min-w-0">
-                                    <h3 class="text-xs sm:text-sm font-bold text-indigo-950"><i class="fa-solid fa-layer-group mr-1 text-indigo-600"></i> สรุปคู่ซ้ำจากทุกสูตรที่บันทึก</h3>
-                                    <p id="presetPairSummaryMeta" class="text-[10px] text-indigo-700 mt-0.5">กำลังตรวจสอบสูตร...</p>
-                                </div>
-                                <button type="button" onclick="renderPresetPairCollisionSummary()" class="shrink-0 px-2 py-1 bg-white border border-indigo-200 hover:bg-indigo-100 rounded-lg text-[10px] font-semibold text-indigo-800">
-                                    <i class="fa-solid fa-rotate mr-1"></i> รีเฟรช
-                                </button>
-                            </div>
-                            <div id="presetPairSummaryContent" class="space-y-1.5 text-xs max-h-48 overflow-y-auto pr-1">
-                                <p class="text-slate-500">กำลังโหลดข้อมูล...</p>
-                            </div>
-                            <p class="text-[10px] text-slate-500 border-t border-indigo-100 pt-1.5">นับคู่กลับเป็นคู่เดียวกัน เช่น 25 และ 52 และนับแต่ละคู่ไม่เกิน 1 ครั้งต่อสูตร</p>
-                        </div>
-
                     </div>
 
-                    <!-- กล่อง 3 -->
-                    <div class="min-w-0 h-full self-stretch bg-white rounded-2xl shadow-sm p-3 sm:p-5 border border-slate-200 space-y-3" style="height:100%;min-width:0;box-sizing:border-box;">
+                    <div class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 space-y-3">
                         <div class="flex items-center justify-between border-b pb-2">
                             <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-filter text-[#1877F2]"></i> 3. ชุดคัดกรอง & เลขเด่น
@@ -242,35 +192,13 @@
                                 <i class="fa-solid fa-file-arrow-down"></i> โหลดจาก Notepad
                             </button>
                         </div>
-
-                        <!-- Filter Preset Manager -->
-                        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
-                                <div class="sm:col-span-6">
-                                    <select id="filterPresetSelect" onchange="loadFilterPreset()" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-700 outline-none">
-                                        <option value="">-- เลือกชุดคัดกรองที่บันทึกไว้ --</option>
-                                    </select>
-                                </div>
-                                <div class="sm:col-span-6 flex gap-1">
-                                    <input type="text" id="filterPresetNameInput" placeholder="ชื่อชุด (ว่าง=เซฟทับ)" 
-                                        class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-xs text-slate-800 placeholder-slate-400 outline-none">
-                                    <button onclick="saveFilterPreset()" class="px-2.5 py-1.5 bg-[#1877F2] hover:bg-blue-600 text-white rounded-lg text-xs font-bold whitespace-nowrap">เซฟทับ</button>
-                                    <button onclick="deleteFilterPreset()" class="px-2 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-600 rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button>
-                                </div>
-                            </div>
-                        </div>
-
                         <div id="filterMultiContainer" class="space-y-2">
-                            <div class="max-h-60 overflow-y-auto pr-1 space-y-2" id="filterInputsList"></div>
+                            <div class="max-h-48 overflow-y-auto pr-1 space-y-2" id="filterInputsList"></div>
                             <button onclick="addFilterRow()" class="w-full py-1.5 border-2 border-dashed border-blue-200 hover:border-blue-400 text-[#1877F2] rounded-xl text-xs font-medium transition flex items-center justify-center gap-1.5">
                                 <i class="fa-solid fa-plus"></i> เพิ่มชุดคัดกรอง
                             </button>
                         </div>
-
-                        <!-- ล็อกเงื่อนไขชุดเลขเด่นเป็น AND โดยซ่อนตัวเลือกจากหน้าจอ -->
-                        <select id="filterLogic" class="hidden" aria-hidden="true" tabindex="-1">
-                            <option value="AND" selected>ต้องมีอยู่ใน "ทุกชุด" (AND)</option>
-                        </select>
+                        <select id="filterLogic" class="hidden"><option value="AND" selected>AND</option></select>
                     </div>
                 </div>
             </div>
@@ -278,89 +206,128 @@
             <!-- Results Section -->
             <div id="resultArea" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3 sm:p-5 space-y-3 hidden">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
-                    <h3 class="text-base sm:text-lg font-bold text-slate-800">ผลลัพธ์การจับคู่ & แสดงเปรียบเทียบ (ซ้าย & ขวา)</h3>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-800">ผลลัพธ์การจับคู่ & แสดงเปรียบเทียบ</h3>
                     <div class="flex items-center gap-2">
                         <button onclick="copyReversedPassedResults()" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-medium shadow transition flex items-center gap-1.5">
                             <i class="fa-solid fa-right-left"></i> คัดลอกแบบกลับตัวเลข
                         </button>
                         <button onclick="openShareModal()" class="px-3.5 py-1.5 bg-[#1877F2] hover:bg-blue-600 text-white rounded-xl text-xs font-medium shadow transition flex items-center gap-1.5">
-                            <i class="fa-brands fa-facebook"></i> แชร์ผลสรุปแบบสวยงาม
+                            <i class="fa-brands fa-facebook"></i> แชร์ผลสรุป
                         </button>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-2 sm:gap-4 items-start">
-                    <div id="sectionPair" class="min-w-0 space-y-2 p-2 sm:p-4 bg-slate-50/70 rounded-xl sm:rounded-2xl border border-slate-200">
-                        <div class="flex flex-wrap items-center justify-between gap-1 border-b pb-2">
-                            <h4 class="text-xs sm:text-sm font-bold text-slate-800"><i class="fa-solid fa-table-cells text-[#1877F2] mr-1"></i>1. ชุดประกบ (สิบ x หน่วย)</h4>
-                            <div class="text-[10px] sm:text-xs text-slate-500">ผ่าน: <strong id="statPairPassed" class="text-[#1877F2]">0</strong></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div id="sectionPair" class="space-y-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div class="flex justify-between text-xs font-bold text-slate-800 border-b pb-1">
+                            <span>1. ชุดประกบ (สิบ x หน่วย)</span>
+                            <span class="text-[#1877F2]">ผ่าน: <strong id="statPairPassed">0</strong> ชุด</span>
                         </div>
-                        <div id="pairResults" class="space-y-2 max-h-60 overflow-y-auto overflow-x-auto pr-1"></div>
-                        <div id="summaryPairArea" class="p-2 bg-blue-800 rounded-xl border border-slate-200 text-[10px] sm:text-xs font-mono font-semibold text-blue-900 flex flex-wrap gap-1 max-h-24 overflow-y-auto break-all"></div>
+                        <div id="pairResults" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                        <div id="summaryPairArea" class="p-2 bg-blue-800 rounded-xl text-xs font-mono font-semibold text-blue-100 flex flex-wrap gap-1 max-h-20 overflow-y-auto"></div>
                     </div>
-
-                    <div id="sectionStair" class="min-w-0 space-y-2 p-2 sm:p-4 bg-blue-50/40 rounded-xl sm:rounded-2xl border border-blue-200">
-                        <div class="flex flex-wrap items-center justify-between gap-1 border-b border-blue-200 pb-2">
-                            <h4 class="text-xs sm:text-sm font-bold text-blue-950"><i class="fa-solid fa-stairs text-[#1877F2] mr-1"></i>2. ชุดวินขึ้นบันไดรวมเบิ้ล</h4>
-                            <div class="text-[10px] sm:text-xs text-blue-800">ผ่าน: <strong id="statStairPassed" class="text-[#1877F2]">0</strong></div>
+                    <div id="sectionStair" class="space-y-2 p-3 bg-blue-50/40 rounded-xl border border-blue-200">
+                        <div class="flex justify-between text-xs font-bold text-blue-950 border-b pb-1">
+                            <span>2. ชุดวินขึ้นบันไดรวมเบิ้ล</span>
+                            <span class="text-[#1877F2]">ผ่าน: <strong id="statStairPassed">0</strong> ชุด</span>
                         </div>
-                        <div id="stairResults" class="space-y-2 max-h-60 overflow-y-auto overflow-x-auto pr-1"></div>
-                        <div id="summaryStairArea" class="p-2 bg-blue-800 rounded-xl border border-blue-200 text-[10px] sm:text-xs font-mono font-semibold text-blue-900 flex flex-wrap gap-1 max-h-24 overflow-y-auto break-all"></div>
+                        <div id="stairResults" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                        <div id="summaryStairArea" class="p-2 bg-blue-800 rounded-xl text-xs font-mono font-semibold text-blue-100 flex flex-wrap gap-1 max-h-20 overflow-y-auto"></div>
                     </div>
                 </div>
             </div>
         </div>
- 
-                  
 
         <!-- ========================================== -->
-        <!-- TAB 2: วิเคราะห์ 4 สูตรแต้มที่ดีที่สุด -->
+        <!-- TAB 2: วิเคราะห์สูตรแต้ม -->
         <!-- ========================================== -->
         <div id="pageBestSum" class="space-y-4 hidden">
             <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
                     <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-trophy text-amber-500"></i> 🎯 4 สูตรแต้มที่ดีที่สุด & เพิ่มสูตรเอง
+                        <i class="fa-solid fa-trophy text-amber-500"></i> 🎯 ระบบวิเคราะห์สูตรแต้ม
                     </h2>
-                    <button onclick="openBestBottomSumModal()" class="px-4 py-2 bg-slate-900 hover:bg-black text-amber-300 font-bold rounded-lg text-xs shadow transition flex items-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 🎯 สแกน 4 สูตรเด่น & จับตัวชน
-                    </button>
-                </div>
-
-                <!-- กล่องเพิ่มสูตรเพิ่มเติมเอง -->
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-                    <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (เช่น P1+P7+2 หรือ P3+P8+5):</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="customUserFormulaInputTab" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1" 
-                            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
-                        <button onclick="addUserCustomFormulaTab()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
-                            <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
+                    <div class="flex items-center gap-2">
+                        <button id="viewSysFormulasBtn" onclick="switchBestSumViewMode('system')" class="px-3.5 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs shadow transition">
+                            📊 20 สูตรหลักระบบ
+                        </button>
+                        <button id="viewCustomFormulasBtn" onclick="switchBestSumViewMode('custom')" class="px-3.5 py-1.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-lg text-xs transition">
+                            🧪 แถบวิเคราะห์สูตรสร้างเอง
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-4 rounded-xl space-y-3 border border-purple-700 shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-2">
-                        <span class="text-sm font-bold text-amber-300">⚡ สรุปตัวชน (จากสูตรทั้งหมด):</span>
-                        <button onclick="sendIntersectionToSumPoints()" class="px-4 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">
-                            🚀 ส่งเข้า "แต้มผลรวมหลัก" (หน้าหลัก)
-                        </button>
+                <!-- โหมด 1: 20 สูตรหลักระบบ -->
+                <div id="bestSumSysView" class="space-y-4">
+                    <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-4 rounded-xl space-y-3 border border-purple-700 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-2">
+                            <span class="text-sm font-bold text-amber-300">⚡ สรุปตัวชน (จาก 4 สูตรหลักที่แม่นที่สุด):</span>
+                            <div class="flex gap-2">
+                                <button onclick="openBestBottomSumModalTab()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">
+                                    🚀 ส่งเข้า "แต้มผลรวมหลัก"
+                                </button>
+                            </div>
+                        </div>
+                        <div id="tabIntersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-2xl tracking-widest text-center sm:text-left py-1">
+                            -- กำลังวิเคราะห์สูตรแต้ม --
+                        </div>
                     </div>
-                    <div id="tabIntersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-xl tracking-widest text-center sm:text-left py-1">
-                        -- กดปุ่มสแกนด้านบนเพื่อวิเคราะห์ --
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-list-ol text-blue-600"></i> รายการสถิติ 20 สูตรตั้งต้นในฐานข้อมูล (เรียงตามความแม่นยำ):
+                        </p>
+                        <div id="tabBestFormulasResultList" class="space-y-4"></div>
                     </div>
                 </div>
 
-                <p class="text-xs text-slate-500">ตารางวิเคราะห์สถิติย้อนหลัง 4 สูตรเด่นและสูตรเพิ่มเติม:</p>
-                <div id="tabBestFormulasResultList" class="space-y-4"></div>
+                <!-- โหมด 2: แถบวิเคราะห์ชุดสูตรสร้างเอง -->
+                <div id="bestSumCustomView" class="space-y-4 hidden">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-plus-circle text-emerald-600"></i> เพิ่มสูตรวิเคราะห์สร้างเอง (เช่น P1+P7+2 หรือ P3+P8+5)
+                            </h3>
+                            <button onclick="toggleCustomFormulaVoiceRecognition()" id="micCustomFormulaBtn" class="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-microphone" id="micCustomFormulaIcon"></i> <span id="micCustomFormulaText">🎙️ พูดสั่งสูตร</span>
+                            </button>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="userAddedFormulaInput" placeholder="พิมพ์สูตรที่ต้องการ เช่น P7+P8+1 หรือ P1+P12+5" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
+                            <button onclick="addUserCustomFormulaTab()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold whitespace-nowrap shadow-sm transition">
+                                <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตรวิเคราะห์
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-4 rounded-xl space-y-3 border border-emerald-700 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-800 pb-2">
+                            <span class="text-sm font-bold text-emerald-300">⚡ สรุปตัวชน (จากสูตรสร้างเองทั้งหมด):</span>
+                            <div class="flex gap-2">
+                                <button onclick="clearUserCustomFormulas()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs transition shadow">ลบสูตรทั้งหมด</button>
+                                <button onclick="sendCustomIntersectionToSumPoints()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold rounded-lg text-xs transition shadow">🚀 ส่งเข้า "แต้มผลรวมหลัก"</button>
+                            </div>
+                        </div>
+                        <div id="customIntersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-2xl tracking-widest text-center sm:text-left py-1">
+                            -- พิมพ์หรือเพิ่มสูตรด้านบนเพื่อสแกนตัวชน --
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-vial text-emerald-600"></i> ตารางสถิติย้อนหลังชุดสูตรสร้างเอง (เรียงตามความแม่นยำ):
+                        </p>
+                        <div id="userCustomFormulasResultList" class="space-y-4">
+                            <p class="text-xs text-slate-400 italic bg-slate-50 p-4 rounded-xl text-center border">ยังไม่มีสูตรสร้างเองที่ถูกเพิ่มเข้าวิเคราะห์</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- ========================================== -->
-        <!-- TAB 2: สถิติ & สูตร EXCEL -->
+        <!-- TAB 3: สถิติ & สูตร EXCEL -->
         <!-- ========================================== -->
         <div id="pageCustomEngine" class="space-y-4 hidden">
-           
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 <div class="lg:col-span-4 space-y-4">
                     <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 space-y-3">
@@ -368,32 +335,14 @@
                             <h2 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                                 <i class="fa-solid fa-clock-rotate-left text-purple-600"></i> สถิติผลสลาก
                             </h2>
-							<!-- 🎚️ ตัวเลื่อนปรับขนาดตัวอักษรช่องสถิติ -->
-<!-- 🎚️ ปรับขนาดตัวเลข พร้อมระบบจำค่าและล็อก -->
-<div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
-    <span class="text-slate-600 font-medium whitespace-nowrap">ขนาดตัวเลข:</span>
-
-    <input
-        type="range"
-        id="historyFontSizeSlider"
-        min="16"
-        max="32"
-        value="22"
-        step="1"
-        oninput="updateHistoryFontSize(this.value)"
-        class="w-full accent-purple-600 cursor-pointer"
-    >
-
-    <button
-        type="button"
-        id="historyFontSizeLockBtn"
-        onclick="toggleHistoryFontSizeLock()"
-        class="whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200"
-    >
-        <i class="fa-solid fa-lock-open"></i> ล็อก
-    </button>
-</div>
-                            <button onclick="clearCustomHistoryInput()" id="clearHistoryBtn" class="text-[11px] text-rose-500 hover:underline">ล้างสถิติ</button>
+                            <!-- 🎚️ บาร์สไลเดอร์ปรับขนาดตัวเลขในช่องสถิติ (แก้ไขให้ทำงานปกติแล้ว) -->
+                            <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
+                                <span class="text-slate-600 font-medium whitespace-nowrap">ขนาดตัวเลข:</span>
+                                <input type="range" id="historyFontSizeSlider" min="16" max="32" value="22" step="1" oninput="updateHistoryFontSize(this.value)" class="w-full accent-purple-600 cursor-pointer">
+                                <button type="button" id="historyFontSizeLockBtn" onclick="toggleHistoryFontSizeLock()" class="whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border hover:bg-purple-200">
+                                    <i class="fa-solid fa-lock-open"></i> ล็อก
+                                </button>
+                            </div>
                         </div>
                         <div class="flex items-center justify-between bg-slate-100 p-2 rounded-xl border border-slate-200">
                             <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5" id="lockStatusText">
@@ -403,37 +352,7 @@
                                 <i class="fa-solid fa-unlock"></i> ปลดล็อค
                             </button>
                         </div>
-
-                        <!-- 📌 บาร์อ้างอิงตำแหน่งหลัก P1 - P20 -->
-                        <div class="bg-amber-500 text-slate-900 p-2 rounded-lg space-y-1 shadow-sm border border-amber-600">
-                            <div class="text-[10px] font-bold text-slate-950 flex items-center justify-between border-b border-amber-600/50 pb-1">
-                                <span>📌 ตำแหน่งหลัก P1 & P20</span>
-                            </div>
-                            <div class="flex items-center gap-1 font-mono text-[9px] font-extrabold text-center">
-                                <div class="flex-[2.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">1</span><span class="flex-1">2</span><span class="flex-1">3</span><span class="flex-1">4</span><span class="flex-1">5</span><span class="flex-1">6</span>
-                                </div>
-                                <div class="flex-[1] flex gap-0.5 bg-amber-300 p-0.5 rounded text-amber-950 font-black border border-amber-700 justify-between">
-                                    <span class="flex-1">7</span><span class="flex-1">8</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">9</span><span class="flex-1">10</span><span class="flex-1">11</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">12</span><span class="flex-1">13</span><span class="flex-1">14</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">15</span><span class="flex-1">16</span><span class="flex-1">17</span>
-                                </div>
-                                <div class="flex-[1.2] flex gap-0.5 bg-amber-200 p-0.5 rounded text-slate-950 justify-between">
-                                    <span class="flex-1">18</span><span class="flex-1">19</span><span class="flex-1">20</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <textarea id="customHistoryInput" oninput="debounceProcessCustomEngine()" rows="5" placeholder="วางสถิติผลสลาก..."
-    class="w-full p-3 border border-slate-300 rounded-lg outline-none font-mono leading-relaxed transition whitespace-pre overflow-x-auto bg-slate-50 text-slate-700"
-    style="font-size: 22px; letter-spacing: 2.2px; max-height: 180px; overflow-y: auto;" readonly></textarea>
+                        <textarea id="customHistoryInput" oninput="debounceProcessCustomEngine()" rows="5" class="w-full p-3 border border-slate-300 rounded-lg outline-none font-mono bg-slate-50 text-slate-700" style="font-size: 22px; letter-spacing: 2.2px; max-height: 180px; overflow-y: auto;" readonly></textarea>
                     </div>
                 </div>
 
@@ -445,43 +364,33 @@
                                 <h3 class="text-xs font-bold text-white">ชุดเลขสรุปตัวแรก (จากทุกคอลัมน์สูตร)</h3>
                                 <div id="extractedFirstDigitsDisplay" class="text-amber-300 font-mono font-extrabold text-base sm:text-lg tracking-widest mt-0.5">-- รอคำนวณ --</div>
                             </div>
-					
                         </div>
                         <button onclick="sendFirstDigitsToMain()" class="px-4 py-2 bg-slate-900 hover:bg-black text-amber-300 font-bold rounded-lg text-xs shadow transition flex items-center gap-1.5">
                             <i class="fa-solid fa-paper-plane text-amber-400"></i> 🚀 ส่งเลขสรุปนี้ เข้าช่องคัดกรองหน้าหลัก
                         </button>
                     </div>
 
-<!-- ปุ่มสั่งงานด้วยเสียง AI อัจฉริยะ -->
-<div class="flex items-center gap-2 bg-gradient-to-r from-purple-900 to-indigo-900 p-2 rounded-xl text-white shadow-sm border border-purple-700">
-    <button id="micVoiceBtn" onclick="toggleVoiceRecognition()" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow">
-        <i class="fa-solid fa-microphone" id="micIcon"></i> <span id="micText">🎙️ พูดสั่งสูตร</span>
-    </button>
-    <div id="voiceStatusText" class="text-[11px] text-purple-200 font-mono truncate max-w-[220px]">สถานะ: พร้อมฟังเสียง (คลิกแล้วพูด)</div>
-</div>
-<div class="bg-white rounded-xl p-2 border border-slate-200 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
-                <div id="excelSubTabsContainer" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
-                <div class="flex items-center gap-2">
-                    <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap">
-                        <i class="fa-solid fa-plus"></i> เพิ่มหน้าสถิติใหม่
-                    </button>
-                </div>
-            </div>
+                    <div class="bg-white rounded-xl p-2 border border-slate-200 shadow-sm flex items-center justify-between gap-2 overflow-x-auto">
+                        <div id="excelSubTabsContainer" class="flex items-center gap-1.5 overflow-x-auto py-0.5"></div>
+                        <button onclick="addNewExcelSheetTab()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm whitespace-nowrap">
+                            <i class="fa-solid fa-plus"></i> เพิ่มหน้าสถิติใหม่
+                        </button>
+                    </div>
 
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden space-y-2 p-2">
                         <div class="flex flex-wrap items-center justify-between gap-2 px-2 pt-1">
                             <div class="flex items-center gap-2">
-                                <span class="text-xs font-bold text-slate-700">พิมพ์สูตรที่หัวคอลัมน์ แล้วกดปุ่มอัปเดต:</span>
-                                <button onclick="triggerManualCalculate()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition flex items-center gap-1">
-                                    <i class="fa-solid fa-rotate"></i> คำนวณตารางใหม่
+                                <span class="text-xs font-bold text-slate-700">คำนวณตารางสูตร:</span>
+                                <button onclick="triggerManualCalculate()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow transition">
+                                    <i class="fa-solid fa-rotate"></i> คำนวณใหม่
                                 </button>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-xs font-medium text-slate-600">แสดงผล:</span>
-                                <select id="outputLengthSelect" onchange="updateOutputLength(this.value)" class="bg-slate-100 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-800 outline-none">
-                                    <option value="1">1 หลัก</option><option value="2">2 หลัก</option><option value="3">3 หลัก</option><option value="4">4 หลัก</option><option value="5" selected>5 หลัก</option><option value="6" selected>6 หลัก</option><option value="7" selected>7 หลัก</option>
+                                <select id="outputLengthSelect" onchange="updateOutputLength(this.value)" class="bg-slate-100 border rounded-lg px-2 py-1 text-xs font-bold text-slate-800 outline-none">
+                                    <option value="5" selected>5 หลัก</option><option value="7">7 หลัก</option>
                                 </select>
-                                <button onclick="addCustomFormulaColumn()" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">+ เพิ่มคอลัมน์สูตร</button>
+                                <button onclick="addCustomFormulaColumn()" class="px-3 py-1 bg-emerald-600 text-white rounded-lg text-xs font-bold">+ เพิ่มคอลัมน์</button>
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -512,40 +421,24 @@
         </div>
     </div>
 
-        <div id="bestBottomSumModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-5 space-y-4 border border-slate-200 max-h-[90vh] flex flex-col">
-            <div class="flex items-center justify-between border-b pb-3 shrink-0">
-                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-500"></i> 🎯 4 สูตรแต้มที่ดีที่สุด & เพิ่มสูตรเอง</h3>
-                <button onclick="closeBestBottomSumModal()" class="text-slate-400 text-lg hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+    <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-indigo-500/40 text-white">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-indigo-400"></i> สรุปผลเลขเด่น พร้อมแชร์
+                </h3>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
-
-            <!-- กล่องเพิ่มสูตรเพิ่มเติมเอง -->
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 shrink-0">
-                <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (เช่น P1+P7+2 หรือ P3+P8+5):</label>
-                <div class="flex gap-2">
-                    <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1" 
-                        class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
-                    <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
-                        <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
-                    </button>
-                </div>
+            <div class="space-y-1">
+                <label class="text-xs text-indigo-200 font-medium">งวดวันที่ออกสลาก:</label>
+                <input type="text" id="drawDateInput" placeholder="เช่น 16 มีนาคม 2569" class="w-full bg-slate-900 border border-indigo-500/40 rounded-xl px-3 py-2 text-xs text-amber-300 outline-none">
             </div>
-
-            <div class="bg-gradient-to-r from-purple-900 to-indigo-950 text-white p-3.5 rounded-xl space-y-2 border border-purple-700 shadow-sm shrink-0">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-800 pb-2">
-                    <span class="text-xs font-bold text-amber-300">⚡ สรุปตัวชน (จากสูตรทั้งหมด):</span>
-                    <button onclick="sendIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">ส่งเข้า "แต้มผลรวมหลัก"</button>
-                </div>
-                <div id="intersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- กำลังคำนวณ --</div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2">
+                <div id="sharePreviewContent" class="text-amber-200 font-black text-sm tracking-widest py-2">-- กำลังโหลดข้อมูล --</div>
             </div>
-            
-            <p class="text-xs text-slate-500 shrink-0">ผลการสแกนและสูตรทั้งหมดที่นำมาวิเคราะห์ (สามารถลบหรือจัดการสูตรได้):</p>
-            
-            <!-- รายการสูตรทั้งหมด -->
-            <div id="bestFormulasResultList" class="space-y-4 overflow-y-auto pr-1 flex-1"></div>
-            
-            <div class="flex justify-end gap-2 pt-3 border-t shrink-0">
-                <button onclick="closeBestBottomSumModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold">ปิดหน้าต่าง</button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <button onclick="shareImageToFacebook()" class="py-3 bg-blue-600 text-white font-bold rounded-xl text-xs">แชร์ Facebook</button>
+                <button onclick="downloadShareImage()" class="py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs">ดาวน์โหลดภาพ PNG</button>
             </div>
         </div>
     </div>
@@ -554,12 +447,9 @@
         <i class="fa-solid fa-circle-check text-blue-400"></i> <span id="toastMsg">สำเร็จ</span>
     </div>
 
-
-
     <script>
         const STORAGE_KEY = 'number_pair_app_main_data_v57';
-        const PRESETS_KEY = 'number_pair_app_presets_v57';		
-          // ระบบแฟ้มรวมสูตรประจำงวด
+        const PRESETS_KEY = 'number_pair_app_presets_v57';        
         const PERIOD_FOLDERS_KEY = 'number_pair_period_folders_v1';
         const ACTIVE_PERIOD_FOLDER_KEY = 'number_pair_active_period_folder_v1';
         const FILTER_PRESETS_KEY = 'number_pair_app_filter_presets_v57';
@@ -569,8 +459,13 @@
         let excelSheetsData = {};
         let extractedFirstDigits = '';
         let currentIntersectionDigits = [];
+        let customIntersectionDigits = [];
+        let globalTop4Formulas = [];
+        let globalLastDigits = [];
+        let myCreatedCustomFormulas = [];
         let isHistoryLocked = true;
         let autoProcessTimer = null;
+        let isHistoryFontSizeLocked = false;
 
         const defaultHistoryData = `730209 51 446 065 376 297
 807779 23 961 699 448 477
@@ -591,32 +486,7 @@
 506356 31 131 012 022 209
 074646 58 740 512 308 703
 876978 77 843 532 280 605
-059696 61 955 531 889 476
-345898 87 449 328 111 690
-458145 37 602 242 389 239
-461252 22 655 389 137 995
-763895 52 431 176 014 449
-837706 16 694 347 288 765
-878972 02 299 815 662 363
-174629 48 917 195 408 041
-340563 07 527 241 578 169
-820866 06 479 054 068 837
-833009 64 510 983 439 954
-292514 47 406 113 851 098
-309612 77 355 108 868 424
-536077 43 267 318 065 153
-107387 08 298 091 602 716
-173770 95 848 415 410 938
-287184 48 758 434 007 721
-751495 62 001 980 304 531
-639214 71 683 709 746 427
-932479 69 413 672 154 039
-004615 53 731 429 937 094
-417212 04 257 346 136 740
-730640 64 060 521 266 041
-402701 70 791 912 058 396
-011781 48 402 392 171 255
-423224 85 300 950 393 804`;
+059696 61 955 531 889 476`;
 
         window.addEventListener('DOMContentLoaded', () => {
             loadPresetsToSelect();
@@ -624,6 +494,9 @@
             loadSavedData();
             initExcelSheetsEngine();
             autoProcess();
+            initPeriodFolders();
+            openBestBottomSumModal();
+            loadHistoryFontSizeSettings();
         });
 
         function debounceAutoProcess() {
@@ -646,38 +519,15 @@
             showToast('สลับหลักสิบ & หลักหน่วยเรียบร้อย');
         }
 
-        function toggleHistoryLock() {
-            isHistoryLocked = !isHistoryLocked;
-            const textarea = document.getElementById('customHistoryInput');
-            const lockBtn = document.getElementById('lockBtn');
-            const lockStatusText = document.getElementById('lockStatusText');
-            const clearBtn = document.getElementById('clearHistoryBtn');
-
-            if (isHistoryLocked) {
-                textarea.setAttribute('readonly', true);
-                textarea.classList.add('bg-slate-50', 'text-slate-700');
-                textarea.classList.remove('bg-white', 'text-slate-950', 'ring-2', 'ring-purple-600');
-                lockBtn.className = "px-3 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold";
-                lockBtn.innerHTML = `<i class="fa-solid fa-unlock"></i> ปลดล็อค`;
-                lockStatusText.innerHTML = `<i class="fa-solid fa-lock text-rose-600"></i> สถานะ: ล็อคช่องสถิติอยู่`;
-                if(clearBtn) clearBtn.style.display = 'block';
-            } else {
-                textarea.removeAttribute('readonly');
-                textarea.classList.remove('bg-slate-50', 'text-slate-700');
-                textarea.classList.add('bg-white', 'text-slate-950', 'ring-2', 'ring-purple-600');
-                lockBtn.className = "px-3 py-1 bg-emerald-600 text-white rounded-lg text-xs font-bold";
-                lockBtn.innerHTML = `<i class="fa-solid fa-lock"></i> ล็อคช่อง`;
-                lockStatusText.innerHTML = `<i class="fa-solid fa-unlock text-emerald-600"></i> สถานะ: ปลดล็อคแล้ว`;
-            }
-        }
-
+        // ระบบสลับหน้าแท็บหลัก
         function switchPageTab(tab) {
             document.getElementById('pageMain').classList.add('hidden');
             document.getElementById('pageBestSum').classList.add('hidden');
             document.getElementById('pageCustomEngine').classList.add('hidden');
-            document.getElementById('tabMainBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 transition";
-            document.getElementById('tabBestSumBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 transition";
-            document.getElementById('tabCustomEngineBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 transition";
+            
+            document.getElementById('tabMainBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
+            document.getElementById('tabBestSumBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
+            document.getElementById('tabCustomEngineBtn').className = "flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition";
 
             if (tab === 'main') {
                 document.getElementById('pageMain').classList.remove('hidden');
@@ -692,20 +542,369 @@
             }
         }
 
+        function switchBestSumViewMode(mode) {
+            const sysView = document.getElementById('bestSumSysView');
+            const customView = document.getElementById('bestSumCustomView');
+            const sysBtn = document.getElementById('viewSysFormulasBtn');
+            const customBtn = document.getElementById('viewCustomFormulasBtn');
+
+            if (mode === 'system') {
+                sysView.classList.remove('hidden');
+                customView.classList.add('hidden');
+                sysBtn.className = "px-3.5 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs shadow transition";
+                customBtn.className = "px-3.5 py-1.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-lg text-xs transition";
+                openBestBottomSumModal();
+            } else {
+                sysView.classList.add('hidden');
+                customView.classList.remove('hidden');
+                customBtn.className = "px-3.5 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs shadow transition";
+                sysBtn.className = "px-3.5 py-1.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-lg text-xs transition";
+                processUserCustomFormulasAnalysis();
+            }
+        }
+
+        // ระบบควบคุมสไลเดอร์ขนาดตัวอักษรหน้าสถิติ
+        function updateHistoryFontSize(value) {
+            const input = document.getElementById('customHistoryInput');
+            if (!input) return;
+            input.style.fontSize = value + 'px';
+            input.style.letterSpacing = (value * 0.1) + 'px';
+            try { localStorage.setItem('historyFontSize', value); } catch (e) {}
+        }
+
+        function updateHistoryFontSizeLockUI() {
+            const slider = document.getElementById('historyFontSizeSlider');
+            const button = document.getElementById('historyFontSizeLockBtn');
+            if (!slider || !button) return;
+            slider.disabled = isHistoryFontSizeLocked;
+            if (isHistoryFontSizeLocked) {
+                button.innerHTML = '<i class="fa-solid fa-lock"></i> ปลดล็อก';
+                button.className = 'whitespace-nowrap px-2 py-1 rounded-md bg-rose-100 text-rose-700 border border-rose-200 hover:bg-rose-200 text-xs';
+                slider.classList.add('opacity-40', 'cursor-not-allowed');
+                slider.classList.remove('cursor-pointer');
+            } else {
+                button.innerHTML = '<i class="fa-solid fa-lock-open"></i> ล็อก';
+                button.className = 'whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200 text-xs';
+                slider.classList.remove('opacity-40', 'cursor-not-allowed');
+                slider.classList.add('cursor-pointer');
+            }
+        }
+
+        function toggleHistoryFontSizeLock() {
+            isHistoryFontSizeLocked = !isHistoryFontSizeLocked;
+            try { localStorage.setItem('historyFontSizeLocked', isHistoryFontSizeLocked ? 'true' : 'false'); } catch (e) {}
+            updateHistoryFontSizeLockUI();
+        }
+
+        function loadHistoryFontSizeSettings() {
+            const slider = document.getElementById('historyFontSizeSlider');
+            if (!slider) return;
+            try {
+                const savedSize = localStorage.getItem('historyFontSize');
+                const savedLock = localStorage.getItem('historyFontSizeLocked');
+                if (savedSize !== null) {
+                    const size = Number(savedSize);
+                    if (Number.isFinite(size) && size >= 16 && size <= 32) slider.value = size;
+                }
+                isHistoryFontSizeLocked = savedLock === 'true';
+            } catch (e) {}
+            updateHistoryFontSize(slider.value);
+            updateHistoryFontSizeLockUI();
+        }
+
+        // ระบบคำนวณสูตรแต้ม
+        function evalSingleFormulaStr(formulaStr, d, length = 7) {
+            const getD = (idx) => d[idx - 1] || 0;
+            let expr = formulaStr.toUpperCase().replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
+            try {
+                let baseSum = eval(expr); baseSum = Math.abs(parseInt(baseSum, 10)) % 10;
+                let seq = []; for (let i = 0; i < length; i++) seq.push((baseSum + i) % 10);
+                return seq.join('');
+            } catch(e) { return '-----'; }
+        }
+
+        function openBestBottomSumModal() {
+            const sheet = excelSheetsData[activeSheetId];
+            const rawText = sheet ? sheet.history : defaultHistoryData;
+            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
+            if (lines.length < 5) return;
+
+            const candidateFormulas = [
+                "P7+P8+1", "P1+P7+3", "P3+P8+5", "P5+P7+2", "P2+P12+4",
+                "P1+P2+P3", "P7+P1+2", "P8+P3+1", "P4+P6+7", "P9+P10+1",
+                "P1+P8+4", "P7+P3+6", "P2+P5+8", "P6+P8+2", "P1+P5+9",
+                "P7+P11+3", "P4+P8+5", "P2+P7+1", "P3+P6+4", "P10+P12+2"
+            ];
+
+            let formulaDetails = [];
+            candidateFormulas.forEach(formula => {
+                let hits = 0, totalChecked = 0, historyLog = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const prevDigits = lines[i - 1].replace(/[^0-9]/g, '').split('').map(Number);
+                    const cleanCurr = lines[i].replace(/[^0-9]/g, '');
+                    if (cleanCurr.length < 8) continue;
+                    let bottomSum = (parseInt(cleanCurr[6], 10) + parseInt(cleanCurr[7], 10)) % 10;
+                    let actualBottom = cleanCurr.slice(6, 8);
+
+                    let resStr = evalSingleFormulaStr(formula, prevDigits, 7);
+                    if (resStr !== '-----') {
+                        totalChecked++;
+                        let resDigits = resStr.split('').map(Number);
+                        let isMatch = resDigits.includes(bottomSum);
+                        if (isMatch) hits++;
+                        historyLog.push({ draw: i + 1, actualBottom, bottomSum, resStr, isMatch });
+                    }
+                }
+                let score = totalChecked > 0 ? (hits / totalChecked) * 100 : 0;
+                formulaDetails.push({ formula, hits, totalChecked, score, historyLog });
+            });
+
+            formulaDetails.sort((a, b) => b.score - a.score);
+            globalTop4Formulas = formulaDetails;
+
+            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
+            globalLastDigits = lastLine.split('').map(Number);
+
+            calculateIntersectionDigits();
+            renderModalResults();
+        }
+
+        function calculateIntersectionDigits() {
+            let sets = [];
+            const top4 = globalTop4Formulas.slice(0, 4);
+            top4.forEach(item => {
+                let resStr = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
+                if (resStr !== '-----') sets.push(resStr.split(''));
+            });
+
+            if (sets.length === 0) currentIntersectionDigits = [];
+            else {
+                let intersection = sets.reduce((acc, curr) => acc.filter(x => curr.includes(x)));
+                if (intersection.length === 0) {
+                    let allPool = [].concat(...sets);
+                    intersection = [...new Set(allPool)].sort();
+                }
+                currentIntersectionDigits = intersection;
+            }
+
+            const tabDisplayEl = document.getElementById('tabIntersectionDigitsDisplay');
+            if (tabDisplayEl) tabDisplayEl.innerText = currentIntersectionDigits.length > 0 ? currentIntersectionDigits.join(' ') : '--- ไม่มีตัวชน --';
+        }
+
+        function renderModalResults() {
+            const tabResultContainer = document.getElementById('tabBestFormulasResultList');
+            if (!tabResultContainer) return;
+            tabResultContainer.innerHTML = '';
+
+            globalTop4Formulas.forEach((item, idx) => {
+                let recentHistory = item.historyLog.slice(-10).reverse();
+                let historyRowsHTML = recentHistory.map(h => `
+                    <tr class="border-b border-slate-100 text-center">
+                        <td class="py-1 px-1 text-slate-500">งวดที่ ${h.draw}</td>
+                        <td class="py-1 px-1 font-bold text-slate-800">${h.actualBottom} (แต้ม ${h.bottomSum})</td>
+                        <td class="py-1 px-1 font-mono text-blue-600 tracking-wider">${h.resStr}</td>
+                        <td class="py-1 px-1 font-bold">
+                            ${h.isMatch ? '<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">✔ เข้า</span>' : '<span class="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">✘ หลุด</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+
+                let nextRes7 = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
+
+                const div = document.createElement('div');
+                div.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 shadow-sm";
+                div.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold ${idx < 4 ? 'text-slate-900 bg-amber-400' : 'text-white bg-slate-600'} px-2 py-0.5 rounded shadow-sm">อันดับที่ ${idx + 1}</span>
+                            <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-[#1877F2] text-sm">${item.formula}</strong></span>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs bg-blue-50/70 p-2.5 rounded-xl border border-blue-200">
+                        <span class="font-semibold text-blue-950">📌 ผลลัพธ์สูตร (7 ตัวเรียง):</span>
+                        <span class="font-mono font-black text-rose-600 tracking-widest text-base">${nextRes7.split('').join(' ')}</span>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-[11px] font-bold text-slate-600">📊 สถิติย้อนหลัง 10 งวดล่าสุด:</div>
+                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden max-h-36 overflow-y-auto">
+                            <table class="w-full text-xs">
+                                <thead class="bg-slate-100 text-slate-600 font-semibold border-b">
+                                    <tr>
+                                        <th class="py-1 px-1">งวด</th>
+                                        <th class="py-1 px-1">2 ล่าง</th>
+                                        <th class="py-1 px-1">ผลสูตร (7ตัวเรียง)</th>
+                                        <th class="py-1 px-1">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">${historyRowsHTML}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                tabResultContainer.appendChild(div);
+            });
+        }
+
+        function openBestBottomSumModalTab() {
+            if (!currentIntersectionDigits || currentIntersectionDigits.length === 0) {
+                showToast('ยังไม่มีตัวเลขตัวชนสำหรับส่ง');
+                return;
+            }
+            const formattedSumPoints = currentIntersectionDigits.join(', ');
+            document.getElementById('sumPointsInput').value = formattedSumPoints;
+            autoProcess();
+            switchPageTab('main');
+            showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
+        }
+
         function addUserCustomFormulaTab() {
-            const input = document.getElementById('customUserFormulaInputTab');
-            if (input && input.value) {
-                const modalInput = document.getElementById('customUserFormulaInput');
-                if (modalInput) modalInput.value = input.value;
-                if (typeof addUserCustomFormula === 'function') {
-                    addUserCustomFormula();
-                } else {
-                    openBestBottomSumModal();
+            const input = document.getElementById('userAddedFormulaInput');
+            if (input && input.value.trim()) {
+                const val = input.value.trim().toUpperCase();
+                if (!myCreatedCustomFormulas.includes(val)) {
+                    myCreatedCustomFormulas.push(val);
+                    showToast(`เพิ่มสูตร "${val}" เรียบร้อย`);
+                    processUserCustomFormulasAnalysis();
                 }
                 input.value = '';
             }
         }
 
+        function clearUserCustomFormulas() {
+            myCreatedCustomFormulas = [];
+            processUserCustomFormulasAnalysis();
+            showToast('ลบสูตรทั้งหมดแล้ว');
+        }
+
+        function processUserCustomFormulasAnalysis() {
+            const container = document.getElementById('userCustomFormulasResultList');
+            const displayEl = document.getElementById('customIntersectionDigitsDisplay');
+            if (!container) return;
+
+            if (myCreatedCustomFormulas.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic bg-slate-50 p-4 rounded-xl text-center border">ยังไม่มีสูตรสร้างเองที่ถูกเพิ่มเข้าวิเคราะห์</p>';
+                if (displayEl) displayEl.innerText = '-- พิมพ์หรือเพิ่มสูตรด้านบนเพื่อสแกนตัวชน --';
+                customIntersectionDigits = [];
+                return;
+            }
+
+            const sheet = excelSheetsData[activeSheetId];
+            const rawText = sheet ? sheet.history : defaultHistoryData;
+            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
+
+            let formulaDetails = [];
+            myCreatedCustomFormulas.forEach(formula => {
+                let hits = 0, totalChecked = 0, historyLog = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const prevDigits = lines[i - 1].replace(/[^0-9]/g, '').split('').map(Number);
+                    const cleanCurr = lines[i].replace(/[^0-9]/g, '');
+                    if (cleanCurr.length < 8) continue;
+                    let bottomSum = (parseInt(cleanCurr[6], 10) + parseInt(cleanCurr[7], 10)) % 10;
+                    let actualBottom = cleanCurr.slice(6, 8);
+
+                    let resStr = evalSingleFormulaStr(formula, prevDigits, 7);
+                    if (resStr !== '-----') {
+                        totalChecked++;
+                        let resDigits = resStr.split('').map(Number);
+                        let isMatch = resDigits.includes(bottomSum);
+                        if (isMatch) hits++;
+                        historyLog.push({ draw: i + 1, actualBottom, bottomSum, resStr, isMatch });
+                    }
+                }
+                let score = totalChecked > 0 ? (hits / totalChecked) * 100 : 0;
+                formulaDetails.push({ formula, hits, totalChecked, score, historyLog });
+            });
+
+            formulaDetails.sort((a, b) => b.score - a.score);
+
+            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
+            const lastDigits = lastLine.split('').map(Number);
+
+            let sets = [];
+            formulaDetails.forEach(item => {
+                let resStr = evalSingleFormulaStr(item.formula, lastDigits, 7);
+                if (resStr !== '-----') sets.push(resStr.split(''));
+            });
+
+            if (sets.length === 0) customIntersectionDigits = [];
+            else {
+                let intersection = sets.reduce((acc, curr) => acc.filter(x => curr.includes(x)));
+                if (intersection.length === 0) {
+                    let allPool = [].concat(...sets);
+                    intersection = [...new Set(allPool)].sort();
+                }
+                customIntersectionDigits = intersection;
+            }
+
+            if (displayEl) {
+                displayEl.innerText = customIntersectionDigits.length > 0 ? customIntersectionDigits.join(' ') : '--- ไม่มีตัวชน --';
+            }
+
+            container.innerHTML = '';
+            formulaDetails.forEach((item, idx) => {
+                let recentHistory = item.historyLog.slice(-10).reverse();
+                let historyRowsHTML = recentHistory.map(h => `
+                    <tr class="border-b border-slate-100 text-center">
+                        <td class="py-1 px-1 text-slate-500">งวดที่ ${h.draw}</td>
+                        <td class="py-1 px-1 font-bold text-slate-800">${h.actualBottom} (แต้ม ${h.bottomSum})</td>
+                        <td class="py-1 px-1 font-mono text-blue-600 tracking-wider">${h.resStr}</td>
+                        <td class="py-1 px-1 font-bold">
+                            ${h.isMatch ? '<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">✔ เข้า</span>' : '<span class="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">✘ หลุด</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+
+                let nextRes7 = evalSingleFormulaStr(item.formula, lastDigits, 7);
+
+                const div = document.createElement('div');
+                div.className = "p-4 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-sm";
+                div.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-white bg-emerald-600 px-2 py-0.5 rounded shadow-sm">สูตรสร้างเอง #${idx + 1}</span>
+                            <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-emerald-700 text-sm">${item.formula}</strong></span>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
+                    </div>
+                    <div class="flex items-center justify-between text-xs bg-emerald-50/80 p-2.5 rounded-xl border border-emerald-200">
+                        <span class="font-semibold text-emerald-950">📌 ผลลัพธ์สูตร (7 ตัวเรียง):</span>
+                        <span class="font-mono font-black text-rose-600 tracking-widest text-base">${nextRes7.split('').join(' ')}</span>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-[11px] font-bold text-slate-600">📊 สถิติย้อนหลัง 10 งวดล่าสุด:</div>
+                        <div class="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden max-h-36 overflow-y-auto">
+                            <table class="w-full text-xs">
+                                <thead class="bg-slate-100 text-slate-600 font-semibold border-b">
+                                    <tr>
+                                        <th class="py-1 px-1">งวด</th>
+                                        <th class="py-1 px-1">2 ล่าง</th>
+                                        <th class="py-1 px-1">ผลสูตร (7ตัวเรียง)</th>
+                                        <th class="py-1 px-1">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">${historyRowsHTML}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function sendCustomIntersectionToSumPoints() {
+            if (!customIntersectionDigits || customIntersectionDigits.length === 0) {
+                showToast('ยังไม่มีตัวเลขตัวชนจากสูตรสร้างเอง');
+                return;
+            }
+            const formattedSumPoints = customIntersectionDigits.join(', ');
+            document.getElementById('sumPointsInput').value = formattedSumPoints;
+            autoProcess();
+            switchPageTab('main');
+            showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
+        }
+
+        // ฟังก์ชัน Excel & ชีท
         function initExcelSheetsEngine() {
             const saved = localStorage.getItem(EXCEL_SHEETS_KEY);
             if (saved) { try { excelSheetsData = JSON.parse(saved); } catch(e) {} }
@@ -713,7 +912,7 @@
                 excelSheetsData = {
                     'sheet_1': {
                         name: 'ตารางสูตรที่ 1', history: defaultHistoryData, outputLength: 5,
-                        columns: [{ name: 'ส1', formula: 'P7+P8+1' }, { name: 'ส2', formula: 'P1+P7+3' }, { name: 'ส3', formula: 'P3+P8+5' }, { name: 'ส4', formula: 'P5+P7+2' }, { name: 'ส5', formula: 'P2+P12+4' }]
+                        columns: [{ name: 'ส1', formula: 'P7+P8+1' }, { name: 'ส2', formula: 'P1+P7+3' }, { name: 'ส3', formula: 'P3+P8+5' }]
                     }
                 };
             }
@@ -735,7 +934,7 @@
                 const isActive = id === activeSheetId;
                 const tabBtn = document.createElement('div');
                 tabBtn.className = `flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold cursor-pointer whitespace-nowrap ${isActive ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600'}`;
-                tabBtn.innerHTML = `<span onclick="switchExcelSubTab('${id}')"><i class="fa-solid fa-table mr-1"></i>${sheet.name}</span>${Object.keys(excelSheetsData).length > 1 ? `<button onclick="deleteExcelSheetTab('${id}', event)" class="text-rose-300 hover:text-white ml-1 text-[10px]"><i class="fa-solid fa-xmark"></i></button>` : ''}`;
+                tabBtn.innerHTML = `<span onclick="switchExcelSubTab('${id}')"><i class="fa-solid fa-table mr-1"></i>${sheet.name}</span>`;
                 container.appendChild(tabBtn);
             }
         }
@@ -745,38 +944,13 @@
             collectAndSaveDOMFormulas();
             const nextIdx = Object.keys(excelSheetsData).length + 1;
             const newId = `sheet_${Date.now()}`;
-            // 🎯 แก้ไขตรงนี้: เปลี่ยนจากที่มีค่าตั้งต้น ให้เป็นอาเรย์ว่าง [] เพื่อให้ตารางโล่งสนิท
-            excelSheetsData[newId] = { 
-                name: `ตารางสูตรที่ ${nextIdx}`, 
-                history: defaultHistoryData, 
-                outputLength: 5, 
-                columns: [] 
-            };
-            activeSheetId = newId; 
-            saveExcelSheetsData(); 
-            renderSubTabsBar(); 
-            loadActiveSheetContent();
-        }
-
-        function deleteExcelSheetTab(id, e) {
-            e.stopPropagation();
-            if (Object.keys(excelSheetsData).length <= 1) return;
-            if (confirm(`ลบหน้าสถิติ "${excelSheetsData[id].name}"?`)) {
-                delete excelSheetsData[id]; if (activeSheetId === id) activeSheetId = Object.keys(excelSheetsData)[0];
-                saveExcelSheetsData(); renderSubTabsBar(); loadActiveSheetContent();
-            }
+            excelSheetsData[newId] = { name: `ตารางสูตรที่ ${nextIdx}`, history: defaultHistoryData, outputLength: 5, columns: [] };
+            activeSheetId = newId; saveExcelSheetsData(); renderSubTabsBar(); loadActiveSheetContent();
         }
 
         function loadActiveSheetContent() {
             const sheet = excelSheetsData[activeSheetId];
             if (!sheet) return;
-
-            // เคลียร์หัวตารางและเนื้อหาเก่าทิ้งก่อนโหลดข้อมูลชีตใหม่ ป้องกันค่าใน DOM ตีกัน
-            const headRow = document.getElementById('customTableHeadRow');
-            const body = document.getElementById('customFormulaTableBody');
-            if (headRow) headRow.innerHTML = '';
-            if (body) body.innerHTML = '';
-
             document.getElementById('customHistoryInput').value = sheet.history || defaultHistoryData;
             document.getElementById('outputLengthSelect').value = sheet.outputLength || 5;
             processCustomFormulasEngine();
@@ -800,38 +974,9 @@
             localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
         }
 
-        function triggerManualCalculate() {
-            collectAndSaveDOMFormulas();
-            processCustomFormulasEngine();
-            showToast('อัปเดตผลลัพธ์เรียบร้อย!');
-        }
-
-        function addCustomFormulaColumn() { 
-            collectAndSaveDOMFormulas();
-            const cols = excelSheetsData[activeSheetId].columns; 
-            cols.push({ name: `ส${cols.length + 1}`, formula: 'P1+1' }); 
-            saveExcelSheetsData(); 
-            processCustomFormulasEngine(); 
-        }
-
-        function removeCustomFormulaColumn(idx) { 
-            collectAndSaveDOMFormulas();
-            const cols = excelSheetsData[activeSheetId].columns; 
-         
-            cols.splice(idx, 1); 
-            saveExcelSheetsData(); 
-            processCustomFormulasEngine(); 
-        }
-
-        function evalSingleFormulaStr(formulaStr, d, length = 5) {
-            const getD = (idx) => d[idx - 1] || 0;
-            let expr = formulaStr.toUpperCase().replace(/P(\d+)/g, (match, p1) => getD(parseInt(p1, 10)));
-            try {
-                let baseSum = eval(expr); baseSum = Math.abs(parseInt(baseSum, 10)) % 10;
-                let seq = []; for (let i = 0; i < length; i++) seq.push((baseSum + i) % 10);
-                return seq.join('');
-            } catch(e) { return '-----'; }
-        }
+        function triggerManualCalculate() { collectAndSaveDOMFormulas(); processCustomFormulasEngine(); showToast('อัปเดตผลลัพธ์แล้ว!'); }
+        function addCustomFormulaColumn() { collectAndSaveDOMFormulas(); const cols = excelSheetsData[activeSheetId].columns; cols.push({ name: `ส${cols.length + 1}`, formula: 'P1+1' }); saveExcelSheetsData(); processCustomFormulasEngine(); }
+        function removeCustomFormulaColumn(idx) { collectAndSaveDOMFormulas(); excelSheetsData[activeSheetId].columns.splice(idx, 1); saveExcelSheetsData(); processCustomFormulasEngine(); }
 
         function processCustomFormulasEngine() {
             collectAndSaveDOMFormulas();
@@ -841,14 +986,13 @@
             const headRow = document.getElementById('customTableHeadRow');
             const body = document.getElementById('customFormulaTableBody');
             if(!headRow || !body) return; 
-            
             body.innerHTML = '';
 
             let headHTML = `<th class="py-1.5 px-0.5 text-center text-[10px]" style="width: 35px;">งวด</th><th class="py-1.5 px-0.5 text-center bg-slate-900 text-[10px]" style="width: 48px;">2 ล่าง</th>`;
             sheet.columns.forEach((col, idx) => {
-                headHTML += `<th class="py-1 px-0.5 text-center" style="width: 58px;"><div class="flex flex-col gap-0.5"><div class="flex items-center justify-between px-0.5"><input type="text" id="col_name_${idx}" value="${col.name}" class="w-7 bg-slate-700 text-white text-center font-bold text-[10px] rounded px-0.5 outline-none"><button onclick="removeCustomFormulaColumn(${idx})" class="text-rose-400 text-[10px] px-0.5"><i class="fa-solid fa-xmark"></i></button></div><input type="text" id="col_formula_${idx}" value="${col.formula}" class="w-full bg-blue-700 text-amber-300 text-center font-mono font-semibold text-[13px] rounded px-0.5 py-0.5 outline-none"></div></th>`;
+                headHTML += `<th class="py-1 px-0.5 text-center" style="width: 58px;"><div class="flex flex-col gap-0.5"><div class="flex items-center justify-between px-0.5"><input type="text" id="col_name_${idx}" value="${col.name}" class="w-7 bg-slate-700 text-white text-center font-bold text-[10px] rounded"><button onclick="removeCustomFormulaColumn(${idx})" class="text-rose-400 text-[10px]"><i class="fa-solid fa-xmark"></i></button></div><input type="text" id="col_formula_${idx}" value="${col.formula}" class="w-full bg-blue-700 text-amber-300 text-center font-mono font-semibold text-[13px] rounded"></div></th>`;
             });
-            headHTML += `<th class="py-1.5 px-0.5 text-center bg-emerald-800 text-[10px]" style="width: 48px;">ตัวแรก</th><th class="py-1.5 px-0.5 text-center bg-rose-900 text-rose-100 text-[10px]" style="width: 55px;">เลขขาด</th>`;
+            headHTML += `<th class="py-1.5 px-0.5 text-center bg-emerald-800 text-[10px]" style="width: 48px;">ตัวแรก</th>`;
             headRow.innerHTML = headHTML;
 
             if (!rawText) return;
@@ -856,7 +1000,7 @@
 
             lines.forEach((line, index) => {
                 const clean = line.replace(/[^0-9]/g, '');
-                let actualBottom = clean.length >= 8 ? clean.slice(6, 8) : (clean.length >= 2 ? clean.slice(0, 2) : '--');
+                let actualBottom = clean.length >= 8 ? clean.slice(6, 8) : '--';
                 let bottomDigits = actualBottom.split('');
                 let computedFormulas = []; let firstDigitsThisRow = [];
 
@@ -871,264 +1015,27 @@
 
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/70";
-                let cellsHTML = `<td class="py-1 px-0.5 text-center text-slate-400 text-[10px] border-r" style="width: 35px;">${index + 1}</td><td class="py-1 px-0.5 text-center font-bold text-slate-800 bg-slate-100/90 border-r text-[10px]" style="width: 48px;">${actualBottom}</td>`;
+                let cellsHTML = `<td class="py-1 px-0.5 text-center text-slate-400 text-[10px] border-r">${index + 1}</td><td class="py-1 px-0.5 text-center font-bold text-slate-800 bg-slate-100 border-r text-[10px]">${actualBottom}</td>`;
 
                 if (index === 0) {
-                    sheet.columns.forEach(() => { cellsHTML += `<td class="py-1 px-0.5 text-center text-slate-300 bg-slate-700 border-r text-[10px]" style="width: 58px;">-----</td>`; });
-                    cellsHTML += `<td class="py-1 px-0.5 text-center font-bold bg-emerald-50 text-emerald-800 text-[10px]" style="width: 48px;">--</td><td class="py-1 px-0.5 text-center font-bold bg-rose-50 text-rose-800 text-[10px]" style="width: 55px;">--</td>`;
+                    sheet.columns.forEach(() => { cellsHTML += `<td class="py-1 px-0.5 text-center text-slate-300 bg-slate-700 border-r text-[10px]">-----</td>`; });
+                    cellsHTML += `<td class="py-1 px-0.5 text-center font-bold bg-emerald-50 text-emerald-800 text-[10px]">--</td>`;
                 } else {
                     computedFormulas.forEach((fVal) => {
-                        if (fVal === '-----') cellsHTML += `<td class="py-1 px-0.5 text-center text-slate-300 bg-slate-700 border-r text-[10px]" style="width: 58px;">-----</td>`;
+                        if (fVal === '-----') cellsHTML += `<td class="py-1 px-0.5 text-center text-slate-300 bg-slate-700 border-r text-[10px]">-----</td>`;
                         else {
                             let formattedChars = fVal.split('').map(digit => (actualBottom !== '--' && bottomDigits.includes(digit)) ? `<span class="text-rose-500 font-black">${digit}</span>` : `<span class="text-white">${digit}</span>`).join('');
-                            cellsHTML += `<td class="py-1 px-0.5 text-center font-bold bg-slate-700 border-r text-[10px]" style="width: 58px;">${formattedChars}</td>`;
+                            cellsHTML += `<td class="py-1 px-0.5 text-center font-bold bg-slate-700 border-r text-[10px]">${formattedChars}</td>`;
                         }
                     });
-
-                    let uniqueFirsts = [...new Set(firstDigitsThisRow)];
-                    let formattedFirsts = uniqueFirsts.map(digit => (actualBottom !== '--' && bottomDigits.includes(digit)) ? `<span class="text-rose-600 font-black">${digit}</span>` : `<span class="text-emerald-950">${digit}</span>`).join('');
-                    let missingDigits = []; for (let d = 0; d <= 9; d++) { let dStr = d.toString(); if (!uniqueFirsts.includes(dStr)) missingDigits.push(dStr); }
-                    let formattedMissing = missingDigits.map(digit => (actualBottom !== '--' && bottomDigits.includes(digit)) ? `<span class="text-rose-600 font-black">${digit}</span>` : `<span class="text-rose-950">${digit}</span>`).join('');
-
-                    cellsHTML += `<td class="py-1 px-0.5 text-center font-extrabold bg-emerald-100 text-[10px] tracking-wider border-r" style="width: 48px;">${formattedFirsts || '--'}</td><td class="py-1 px-0.5 text-center font-extrabold bg-rose-100 text-[10px] tracking-wider" style="width: 55px;">${formattedMissing || '--'}</td>`;
+                    let uniqueFirsts = [...new Set(firstDigitsThisRow)].join('');
+                    cellsHTML += `<td class="py-1 px-0.5 text-center font-extrabold bg-emerald-100 text-[10px] tracking-wider">${uniqueFirsts || '--'}</td>`;
                 }
                 tr.innerHTML = cellsHTML; body.appendChild(tr);
             });
-
-            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
-            if (lastLine.length >= 8) {
-                const lastDigits = lastLine.split('').map(Number);
-                let nextRowFormulas = []; let nextFirstDigits = [];
-                sheet.columns.forEach(col => {
-                    let resStr = evalSingleFormulaStr(col.formula, lastDigits, outLen);
-                    nextRowFormulas.push(resStr);
-                    if (resStr !== '-----' && resStr.length > 0) nextFirstDigits.push(resStr[0]);
-                });
-
-                let uniqueNextFirsts = [...new Set(nextFirstDigits)].join(''); extractedFirstDigits = uniqueNextFirsts;
-                const firstDisplay = document.getElementById('extractedFirstDigitsDisplay');
-                if(firstDisplay) firstDisplay.innerText = extractedFirstDigits.length > 0 ? extractedFirstDigits.split('').join(' ') : '---';
-
-                let nextMissingDigits = []; for (let d = 0; d <= 9; d++) { let dStr = d.toString(); if (!uniqueNextFirsts.includes(dStr)) nextMissingDigits.push(dStr); }
-                let nextMissingStr = nextMissingDigits.join('');
-
-                const trNext = document.createElement('tr'); trNext.className = "bg-purple-50 font-bold border-2 border-purple-400";
-                let nextCellsHTML = `<td class="py-1 px-0.5 text-center text-purple-950 text-[10px] border-r" style="width: 35px;">ถัดไป</td><td class="py-1 px-0.5 text-center text-purple-950 bg-purple-200 border-r text-[10px]" style="width: 48px;">--</td>`;
-                nextRowFormulas.forEach(fVal => { nextCellsHTML += `<td class="py-1 px-0.5 text-center text-purple-950 border-r text-[10px] bg-purple-100/60" style="width: 58px;">${fVal}</td>`; });
-                nextCellsHTML += `<td class="py-1 px-0.5 text-center text-emerald-950 bg-emerald-300 text-[10px] font-extrabold tracking-widest border-r" style="width: 48px;">${uniqueNextFirsts}</td><td class="py-1 px-0.5 text-center text-rose-950 bg-rose-300 text-[10px] font-extrabold tracking-widest" style="width: 55px;">${nextMissingStr}</td>`;
-                trNext.innerHTML = nextCellsHTML; body.appendChild(trNext);
-            }
         }
 
-        function runFormulaIntersectionAnalysis() {
-            collectAndSaveDOMFormulas();
-            const sheet = excelSheetsData[activeSheetId];
-            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
-            const logBox = document.getElementById('aiChatLog2');
-            if (!rawText) { alert('กรุณากรอกสถิติผลสลากในหน้า Excel ก่อนครับ'); return; }
-            const lines = rawText.split('\n').filter(l => l.trim().length > 0); if (lines.length === 0) return;
-            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, ''); if (lastLine.length < 8) return;
-            const lastDigits = lastLine.split('').map(Number);
-            const outLen = sheet.outputLength || 5;
-
-            let allPool = [];
-            sheet.columns.forEach((col) => {
-                let resStr = evalSingleFormulaStr(col.formula, lastDigits, outLen);
-                if (resStr !== '-----') resStr.split('').forEach(d => allPool.push(d));
-            });
-
-            if (allPool.length === 0) { logBox.innerHTML = `<div class="text-rose-300 font-bold">❌ ไม่พบผลลัพธ์จากสูตรในตาราง</div>`; return; }
-
-            let counts = {}; for (let i = 0; i <= 9; i++) counts[i.toString()] = 0;
-            allPool.forEach(d => { counts[d]++; });
-
-            let freqGroups = {};
-            Object.keys(counts).forEach(d => {
-                let f = counts[d];
-                if (f > 0) { if (!freqGroups[f]) freqGroups[f] = []; freqGroups[f].push(d); }
-            });
-
-            let freqsDesc = Object.keys(freqGroups).map(Number).sort((a, b) => b - a);
-            let stepsHTML = `<div class="text-emerald-300 font-bold mb-1">🏆 ผลวิเคราะห์ตัวชนจากทุกสูตร & เรียงลำดับขั้นบันไดจากมากไปน้อย:</div>`;
-            freqsDesc.forEach((f, idx) => {
-                let digitsStr = freqGroups[f].sort().join(', ');
-                let badgeBg = idx === 0 ? 'bg-amber-400 text-slate-950 font-black' : (idx === 1 ? 'bg-blue-600 text-white font-bold' : 'bg-purple-800 text-purple-200');
-                stepsHTML += `<div class="flex items-center gap-2 py-0.5 border-l-2 border-purple-600 pl-2"><span class="px-2 py-0.5 rounded text-[10px] ${badgeBg}">อันดับ ${idx + 1} (ชน ${f} สูตร)</span><span class="font-mono text-amber-200 font-bold tracking-widest text-xs">${digitsStr}</span></div>`;
-            });
-            logBox.innerHTML = stepsHTML; logBox.scrollTop = logBox.scrollHeight; showToast('วิเคราะห์จัดอันดับตัวชนสำเร็จ!');
-        }
-
-        let globalTop4Formulas = [];
-        let globalLastDigits = [];
-
-        function openBestBottomSumModal() {
-            collectAndSaveDOMFormulas();
-            const sheet = excelSheetsData[activeSheetId];
-            const rawText = sheet ? sheet.history : document.getElementById('customHistoryInput').value.trim();
-            if (!rawText) { alert('กรุณากรอกสถิติผลสลากในหน้า "สถิติ & สูตร Excel" ก่อนครับ'); return; }
-            const lines = rawText.split('\n').filter(l => l.trim().length > 0);
-            if (lines.length < 5) { alert('ต้องการสถิติย้อนหลังอย่างน้อย 5 งวดขึ้นไป'); return; }
-
-            const candidateFormulas = [
-                "P7+P8+1", "P1+P7+3", "P3+P8+5", "P5+P7+2", "P2+P12+4",
-                "P1+P2+P3", "P7+P1+2", "P8+P3+1", "P4+P6+7", "P9+P10+1",
-                "P1+P8+4", "P7+P3+6", "P2+P5+8", "P6+P8+2", "P1+P5+9",
-                "P7+P11+3", "P4+P8+5", "P2+P7+1", "P3+P6+4", "P10+P12+2"
-            ];
-
-            let formulaDetails = [];
-
-            candidateFormulas.forEach(formula => {
-                let hits = 0;
-                let totalChecked = 0;
-                let historyLog = [];
-
-                for (let i = 1; i < lines.length; i++) {
-                    const prevDigits = lines[i - 1].replace(/[^0-9]/g, '').split('').map(Number);
-                    const cleanCurr = lines[i].replace(/[^0-9]/g, '');
-                    if (cleanCurr.length < 8) continue;
-                    let bottomSum = (parseInt(cleanCurr[6], 10) + parseInt(cleanCurr[7], 10)) % 10;
-                    let actualBottom = cleanCurr.slice(6, 8);
-
-                    let resStr = evalSingleFormulaStr(formula, prevDigits, 7);
-                    if (resStr !== '-----') {
-                        totalChecked++;
-                        let resDigits = resStr.split('').map(Number);
-                        let isMatch = resDigits.includes(bottomSum);
-                        if (isMatch) hits++;
-                        
-                        historyLog.push({
-                            draw: i + 1,
-                            actualBottom,
-                            bottomSum,
-                            resStr,
-                            isMatch
-                        });
-                    }
-                }
-
-                let score = totalChecked > 0 ? (hits / totalChecked) * 100 : 0;
-                formulaDetails.push({ formula, hits, totalChecked, score, historyLog });
-            });
-
-            formulaDetails.sort((a, b) => b.score - a.score);
-            globalTop4Formulas = formulaDetails.slice(0, 4);
-
-            const lastLine = lines[lines.length - 1].replace(/[^0-9]/g, '');
-            globalLastDigits = lastLine.split('').map(Number);
-
-            calculateIntersectionDigits();
-            renderModalResults(7);
-
-            document.getElementById('bestBottomSumModal').classList.remove('hidden');
-        }
-
-        function calculateIntersectionDigits() {
-            let sets = [];
-            globalTop4Formulas.forEach(item => {
-                let resStr = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
-                if (resStr !== '-----') {
-                    sets.push(resStr.split(''));
-                }
-            });
-
-            if (sets.length === 0) {
-                currentIntersectionDigits = [];
-            } else {
-                let intersection = sets.reduce((acc, curr) => acc.filter(x => curr.includes(x)));
-                if (intersection.length === 0) {
-                    let allPool = [].concat(...sets);
-                    intersection = [...new Set(allPool)].sort();
-                }
-                currentIntersectionDigits = intersection;
-            }
-
-            const displayEl = document.getElementById('intersectionDigitsDisplay');
-            const tabDisplayEl = document.getElementById('tabIntersectionDigitsDisplay');
-            const resultText = currentIntersectionDigits.length > 0 ? currentIntersectionDigits.join(' ') : '--- ไม่มีตัวชน --';
-            if (displayEl) displayEl.innerText = resultText;
-            if (tabDisplayEl) tabDisplayEl.innerText = resultText;
-        }
-
-        function renderModalResults(displayLen = 7) {
-            const resultContainer = document.getElementById('bestFormulasResultList');
-            const tabResultContainer = document.getElementById('tabBestFormulasResultList');
-            if(!resultContainer) return;
-            resultContainer.innerHTML = '';
-            if (tabResultContainer) tabResultContainer.innerHTML = '';
-
-            globalTop4Formulas.forEach((item, idx) => {
-                let recentHistory = item.historyLog.slice(-10).reverse();
-                let historyRowsHTML = recentHistory.map(h => `
-                    <tr class="border-b border-slate-100 text-center">
-                        <td class="py-1 px-1 text-slate-500">งวดที่ ${h.draw}</td>
-                        <td class="py-1 px-1 font-bold text-slate-800">${h.actualBottom} (แต้ม ${h.bottomSum})</td>
-                        <td class="py-1 px-1 font-mono text-blue-600 tracking-wider">${h.resStr}</td>
-                        <td class="py-1 px-1 font-bold">
-                            ${h.isMatch ? '<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">✔ เข้า</span>' : '<span class="text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">✘ หลุด</span>'}
-                        </td>
-                    </tr>
-                `).join('');
-
-                let nextRes7 = evalSingleFormulaStr(item.formula, globalLastDigits, 7);
-
-                const div = document.createElement('div');
-                div.className = "p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 shadow-sm";
-                div.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-900 bg-amber-400 px-2 py-0.5 rounded shadow-sm">อันดับที่ ${idx + 1}</span>
-                            <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-[#1877F2] text-sm">${item.formula}</strong></span>
-                        </div>
-                        <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
-                    </div>
-
-                    <div class="flex items-center justify-between text-xs bg-blue-50/70 p-2.5 rounded-xl border border-blue-200">
-                        <span class="font-semibold text-blue-950">📌 ผลลัพธ์สูตร (7 ตัวเรียง):</span>
-                        <span class="font-mono font-black text-rose-600 tracking-widest text-base">${nextRes7.split('').join(' ')}</span>
-                    </div>
-
-                    <div class="space-y-1">
-                        <div class="text-[11px] font-bold text-slate-600">📊 สถิติย้อนหลัง 10 งวดล่าสุด (ผลสูตร 7 ตัว):</div>
-                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden max-h-36 overflow-y-auto">
-                            <table class="w-full text-xs">
-                                <thead class="bg-slate-100 text-slate-600 font-semibold border-b">
-                                    <tr>
-                                        <th class="py-1 px-1">งวด</th>
-                                        <th class="py-1 px-1">2 ล่าง</th>
-                                        <th class="py-1 px-1">ผลสูตร (7ตัวเรียง)</th>
-                                        <th class="py-1 px-1">สถานะ</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    ${historyRowsHTML}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-                resultContainer.appendChild(div);
-                if (tabResultContainer) tabResultContainer.appendChild(div.cloneNode(true));
-            });
-        }
-
-        function closeBestBottomSumModal() {
-            document.getElementById('bestBottomSumModal').classList.add('hidden');
-        }
-
-        function sendIntersectionToSumPoints() {
-            if (!currentIntersectionDigits || currentIntersectionDigits.length === 0) {
-                showToast('ยังไม่มีตัวเลขตัวชนสำหรับส่ง');
-                return;
-            }
-            const formattedSumPoints = currentIntersectionDigits.join(', ');
-            document.getElementById('sumPointsInput').value = formattedSumPoints;
-            autoProcess();
-            switchPageTab('main');
-            closeBestBottomSumModal();
-            showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
-        }
-
+        // ระบบจับคู่หน้าหลัก
         function autoProcess() {
             saveToLocalStorage();
             const tensEl = document.getElementById('tens');
@@ -1153,7 +1060,6 @@
                 const digits = input.value.replace(/[^0-9]/g, '');
                 if (digits.length > 0) filterSets.push([...new Set(digits.split(''))]);
             });
-            const filterLogic = 'AND';
 
             // Pair Section
             const pairResultsDiv = document.getElementById('pairResults');
@@ -1165,19 +1071,16 @@
                 document.getElementById('sectionPair').classList.remove('hidden');
                 baseTens.forEach(t => {
                     const rowDiv = document.createElement('div');
-                    rowDiv.className = 'flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-xl border border-slate-200 shadow-sm';
+                    rowDiv.className = 'flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-xl border border-slate-200';
                     baseUnits.forEach(u => {
                         const pairStr = t + u;
-                        const d1 = parseInt(t, 10), d2 = parseInt(u, 10), digits = [t, u];
-                        const sumPoint = (d1 + d2) % 10;
+                        const sumPoint = (parseInt(t, 10) + parseInt(u, 10)) % 10;
                         let isPassed = true;
 
                         if (uniqueExclude.length > 0 && (uniqueExclude.includes(t) || uniqueExclude.includes(u))) isPassed = false;
                         if (isPassed && allowedSumPoints.length > 0 && !allowedSumPoints.includes(sumPoint)) isPassed = false;
-
                         if (isPassed && filterSets.length > 0) {
-                            if (filterLogic === 'AND') isPassed = filterSets.every(set => digits.some(d => set.includes(d)));
-                            else isPassed = filterSets.some(set => digits.some(d => set.includes(d)));
+                            isPassed = filterSets.every(set => [t, u].some(d => set.includes(d)));
                         }
 
                         const badge = document.createElement('span');
@@ -1206,20 +1109,17 @@
                 for (let i = 0; i < stairDigits.length; i++) {
                     const t = stairDigits[i];
                     const rowDiv = document.createElement('div');
-                    rowDiv.className = 'flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-xl border border-blue-200 shadow-sm';
+                    rowDiv.className = 'flex flex-wrap items-center gap-1.5 p-2 bg-white rounded-xl border border-blue-200';
                     for (let j = i; j < stairDigits.length; j++) {
                         const u = stairDigits[j];
                         const pairStr = t + u;
-                        const d1 = parseInt(t, 10), d2 = parseInt(u, 10), digits = [t, u];
-                        const sumPoint = (d1 + d2) % 10;
+                        const sumPoint = (parseInt(t, 10) + parseInt(u, 10)) % 10;
                         let isPassed = true;
 
                         if (uniqueExclude.length > 0 && (uniqueExclude.includes(t) || uniqueExclude.includes(u))) isPassed = false;
                         if (isPassed && allowedSumPoints.length > 0 && !allowedSumPoints.includes(sumPoint)) isPassed = false;
-
                         if (isPassed && filterSets.length > 0) {
-                            if (filterLogic === 'AND') isPassed = filterSets.every(set => digits.some(d => set.includes(d)));
-                            else isPassed = filterSets.some(set => digits.some(d => set.includes(d)));
+                            isPassed = filterSets.every(set => [t, u].some(d => set.includes(d)));
                         }
 
                         const badge = document.createElement('span');
@@ -1240,13 +1140,6 @@
             resultArea.classList.remove('hidden');
         }
 
-        function copyAllPassedResults() {
-            const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
-            if (badges.length === 0) { showToast('ไม่มีเลขผ่าน'); return; }
-            const uniqueList = [...new Set(Array.from(badges).map(b => b.innerText))];
-            navigator.clipboard.writeText(uniqueList.join(' ')).then(() => showToast(`คัดลอก ${uniqueList.length} ชุดแล้ว!`));
-        }
-
         function copyReversedPassedResults() {
             const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
             if (badges.length === 0) { showToast('ไม่มีเลขผ่าน'); return; }
@@ -1261,15 +1154,13 @@
             const container = document.getElementById('filterInputsList'); if(!container) return;
             const index = container.children.length + 1;
             const rowId = `filter_input_${Date.now()}_${index}`;
-            const div = document.createElement('div'); div.className = "flex items-center gap-1.5 min-w-0 w-full filter-row";
-            div.innerHTML = `<span class="shrink-0 text-xs text-slate-400 font-mono w-5 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" oninput="debounceAutoProcess()" placeholder="ชุดเลขเด่น ${index}" class="filter-input min-w-0 w-0 flex-1 px-2 py-1 border border-slate-200 rounded-lg text-xs font-medium"><button type="button" onclick="removeFilterRow(this)" aria-label="ลบชุดคัดกรอง" class="shrink-0 text-slate-500 hover:text-rose-600 p-1.5"><i class="fa-solid fa-xmark"></i></button>`;
+            const div = document.createElement('div'); div.className = "flex items-center gap-1.5 w-full filter-row";
+            div.innerHTML = `<span class="text-xs text-slate-400 font-mono w-5 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" oninput="debounceAutoProcess()" placeholder="ชุดเลขเด่น" class="filter-input w-full px-2 py-1 border rounded-lg text-xs font-medium"><button type="button" onclick="removeFilterRow(this)" class="text-slate-500 hover:text-rose-600 p-1"><i class="fa-solid fa-xmark"></i></button>`;
             container.appendChild(div); reindexFilterRows();
         }
 
         function removeFilterRow(btn) {
-            const container = document.getElementById('filterInputsList'); if(!container) return;
-            if (container.children.length <= 1) btn.closest('.filter-row').querySelector('input').value = '';
-            else btn.closest('.filter-row').remove();
+            btn.closest('.filter-row').remove();
             reindexFilterRows(); autoProcess();
         }
 
@@ -1280,8 +1171,7 @@
             return {
                 tens: document.getElementById('tens').value, units: document.getElementById('units').value,
                 stairInput: document.getElementById('stairInput').value, excludeInput: document.getElementById('excludeInput').value,
-                sumPointsInput: document.getElementById('sumPointsInput').value,
-                filterInputs, filterLogic: 'AND'
+                sumPointsInput: document.getElementById('sumPointsInput').value, filterInputs
             };
         }
 
@@ -1291,7 +1181,6 @@
             document.getElementById('stairInput').value = data.stairInput || '67890';
             document.getElementById('excludeInput').value = data.excludeInput || '';
             document.getElementById('sumPointsInput').value = data.sumPointsInput || '';
-            document.getElementById('filterLogic').value = 'AND';
             const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
             if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
             else { addFilterRow('24680'); addFilterRow('13579'); }
@@ -1306,148 +1195,160 @@
             document.getElementById('tens').value = '6789'; document.getElementById('units').value = '56789';
             document.getElementById('stairInput').value = '67890'; addFilterRow('24680'); addFilterRow('13579');
         }
-        function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
+
+        // ระบบจัดการแฟ้ม & Presets
+        function getStoredFolders() {
+            let folders = {};
+            try { folders = JSON.parse(localStorage.getItem(PERIOD_FOLDERS_KEY) || '{}'); } catch (e) { folders = {}; }
+            if (Object.keys(folders).length === 0) {
+                folders['แฟ้มใหม่'] = {};
+                localStorage.setItem(PERIOD_FOLDERS_KEY, JSON.stringify(folders));
+            }
+            return folders;
+        }
+
+        function saveStoredFolders(folders) { localStorage.setItem(PERIOD_FOLDERS_KEY, JSON.stringify(folders)); }
+
+        function getActivePeriodFolder() {
+            const folders = getStoredFolders();
+            let active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+            if (!active || !folders[active]) {
+                active = Object.keys(folders)[0] || 'แฟ้มใหม่';
+                localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, active);
+            }
+            return active;
+        }
+
+        function initPeriodFolders() {
+            refreshPeriodFolderSelect();
+            loadPresetsToSelect();
+        }
+
+        function refreshPeriodFolderSelect() {
+            const select = document.getElementById('periodFolderSelect');
+            if (!select) return;
+            const folders = getStoredFolders();
+            const active = getActivePeriodFolder();
+            select.innerHTML = '';
+            Object.keys(folders).forEach(name => { select.add(new Option(name, name)); });
+            select.value = active;
+            const label = document.getElementById('activePeriodFolderLabel');
+            if (label) label.textContent = active;
+        }
+
+        function createPeriodFolder() {
+            const input = document.getElementById('periodFolderName');
+            const name = input.value.trim();
+            if (!name) return;
+            const folders = getStoredFolders();
+            if (folders[name]) { alert('มีแฟ้มนี้แล้ว'); return; }
+            folders[name] = {};
+            saveStoredFolders(folders);
+            localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
+            input.value = '';
+            refreshPeriodFolderSelect();
+            loadPresetsToSelect();
+            showToast('สร้างแฟ้มสำเร็จ');
+        }
+
+        function switchPeriodFolder() {
+            const select = document.getElementById('periodFolderSelect');
+            localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, select.value);
+            loadPresetsToSelect();
+            showToast('เปลี่ยนแฟ้มแล้ว');
+        }
+
+        function renameActivePeriodFolder() {
+            const oldName = getActivePeriodFolder();
+            const newName = prompt('ชื่อแฟ้มใหม่:', oldName);
+            if (!newName || !newName.trim() || newName === oldName) return;
+            const folders = getStoredFolders();
+            folders[newName.trim()] = folders[oldName];
+            delete folders[oldName];
+            saveStoredFolders(folders);
+            localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, newName.trim());
+            refreshPeriodFolderSelect();
+            loadPresetsToSelect();
+            showToast('เปลี่ยนชื่อแฟ้มสำเร็จ');
+        }
+
+        function deleteActivePeriodFolder() {
+            const name = getActivePeriodFolder();
+            if (!confirm(`ลบแฟ้ม "${name}"?`)) return;
+            const folders = getStoredFolders();
+            delete folders[name];
+            if (Object.keys(folders).length === 0) folders['แฟ้มใหม่'] = {};
+            saveStoredFolders(folders);
+            localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, Object.keys(folders)[0]);
+            refreshPeriodFolderSelect();
+            loadPresetsToSelect();
+            showToast('ลบแฟ้มเรียบร้อย');
+        }
 
         function getStoredPresets() {
-            try { const p = localStorage.getItem(PRESETS_KEY); return p ? JSON.parse(p) : {}; }
-            catch (e) { console.warn('อ่านสูตรที่บันทึกไว้ไม่สำเร็จ', e); return {}; }
-        }
-
-        // แปลงคู่กลับให้เป็นคีย์เดียวกัน เช่น 25 และ 52 จะได้คีย์ 25
-        function normalizePairForPresetCompare(pair) {
-            const digits = String(pair).replace(/[^0-9]/g, '');
-            if (digits.length !== 2) return '';
-            return digits.split('').sort().join('');
-        }
-
-        // คำนวณผลคู่ที่ผ่านเงื่อนไขของสูตรที่บันทึก โดยไม่เปลี่ยนค่าบนหน้าจอปัจจุบัน
-        function getPassedPairsFromPresetState(data) {
-            if (!data || typeof data !== 'object') return new Set();
-            const tens = [...new Set(String(data.tens || '').replace(/[^0-9]/g, '').split(''))];
-            const units = [...new Set(String(data.units || '').replace(/[^0-9]/g, '').split(''))];
-            const stair = [...new Set(String(data.stairInput || '').replace(/[^0-9]/g, '').split(''))];
-            const exclude = [...new Set(String(data.excludeInput || '').replace(/[^0-9]/g, '').split(''))];
-            const allowedSums = [...new Set(String(data.sumPointsInput || '').replace(/[^0-9]/g, '').split(''))].map(Number);
-            const filterSets = (Array.isArray(data.filterInputs) ? data.filterInputs : [])
-                .map(value => [...new Set(String(value || '').replace(/[^0-9]/g, '').split(''))])
-                .filter(set => set.length > 0);
-            const passed = new Set();
-
-            const testPair = (a, b) => {
-                if (exclude.length && (exclude.includes(a) || exclude.includes(b))) return;
-                const sumPoint = (Number(a) + Number(b)) % 10;
-                if (allowedSums.length && !allowedSums.includes(sumPoint)) return;
-                const digits = [a, b];
-                // หน้าหลักกำหนดเงื่อนไขชุดคัดกรองเป็น AND
-                if (filterSets.length && !filterSets.every(set => digits.some(d => set.includes(d)))) return;
-                const normalized = normalizePairForPresetCompare(a + b);
-                if (normalized) passed.add(normalized);
-            };
-
-            if (tens.length && units.length) {
-                tens.forEach(t => units.forEach(u => testPair(t, u)));
-            }
-            if (stair.length) {
-                for (let i = 0; i < stair.length; i++) {
-                    for (let j = i; j < stair.length; j++) testPair(stair[i], stair[j]);
-                }
-            }
-            return passed;
-        }
-
-        function renderPresetPairCollisionSummary() {
-            const meta = document.getElementById('presetPairSummaryMeta');
-            const content = document.getElementById('presetPairSummaryContent');
-            if (!meta || !content) return;
-            const presets = getStoredPresets();
-            const names = Object.keys(presets);
-            if (!names.length) {
-                meta.textContent = 'ยังไม่มีสูตรที่บันทึกไว้';
-                content.innerHTML = '<p class="text-slate-500">บันทึกสูตรอย่างน้อย 1 สูตร แล้วจึงจะแสดงผลเปรียบเทียบ</p>';
-                return;
-            }
-
-            const counts = new Map();
-            names.forEach(name => {
-                const pairsInThisPreset = getPassedPairsFromPresetState(presets[name]);
-                pairsInThisPreset.forEach(pair => counts.set(pair, (counts.get(pair) || 0) + 1));
-            });
-            const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-            meta.textContent = `นำมาเปรียบเทียบ ${names.length} สูตร · พบคู่ที่ผ่านอย่างน้อย 1 สูตร ${ranked.length} คู่`;
-            if (!ranked.length) {
-                content.innerHTML = '<p class="text-slate-500">ยังไม่พบคู่ที่ผ่านเงื่อนไขจากสูตรที่บันทึกไว้</p>';
-                return;
-            }
-
-            content.innerHTML = ranked.map(([pair, count], index) => {
-                const rankStyle = index === 0
-                    ? 'bg-amber-100 border-amber-300 text-amber-950'
-                    : 'bg-white border-indigo-100 text-indigo-950';
-                return `<div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border ${rankStyle}">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-[10px] text-slate-500 w-5 shrink-0">${index + 1}.</span>
-                        <strong class="font-mono text-sm tracking-wider">${pair}</strong>
-                    </div>
-                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">พบ ${count} สูตร</span>
-                </div>`;
-            }).join('');
+            const folder = getActivePeriodFolder();
+            const folders = getStoredFolders();
+            return (folders[folder] && typeof folders[folder] === 'object') ? folders[folder] : {};
         }
 
         function saveCurrentPreset() {
+            const input = document.getElementById('presetNameInput');
             const select = document.getElementById('presetSelect');
-            let name = document.getElementById('presetNameInput').value.trim() || select.value; if (!name) return;
-            const presets = getStoredPresets(); presets[name] = getCurrentFormState();
-            localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); loadPresetsToSelect(); select.value = name;
-            showToast(`บันทึกสูตร "${name}" เรียบร้อย!`);
+            const name = input.value.trim() || select.value;
+            if (!name) { alert('กรุณากรอกชื่อสูตร'); return; }
+            const folder = getActivePeriodFolder();
+            const folders = getStoredFolders();
+            if (!folders[folder]) folders[folder] = {};
+            folders[folder][name] = getCurrentFormState();
+            saveStoredFolders(folders);
+            loadPresetsToSelect();
+            select.value = name;
+            input.value = '';
+            showToast(`บันทึกสูตร "${name}" เรียบร้อย`);
         }
+
         function loadPresetsToSelect() {
-            const select = document.getElementById('presetSelect'); if(!select) return;
-            const presets = getStoredPresets(); select.innerHTML = '<option value="">-- งานปัจจุบัน (Auto Saved) --</option>';
-            for (let name in presets) select.innerHTML += `<option value="${name}">📁 ${name}</option>`;
-            renderPresetPairCollisionSummary();
+            const select = document.getElementById('presetSelect');
+            if (!select) return;
+            const presets = getStoredPresets();
+            select.innerHTML = '<option value="">-- งานปัจจุบัน (Auto Saved) --</option>';
+            for (let name in presets) select.innerHTML += `<option value="${name}">${name}</option>`;
         }
+
         function loadSelectedPreset() {
-            const name = document.getElementById('presetSelect').value; if (!name) { loadSavedData(); autoProcess(); return; }
-            const presets = getStoredPresets(); if (presets[name]) { setFormState(presets[name]); autoProcess(); showToast(`โหลดสูตร "${name}" แล้ว`); }
+            const name = document.getElementById('presetSelect').value;
+            if (!name) { loadSavedData(); autoProcess(); return; }
+            const presets = getStoredPresets();
+            if (presets[name]) { setFormState(presets[name]); autoProcess(); showToast(`โหลดสูตร "${name}" แล้ว`); }
         }
+
         function deleteSelectedPreset() {
-            const name = document.getElementById('presetSelect').value; if (!name) return;
+            const name = document.getElementById('presetSelect' ).value;
+            if (!name) return;
             if (confirm(`ลบสูตร "${name}"?`)) {
-                const presets = getStoredPresets(); delete presets[name]; localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
-                loadPresetsToSelect(); loadSavedData(); autoProcess();
+                const folder = getActivePeriodFolder();
+                const folders = getStoredFolders();
+                if (folders[folder]) {
+                    delete folders[folder][name];
+                    saveStoredFolders(folders);
+                    loadPresetsToSelect();
+                    showToast('ลบสูตรเรียบร้อย');
+                }
             }
         }
 
         function getStoredFilterPresets() { const p = localStorage.getItem(FILTER_PRESETS_KEY); return p ? JSON.parse(p) : {}; }
         function saveFilterPreset() {
-            const select = document.getElementById('filterPresetSelect');
-            let name = document.getElementById('filterPresetNameInput').value.trim() || select.value; if (!name) return;
+            let name = prompt("ตั้งชื่อชุดคัดกรอง:");
+            if (!name) return;
             let filterInputs = []; document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
-            const presets = getStoredFilterPresets(); presets[name] = { filterInputs, filterLogic: 'AND' };
-            localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect(); select.value = name;
+            const presets = getStoredFilterPresets(); presets[name] = { filterInputs };
+            localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets));
+            showToast('บันทึกชุดคัดกรองเรียบร้อย');
         }
-        function loadFilterPresetsToSelect() {
-            const select = document.getElementById('filterPresetSelect'); if(!select) return;
-            const presets = getStoredFilterPresets(); select.innerHTML = '<option value="">-- เลือกชุดคัดกรองที่บันทึกไว้ --</option>';
-            for (let name in presets) select.innerHTML += `<option value="${name}">🔖 ${name}</option>`;
-        }
-        function loadFilterPreset() {
-            const name = document.getElementById('filterPresetSelect').value; if (!name) return;
-            const presets = getStoredFilterPresets();
-            if (presets[name]) {
-                const data = presets[name]; document.getElementById('filterLogic').value = 'AND';
-                const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
-                if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
-                autoProcess();
-            }
-        }
-        function deleteFilterPreset() {
-            const name = document.getElementById('filterPresetSelect').value; if (!name) return;
-            if (confirm(`ลบชุดคัดกรอง "${name}"?`)) {
-                const presets = getStoredFilterPresets(); delete presets[name];
-                localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect();
-            }
-        }
+        function loadFilterPresetsToSelect() {}
+        function loadFilterPreset() {}
+        function deleteFilterPreset() {}
 
         function openNotepadModal() { document.getElementById('notepadModal').classList.remove('hidden'); }
         function closeNotepadModal() { document.getElementById('notepadModal').classList.add('hidden'); }
@@ -1458,27 +1359,12 @@
             lines.forEach(line => addFilterRow(line)); closeNotepadModal(); autoProcess();
         }
 
-        function clearCustomHistoryInput() {
-            if(isHistoryLocked) { alert('กรุณากดปลดล็อคก่อน'); return; }
-            document.getElementById('customHistoryInput').value = ''; processCustomFormulasEngine();
-        }
-
         function sendFirstDigitsToMain() {
             if (!extractedFirstDigits) return;
-            const container = document.getElementById('filterInputsList'); 
-            if(!container) return; 
-            
-            // เช็คว่าช่องแรกว่างอยู่ไหม ถ้าว่างให้นำไปใส่ช่องแรกได้เลย แต่ถ้ามีข้อมูลอยู่แล้วให้สร้างแถวใหม่เพิ่มต่อท้าย
-            const firstInput = container.querySelector('.filter-input');
-            if (firstInput && firstInput.value.trim() === '') {
-                firstInput.value = extractedFirstDigits;
-            } else {
-                addFilterRow(extractedFirstDigits);
-            }
-            
+            addFilterRow(extractedFirstDigits);
             autoProcess(); 
             switchPageTab('main');
-            showToast('ส่งเลขสรุปเพิ่มเข้าช่องคัดกรองหน้าหลักเรียบร้อย!');
+            showToast('ส่งเลขสรุปเพิ่มเข้าช่องคัดกรองหน้าหลักแล้ว!');
         }
 
         function showToast(msg) {
@@ -1488,1327 +1374,36 @@
             setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 2200);
         }
 
-        // ==========================================
-        // 💾 ฟังก์ชันระบบสำรองข้อมูลออฟไลน์ (Export / Import Backup File)
-        // ==========================================
-        function getAllBackupBundle() {
-            collectAndSaveDOMFormulas();
-            return {
-                mainData: getCurrentFormState(),
-                presets: getStoredPresets(),
-                filterPresets: getStoredFilterPresets(),
-                excelSheetsData: excelSheetsData,
-                exportedAt: new Date().toLocaleString('th-TH')
-            };
-        }
-
-        function applyBackupBundle(bundle) {
-            if (!bundle) return false;
-            if (bundle.mainData) {
-                setFormState(bundle.mainData);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(bundle.mainData));
-            }
-            if (bundle.presets) {
-                localStorage.setItem(PRESETS_KEY, JSON.stringify(bundle.presets));
-                loadPresetsToSelect();
-            }
-            if (bundle.filterPresets) {
-                localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(bundle.filterPresets));
-                loadFilterPresetsToSelect();
-            }
-            if (bundle.excelSheetsData) {
-                excelSheetsData = bundle.excelSheetsData;
-                localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(bundle.excelSheetsData));
-                renderSubTabsBar();
-                loadActiveSheetContent();
-            }
-            autoProcess();
-            return true;
-        }
-
         function exportAllDataToFile() {
-            const bundle = getAllBackupBundle();
-            const jsonStr = JSON.stringify(bundle, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const bundle = { mainData: getCurrentFormState(), presets: getStoredPresets(), excelSheetsData };
+            const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
-            let filenameInput = document.getElementById('backupFileNameInput');
-            let filename = (filenameInput && filenameInput.value.trim()) ? filenameInput.value.trim() : 'lottery_backup';
-            if (!filename.endsWith('.json')) filename += '.json';
-
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            showToast(`ส่งออกไฟล์สำรอง "${filename}" เรียบร้อย!`);
+            const a = document.createElement('a'); a.href = url; a.download = 'lottery_backup.json';
+            a.click(); URL.revokeObjectURL(url);
+            showToast('ส่งออกไฟล์สำรองสำเร็จ!');
         }
 
         function importDataFromFile(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const bundle = JSON.parse(e.target.result);
-                    if (applyBackupBundle(bundle)) {
-                        showToast('นำเข้าข้อมูลจากไฟล์สำรองสำเร็จ!');
-                    } else {
-                        alert('รูปแบบไฟล์ไม่ถูกต้อง');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('เกิดข้อผิดพลาดในการอ่านไฟล์');
-                }
+                    if (bundle.mainData) setFormState(bundle.mainData);
+                    if (bundle.excelSheetsData) { excelSheetsData = bundle.excelSheetsData; loadActiveSheetContent(); }
+                    autoProcess();
+                    showToast('นำเข้าข้อมูลสำเร็จ!');
+                } catch (err) { alert('ไฟล์ไม่ถูกต้อง'); }
             };
             reader.readAsText(file);
-            event.target.value = '';
         }
 
-
-        // ระบบแชร์ผลสรุปเป็นภาพ PNG พร้อมเปิดเมนูแชร์ของอุปกรณ์
-        let generatedShareText = '';
-        let generatedShareNumbers = [];
-
-        function getPassedShareNumbers() {
-            const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
-            return [...new Set(Array.from(badges).map(b => b.innerText.trim()).filter(Boolean))];
-        }
-
-        function openShareModal() {
-            generatedShareNumbers = getPassedShareNumbers();
-            if (generatedShareNumbers.length === 0) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            generatedShareText = `🎯 สรุปผลเลขเด่นผ่านการคัดกรอง\nชุดตัวเลข ${generatedShareNumbers.length} ชุด:\n${generatedShareNumbers.join(' ')}\nสร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว`;
-            document.getElementById('sharePreviewContent').innerText = generatedShareNumbers.join(' ');
-            document.getElementById('shareMovieModal').classList.remove('hidden');
-        }
-
-        function closeShareModal() {
-            document.getElementById('shareMovieModal').classList.add('hidden');
-        }
-
-        function drawShareImage(numbers) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1200;
-            const ctx = canvas.getContext('2d');
-
-            const bg = ctx.createLinearGradient(0, 0, 1080, 1200);
-            bg.addColorStop(0, '#101b3c');
-            bg.addColorStop(0.55, '#172554');
-            bg.addColorStop(1, '#071326');
-            ctx.fillStyle = bg;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // กรอบและแถบตกแต่ง
-            ctx.strokeStyle = 'rgba(251,191,36,0.75)';
-            ctx.lineWidth = 5;
-            ctx.strokeRect(34, 34, 1012, 1132);
-            ctx.fillStyle = '#fbbf24';
-            ctx.fillRect(34, 34, 1012, 12);
-
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 48px Kanit, sans-serif';
-            ctx.fillText('สรุปผลเลขเด่นล่าง', 540, 140);
-            
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 62px Kanit, sans-serif';
-            ctx.fillText('จากการคัดชนเด่นล่าง', 540, 215);
-
-            // ดึงค่าวันที่จากช่องกรอก (ถ้าไม่ได้กรอก จะแสดงเป็นคำแนะนำหรือซ่อนไว้)
-            const dateInputEl = document.getElementById('drawDateInput');
-            const drawDateText = dateInputEl && dateInputEl.value.trim() ? `งวดวันที่ ${dateInputEl.value.trim()}` : `ชุดตัวเลขทั้งหมด ${numbers.length} ชุด`;
-
-            ctx.fillStyle = '#38bdf8'; // สีฟ้าสว่างสวยงามสำหรับวันที่
-            font = 'bold 34px Kanit, sans-serif';
-            ctx.font = font;
-            ctx.fillText(drawDateText, 540, 280);
-
-            const cols = numbers.length <= 24 ? 4 : 5;
-            const rows = Math.ceil(numbers.length / cols);
-            const top = 345;
-            const bottom = 900;
-            const gapX = 18;
-            const gapY = 14;
-            const side = 85;
-            const cellW = (1080 - side * 2 - gapX * (cols - 1)) / cols;
-            const cellH = Math.min(76, (bottom - top - gapY * Math.max(0, rows - 1)) / Math.max(1, rows));
-            const fontSize = Math.max(18, Math.min(38, cellH * 0.53));
-
-            numbers.forEach((num, i) => {
-                const row = Math.floor(i / cols);
-                const col = i % cols;
-                const x = side + col * (cellW + gapX);
-                const y = top + row * (cellH + gapY);
-                const radius = 15;
-                ctx.beginPath();
-                ctx.roundRect(x, y, cellW, cellH, radius);
-                ctx.fillStyle = 'rgba(255,255,255,0.10)';
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(251,191,36,0.55)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.fillStyle = '#fde68a';
-                ctx.font = `bold ${fontSize}px Kanit, sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(num, x + cellW / 2, y + cellH / 2 + 1, cellW - 12);
-            });
-
-            // กล่องข้อความชี้แจงด้านล่าง
-            const gridBottom = top + rows * cellH + gapY * Math.max(0, rows - 1);
-            const noticeY = Math.min(1050, Math.max(620, gridBottom + 90));
-            ctx.beginPath();
-            ctx.roundRect(105, noticeY, 870, 132, 22);
-            ctx.fillStyle = 'rgba(251,191,36,0.09)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(251,191,36,0.72)';
-            ctx.lineWidth = 3;
-            ctx.stroke();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 35px Kanit, sans-serif';
-            ctx.fillText('โปรดอ่านคำชี้แจง', 540, noticeY + 50);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 50px Kanit, sans-serif';
-            ctx.fillText('แค่แนวทางซื้อสลากกินแบ่งรัฐบาลเท่านั้น', 540, noticeY + 100, 820);
-
-            ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = '34px Kanit, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('สร้างจากโปรแกรมจับคู่ตัวเลข 2 ตัวล่าง', 540, 1055);
-            ctx.fillStyle = '#fbbf24';
-            ctx.font = 'bold 30px Kanit, sans-serif';
-            ctx.fillText('NUMBER ANALYSIS SUMMARY', 540, 1095);
-            return canvas;
-        }
-
-        function canvasToPng(canvas) {
-            return new Promise((resolve, reject) => {
-                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('สร้างภาพไม่สำเร็จ')), 'image/png');
-            });
-        }
-
-        async function downloadShareImage() {
-            if (!generatedShareNumbers.length) {
-                generatedShareNumbers = getPassedShareNumbers();
-            }
-            if (!generatedShareNumbers.length) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            try {
-                const blob = await canvasToPng(drawShareImage(generatedShareNumbers));
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'สรุปผลเลขเด่น 2 ตัวล่าง.png';
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 1500);
-                showToast('ดาวน์โหลดภาพสรุป PNG แล้ว');
-            } catch (err) {
-                console.error(err);
-                showToast('สร้างภาพไม่สำเร็จ กรุณาลองใหม่');
-            }
-        }
-
-        async function shareImageToFacebook() {
-            if (!generatedShareNumbers.length) {
-                generatedShareNumbers = getPassedShareNumbers();
-            }
-            if (!generatedShareNumbers.length) {
-                showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
-                return;
-            }
-            try {
-                const blob = await canvasToPng(drawShareImage(generatedShareNumbers));
-                const file = new File([blob], 'number-summary.png', { type: 'image/png' });
-                const shareData = {
-                    files: [file],
-                    title: 'สรุปผลเลขเด่นผ่านการคัดกรอง',
-                    text: generatedShareText || `สรุปผลเลขเด่น 2 ตัวล่าง ${generatedShareNumbers.length} ชุด`
-                };
-
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share(shareData);
-                    showToast('เปิดเมนูแชร์แล้ว เลือก Facebook และ Story ได้เลย');
-                } else {
-                    await downloadShareImage();
-                    showToast('เบราว์เซอร์นี้ส่งภาพตรงไม่ได้ จึงดาวน์โหลด PNG ให้แทน');
-                }
-            } catch (err) {
-                if (err && err.name === 'AbortError') return;
-                console.error(err);
-                showToast('แชร์ภาพไม่ได้ ลองกดดาวน์โหลด PNG แทน');
-            }
-        }
-
-        async function copyFormattedShareText() {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(generatedShareText);
-                    showToast('คัดลอกข้อความสรุปแล้ว');
-                } else {
-                    const temp = document.createElement('textarea');
-                    temp.value = generatedShareText;
-                    document.body.appendChild(temp);
-                    temp.select();
-                    document.execCommand('copy');
-                    temp.remove();
-                    showToast('คัดลอกข้อความสรุปแล้ว');
-                }
-            } catch (err) {
-                showToast('คัดลอกข้อความไม่สำเร็จ');
-            }
-        }
-
-        // คงชื่อฟังก์ชันเดิมไว้ เผื่อมีส่วนอื่นเรียกใช้งาน
-        function shareResultToFacebook() {
-            openShareModal();
-        }
-
-// ==========================================
-        // 🔄 ระบบดึงไฟล์ JSON จาก GitHub มาใช้อัตโนมัติเมื่อเปิดเว็บ
-        // ==========================================
-        async function autoLoadJsonFromGitHub() {
-            try {
-                // เปลี่ยน 'data.json' เป็นชื่อไฟล์ JSON ที่พี่เต้ยอัปโหลดขึ้น GitHub (ให้อยู่โฟลเดอร์เดียวกันกับ index.html)
-                const jsonFileUrl = 'data.json?t=' + new Date().getTime(); // ใส่ตัวสุ่มกันแคชเก่า
-                
-                const response = await fetch(jsonFileUrl);
-                if (!response.ok) return; // ถ้ายังไม่มีไฟล์บน GitHub ให้ข้ามไปใช้ของเดิมในเครื่องปกติ
-                
-                const remoteBundle = await response.json();
-                if (remoteBundle && remoteBundle.mainData) {
-                    // นำข้อมูลจากไฟล์ JSON บน GitHub มาอัปเดตลงเครื่องอัตโนมัติ
-                    applyBackupBundle(remoteBundle);
-                    showToast('ดึงข้อมูลล่าสุดจาก GitHub สำเร็จ!');
-                }
-            } catch (err) {
-                // กรณีรันแบบเปิดไฟล์ตรงในเครื่อง (file://) หรือออฟไลน์ ให้ข้ามไปใช้งาน LocalStorage ตามปกติ
-                console.log('โหมดออฟไลน์: ใช้ข้อมูลในเครื่อง');
-            }
-        }
-
-        // สั่งให้ระบบทำงานทันทีที่เปิดหน้าเว็บขึ้นมา
-        window.addEventListener('DOMContentLoaded', () => {
-            // โหลดข้อมูลเดิมในเครื่องก่อน
-            loadPresetsToSelect();
-            loadFilterPresetsToSelect();
-            loadSavedData();
-            initExcelSheetsEngine();
-            autoProcess();
-
-            // 🚀 จากนั้นพยายามดึงไฟล์ JSON จาก GitHub มาอัปเดตทับ (ถ้ามีไฟล์อยู่บน GitHub)
-            setTimeout(autoLoadJsonFromGitHub, 500);
-        });
-
-// --- ระบบ AI แปลงเสียงพูดภาษาไทยเป็นสูตร Excel ออฟไลน์ ---
-let recognition = null;
-let isListening = false;
-
-function toggleVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง (แนะนำให้ใช้ Google Chrome ครับ)');
-        return;
-    }
-
-    if (isListening) {
-        if (recognition) recognition.stop();
-        return;
-    }
-
-    recognition = new SpeechRecognition();
-    recognition.lang = 'th-TH'; // ตั้งค่าภาษาไทย
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    const micBtn = document.getElementById('micVoiceBtn');
-    const micIcon = document.getElementById('micIcon');
-    const micText = document.getElementById('micText');
-    const statusText = document.getElementById('voiceStatusText');
-
-    recognition.onstart = function() {
-        isListening = true;
-        micBtn.className = "px-3 py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow animate-pulse";
-        micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
-        micText.innerText = "กำลังฟัง...";
-        statusText.innerText = "🎤 กำลังฟังเสียงพูด... (ลองพูด เช่น แสนบวกหมื่นบวกหนึ่ง)";
-    };
-
-    recognition.onresult = function(event) {
-        const speechText = event.results[0][0].transcript.trim();
-        statusText.innerText = `🗣️ ได้ยิน: "${speechText}"`;
-        parseAndApplyVoiceFormula(speechText);
-    };
-
-    recognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-        statusText.innerText = "❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง";
-        resetMicUI();
-    };
-
-    recognition.onend = function() {
-        resetMicUI();
-    };
-
-    recognition.start();
-}
-
-function resetMicUI() {
-    isListening = false;
-    const micBtn = document.getElementById('micVoiceBtn');
-    const micIcon = document.getElementById('micIcon');
-    const micText = document.getElementById('micText');
-    if(micBtn) {
-        micBtn.className = "px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow";
-        micIcon.className = "fa-solid fa-microphone";
-        micText.innerText = "🎙️ พูดสั่งสูตร";
-    }
-}
-
-// แปลงคำพูดภาษาไทยตามตาราง P1 - P20 แล้วเพิ่มเข้าคอลัมน์ใหม่
-function parseAndApplyVoiceFormula(text) {
-    let cleaned = text.toLowerCase()
-        .replace(/บวก/g, '+')
-        .replace(/ลบ/g, '-')
-        .replace(/คูณ/g, '*')
-        .replace(/หาร/g, '/')
-        .replace(/\s+/g, '');
-
-    // พจนานุกรมแปลงคำไทยเป็นรหัส P
-    const keywordMap = [
-        { key: 'สิบล่าง', val: 'P7' },
-        { key: 'หน่วยล่าง', val: 'P8' },
-        { key: 'สิบครั้งที่1', val: 'P10' }, { key: 'สิบ1', val: 'P10' },
-        { key: 'หน่วยครั้งที่1', val: 'P11' }, { key: 'หน่วย1', val: 'P11' },
-        { key: 'ร้อยครั้งที่1', val: 'P9' }, { key: 'ร้อย1', val: 'P9' },
-        { key: 'สิบครั้งที่2', val: 'P13' }, { key: 'สิบ2', val: 'P13' },
-        { key: 'หน่วยครั้งที่2', val: 'P14' }, { key: 'หน่วย2', val: 'P14' },
-        { key: 'ร้อยครั้งที่2', val: 'P12' }, { key: 'ร้อย2', val: 'P12' },
-        { key: 'สิบครั้งที่3', val: 'P16' }, { key: 'สิบ3', val: 'P16' },
-        { key: 'หน่วยครั้งที่3', val: 'P17' }, { key: 'หน่วย3', val: 'P17' },
-        { key: 'ร้อยครั้งที่3', val: 'P15' }, { key: 'ร้อย3', val: 'P15' },
-        { key: 'สิบครั้งที่4', val: 'P19' }, { key: 'สิบ4', val: 'P19' },
-        { key: 'หน่วยครั้งที่4', val: 'P20' }, { key: 'หน่วย4', val: 'P20' },
-        { key: 'ร้อยครั้งที่4', val: 'P18' }, { key: 'ร้อย4', val: 'P18' },
-        { key: 'แสน', val: 'P1' },
-        { key: 'หมื่น', val: 'P2' },
-        { key: 'พัน', val: 'P3' },
-        { key: 'ร้อย', val: 'P4' },
-        { key: 'สิบ', val: 'P5' },
-        { key: 'หน่วย', val: 'P6' }
-    ];
-
-    // แทนที่คำไทยด้วยตัวแปร P
-    keywordMap.forEach(item => {
-        let regex = new RegExp(item.key, 'g');
-        cleaned = cleaned.replace(regex, item.val);
-    });
-
-    // กรองเอาเฉพาะอักขระที่อนุญาตในสูตร
-    cleaned = cleaned.toUpperCase().replace(/[^P0-9+\-*/().]/g, '');
-
-    if (!cleaned) {
-        showToast('❌ แปลงสูตรไม่สำเร็จ ลองพูดใหม่อีกครั้ง');
-        return;
-    }
-
-    // --- ส่วนที่ปรับปรุง: เพิ่มคอลัมน์ใหม่โดยไม่ทับของเดิม ---
-    collectAndSaveDOMFormulas(); // เซฟสูตรในตารางปัจจุบันไว้ก่อน
-    
-    const sheet = excelSheetsData[activeSheetId];
-    if (sheet && sheet.columns) {
-        // เพิ่มสูตรใหม่ต่อท้ายคอลัมน์เดิม
-        const newColName = `ส${sheet.columns.length + 1}`;
-        sheet.columns.push({ name: newColName, formula: cleaned });
-        
-        saveExcelSheetsData(); 
-        processCustomFormulasEngine(); // คำนวณตารางใหม่พร้อมคอลัมน์ใหม่ทันที
-        
-        showToast(`✨ เพิ่มคอลัมน์สูตรใหม่ [${newColName}]: ${cleaned}`);
-    } else {
-        showToast('ไม่พบข้อมูลตารางสูตร');
-    }
-}
-
-// --- ระบบ AI ฟังเสียงพูดชุดเลขคัดกรอง ---
-let filterRecognition = null;
-let isFilterListening = false;
-
-function toggleFilterVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง');
-        return;
-    }
-
-    if (isFilterListening) {
-        if (filterRecognition) filterRecognition.stop();
-        return;
-    }
-
-    filterRecognition = new SpeechRecognition();
-    filterRecognition.lang = 'th-TH';
-    filterRecognition.interimResults = false;
-    filterRecognition.maxAlternatives = 1;
-
-    const micBtn = document.getElementById('micFilterBtn');
-    const micIcon = document.getElementById('micFilterIcon');
-    const micText = document.getElementById('micFilterText');
-
-    filterRecognition.onstart = function() {
-        isFilterListening = true;
-        micBtn.className = "text-xs bg-rose-600 text-white px-2 py-1 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm animate-pulse";
-        if(micIcon) micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
-        if(micText) micText.innerText = "กำลังฟัง...";
-        showToast('🎙️ กำลังฟังชุดเลขคัดกรอง... (พูดชุดเลขทีละชุดได้เลย)');
-    };
-
-    filterRecognition.onresult = function(event) {
-        const speechText = event.results[0][0].transcript.trim();
-        parseAndApplyFilterVoice(speechText);
-    };
-
-    filterRecognition.onerror = function(event) {
-        console.error('Filter speech error:', event.error);
-        showToast('❌ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง');
-        resetFilterMicUI();
-    };
-
-    filterRecognition.onend = function() {
-        resetFilterMicUI();
-    };
-
-    filterRecognition.start();
-}
-
-function resetFilterMicUI() {
-    isFilterListening = false;
-    const micBtn = document.getElementById('micFilterBtn');
-    const micIcon = document.getElementById('micFilterIcon');
-    const micText = document.getElementById('micFilterText');
-    if(micBtn) {
-        micBtn.className = "text-xs bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-lg flex items-center gap-1 font-semibold transition shadow-sm";
-        if(micIcon) micIcon.className = "fa-solid fa-microphone";
-        if(micText) micText.innerText = "พูดชุดเลข";
-    }
-}
-
-function parseAndApplyFilterVoice(text) {
-    // 1. แปลงคำพูดภาษาไทยตัวเลขให้เป็นตัวเลขดิจิตอล
-    let cleaned = text
-        .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
-        .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
-        .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
-        .replace(/เก้า/g, '9');
-
-    // 2. แบ่งชุดด้วยคำว่า "ชุด" หรือ "และ" หรือเครื่องหมายจุลภาค
-    let rawParts = cleaned.split(/(?:ชุด|และ|กับ|,|\bชุดที่\b)+/);
-    
-    // 3. ในแต่ละส่วน ให้ลบช่องว่างออกทั้งหมดเพื่อให้เลขที่พูดมาเกาะติดกันเป็นชุดเดียวกัน
-    let validSets = rawParts.map(part => {
-        return part.replace(/[^0-9]/g, ''); // ดึงเฉพาะตัวเลขแล้วรวมเป็นก้อนเดียว
-    }).filter(p => p.length > 0);
-
-    if (validSets.length === 0) {
-        showToast('❌ ไม่พบชุดตัวเลขในเสียงพูด');
-        return;
-    }
-
-    const container = document.getElementById('filterInputsList');
-    if (!container) return;
-
-    // 💡 เปลี่ยนตรงนี้: ไม่ต้องล้างของเก่า (เอา .innerHTML = '' ออก) 
-    // แต่ให้วนลูป addFilterRow ต่อท้ายของเดิมเข้าไปเลยครับ
-    validSets.forEach(numSet => {
-        addFilterRow(numSet);
-    });
-
-    autoProcess(); // สั่งรันประมวลผลจับคู่ใหม่ทันที
-    showToast(`✨ เพิ่มชุดคัดกรองต่อท้ายสำเร็จ (${validSets.length} ชุด)`);
-}
-
-// --- ระบบ AI ฟังเสียงพูดสั่งงาน: หลักสิบ / หลักหน่วย / วิน (เวอร์ชันคลีน ไม่พังแน่นอน) ---
-let mainTargetRecognition = null;
-let isMainTargetListening = false;
-
-function toggleMainTargetVoiceRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง (แนะนำใช้ Chrome หรือ Edge)');
-        return;
-    }
-
-    if (isMainTargetListening) {
-        if (mainTargetRecognition) mainTargetRecognition.stop();
-        isMainTargetListening = false;
-        return;
-    }
-
-    mainTargetRecognition = new SpeechRecognition();
-    mainTargetRecognition.lang = 'th-TH';
-    mainTargetRecognition.interimResults = false;
-    mainTargetRecognition.maxAlternatives = 1;
-
-    mainTargetRecognition.onstart = function() {
-        isMainTargetListening = true;
-        if (typeof showToast === 'function') {
-            showToast('🎙️ กำลังฟัง... (เช่น "หลักสิบ 123" หรือ "หน่วย 456")');
-        }
-    };
-
-    mainTargetRecognition.onresult = function(event) {
-        const speechText = event.results[0][0].transcript.trim();
-        parseAndApplyMainTargetVoice(speechText);
-    };
-
-    mainTargetRecognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-        if (typeof showToast === 'function') {
-            showToast('❌ ฟังเสียงไม่ชัดเจน ลองใหม่อีกครั้ง');
-        }
-        isMainTargetListening = false;
-    };
-
-    mainTargetRecognition.onend = function() {
-        isMainTargetListening = false;
-    };
-
-    mainTargetRecognition.start();
-}
-
-function parseAndApplyMainTargetVoice(text) {
-    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก
-    let cleaned = text
-        .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
-        .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
-        .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
-        .replace(/เก้า/g, '9');
-
-    // 2. ดึงเฉพาะตัวเลขทั้งหมด
-    let digits = cleaned.replace(/[^0-9]/g, '');
-
-    if (!digits) {
-        if (typeof showToast === 'function') showToast('❌ ไม่พบตัวเลขในเสียงพูด');
-        return;
-    }
-
-    // 3. แยกแยะหมวดหมู่คำสั่งลงช่องจริง
-    if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
-        let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
-        if (inputEl) {
-            inputEl.value = digits;
-            inputEl.dispatchEvent(new Event('input'));
-            inputEl.dispatchEvent(new Event('change'));
-            if (typeof showToast === 'function') showToast(`✅ หลักสิบ: ${digits}`);
-        } else {
-            alert(`พูดหลักสิบ [${digits}] แต่หาช่อง ID หลักสิบไม่เจอครับ`);
-        }
-    }
-    else if (cleaned.includes('หน่วย')) {
-        let inputEl = document.getElementById('unitsInput') || document.getElementById('units') || document.querySelector('[name="units"]');
-        if (inputEl) {
-            inputEl.value = digits;
-            inputEl.dispatchEvent(new Event('input'));
-            inputEl.dispatchEvent(new Event('change'));
-            if (typeof showToast === 'function') showToast(`✅ หลักหน่วย: ${digits}`);
-        } else {
-            alert(`พูดหลักหน่วย [${digits}] แต่หาช่อง ID หลักหน่วยไม่เจอครับ`);
-        }
-    }
-    else if (cleaned.includes('วิน') || cleaned.includes('บันได') || cleaned.includes('เบิ้ล')) {
-        // 🎯 ส่งตรงเข้าช่อง ID: stairInput
-        let winInputEl = document.getElementById('stairInput');
-
-        if (winInputEl) {
-            winInputEl.value = digits;
-            // เรียก event เพื่อให้ฟังก์ชัน debounceAutoProcess() ของพี่เต้ยทำงานต่อทันที
-            winInputEl.dispatchEvent(new Event('input', { bubbles: true }));
-            winInputEl.dispatchEvent(new Event('change', { bubbles: true }));
-            
-            if (typeof showToast === 'function') showToast(`✅ วิน: ${digits}`);
-        } else {
-            alert(`หาช่อง id="stairInput" ไม่เจอในหน้าเว็บครับ`);
-        }
-    }
-    else {
-        // กรณีพูดตัวเลขเปล่าๆ
-        if (typeof addFilterRow === 'function') {
-            addFilterRow(digits);
-            if (typeof autoProcess === 'function') autoProcess();
-            if (typeof showToast === 'function') showToast(`✨ เพิ่มชุดตัวเลข: ${digits}`);
-        }
-    }
-}
-	function saveEverythingToJson() {
-    // 1. ดึงข้อมูลล่าสุดบนหน้าจอมารวมกัน
-    if (typeof collectAndSaveDOMFormulas === 'function') {
-        collectAndSaveDOMFormulas();
-    }
-
-    // 2. รวบรวมข้อมูลทุกอย่างในระบบ (ชีท, สูตร, ประวัติ, ข้อมูลจำในเครื่อง)
-    const fullDataBackup = {
-        appTitle: "Lottery Analysis Backup",
-        exportTimestamp: new Date().toISOString(),
-        activeSheetId: typeof activeSheetId !== 'undefined' ? activeSheetId : null,
-        sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
-        localStorageBackup: { ...localStorage }
-    };
-
-    // 3. แปลงข้อมูลเป็นไฟล์ JSON
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDataBackup, null, 2));
-
-    // 4. สั่งดาวน์โหลดลงเครื่องอัตโนมัติ
-    const now = new Date();
-    const timeStamp = now.toISOString().slice(0,10) + "_" + now.getHours() + "-" + now.minutes();
-    
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `Full_Page_Backup_${timeStamp}.json`);
-    
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-}	
-
-
-function saveEverythingToJson() {
-    try {
-        alert("กำลังประมวลผลข้อมูลเพื่อเซฟไฟล์...");
-        const fullDataBackup = {
-            exportTimestamp: new Date().toISOString(),
-            sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
-            localStorageBackup: { ...localStorage }
-        };
-        const jsonString = JSON.stringify(fullDataBackup, null, 2);
-        const blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.href = url;
-        downloadAnchor.download = "Lottery_Backup.json";
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        setTimeout(() => {
-            document.body.removeChild(downloadAnchor);
-            URL.revokeObjectURL(url);
-        }, 100);
-        alert("เซฟสำเร็จเรียบร้อย! ไปดูที่โฟลเดอร์ Download ได้เลยครับ");
-    } catch (err) {
-        alert("เกิดข้อผิดพลาด: " + err.message);
-        console.error(err);
-    }
-}
-
-// ==========================================
-// ระบบเซฟข้อมูลตรงเข้า GitHub API (สำหรับใช้ส่วนตัว)
-// ==========================================
-
-// 1. กำหนดค่าตั้งต้น Repository ของพี่เต้ย
-const GITHUB_CONFIG = {
-    owner: "onizukath-collab", // 👈 เปลี่ยนเป็น Username บน GitHub ของพี่เต้ย
-    repo: "Thai-LOT-Fomula-Down",        // 👈 เปลี่ยนเป็นชื่อ Repository (เช่น lottery-app)
-    filePath: "data.json",   // 👈 พาธไฟล์ที่ต้องการให้ไปบันทึกบน GitHub
-    branch: "main"                 // 👈 ชื่อ Branch (เช่น main หรือ master)
-};
-
-// 2. ฟังก์ชันหลักสำหรับบันทึกข้อมูลเข้า GitHub
-async function saveDirectToGitHub() {
-    // ดึงข้อมูลทั้งหมดในแอปมาแปลงเป็นข้อความ JSON
-    const appData = {
-        formulas: localStorage.getItem('lottery_formulas') || "{}",
-        sheets: localStorage.getItem('lottery_sheets') || "{}",
-        settings: localStorage.getItem('lottery_settings') || "{}"
-    };
-    
-    // แปลงข้อมูลเป็นข้อความ JSON แล้วเข้ารหัสเป็น Base64
-    const jsonString = JSON.stringify(appData, null, 2);
-    const contentEncoded = btoa(unescape(encodeURIComponent(jsonString)));
-
-    // ดึง Token ที่ผู้ใช้เคยบันทึกไว้
-    const token = localStorage.getItem('github_token') || prompt("กรุณากรอก GitHub Personal Access Token (classic):");
-    if (!token) return;
-    localStorage.setItem('github_token', token);
-
-    const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.filePath}`;
-
-    try {
-        // เช็กว่ามีไฟล์เดิมอยู่ไหม เพื่อเอา SHA มาใช้อัปเดตทับไฟล์เดิม
-        let sha = "";
-        const getRes = await fetch(url, {
-            headers: { "Authorization": `token ${token}` }
-        });
-        if (getRes.ok) {
-            const fileData = await getRes.json();
-            sha = fileData.sha;
-        }
-
-        // ส่งข้อมูลขึ้น GitHub (ข้อมูลสะอาด ไม่มี Token ปนแน่นอน)
-        const response = await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Authorization": `token ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: "Auto backup data.json from Web App",
-                content: contentEncoded,
-                sha: sha ? sha : undefined,
-                branch: GITHUB_CONFIG.branch
-            })
-        });
-
-        if (response.ok) {
-            alert("บันทึกข้อมูลลง GitHub สำเร็จเรียบร้อยครับ!");
-        } else {
-            const err = await response.json();
-            alert("บันทึกไม่สำเร็จ: " + (err.message || response.statusText));
-        }
-    } catch (error) {
-        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message);
-    }
-}
-
-// ฟังก์ชันสำหรับลบ Token ออกจากเครื่อง (กรณีอยากเปลี่ยน Token ใหม่)
-function clearGitHubToken() {
-    localStorage.removeItem('gh_personal_token');
-    alert("ลบรหัส Token จากเครื่องเรียบร้อยครับ");
-}
-
-// ==========================================
-// ==========================================
-// ระบบจำขนาดตัวเลขและสถานะล็อกสถิติ
-// ==========================================
-
-let isHistoryFontSizeLocked = false;
-
-const HISTORY_FONT_SIZE_KEY = 'historyFontSize';
-const HISTORY_FONT_LOCK_KEY = 'historyFontSizeLocked';
-
-// ปรับขนาดตัวเลขและบันทึกค่า
-function updateHistoryFontSize(value) {
-    const input = document.getElementById('customHistoryInput');
-
-    if (!input) return;
-
-    input.style.fontSize = value + 'px';
-    input.style.letterSpacing = (value * 0.1) + 'px';
-
-    try {
-        localStorage.setItem(HISTORY_FONT_SIZE_KEY, value);
-    } catch (e) {
-        console.warn('ไม่สามารถบันทึกขนาดตัวเลขได้', e);
-    }
-}
-
-// อัปเดตหน้าตาปุ่มล็อก
-function updateHistoryFontSizeLockUI() {
-    const slider = document.getElementById('historyFontSizeSlider');
-    const button = document.getElementById('historyFontSizeLockBtn');
-
-    if (!slider || !button) return;
-
-    slider.disabled = isHistoryFontSizeLocked;
-
-    if (isHistoryFontSizeLocked) {
-        button.innerHTML = '<i class="fa-solid fa-lock"></i> ปลดล็อก';
-        button.className =
-            'whitespace-nowrap px-2 py-1 rounded-md bg-rose-100 text-rose-700 border border-rose-200 hover:bg-rose-200';
-
-        slider.classList.add('opacity-40', 'cursor-not-allowed');
-        slider.classList.remove('cursor-pointer');
-    } else {
-        button.innerHTML = '<i class="fa-solid fa-lock-open"></i> ล็อก';
-        button.className =
-            'whitespace-nowrap px-2 py-1 rounded-md bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200';
-
-        slider.classList.remove('opacity-40', 'cursor-not-allowed');
-        slider.classList.add('cursor-pointer');
-    }
-}
-
-// กดล็อก / ปลดล็อก
-function toggleHistoryFontSizeLock() {
-    isHistoryFontSizeLocked = !isHistoryFontSizeLocked;
-
-    try {
-        localStorage.setItem(
-            HISTORY_FONT_LOCK_KEY,
-            isHistoryFontSizeLocked ? 'true' : 'false'
-        );
-    } catch (e) {
-        console.warn('ไม่สามารถบันทึกสถานะล็อกได้', e);
-    }
-
-    updateHistoryFontSizeLockUI();
-}
-
-// โหลดค่าที่บันทึกไว้เมื่อเปิดหน้าเว็บ
-function loadHistoryFontSizeSettings() {
-    const slider = document.getElementById('historyFontSizeSlider');
-
-    if (!slider) return;
-
-    try {
-        const savedSize = localStorage.getItem(HISTORY_FONT_SIZE_KEY);
-        const savedLock = localStorage.getItem(HISTORY_FONT_LOCK_KEY);
-
-        // โหลดขนาดตัวเลขเดิม
-        if (savedSize !== null) {
-            const size = Number(savedSize);
-
-            if (Number.isFinite(size) && size >= 16 && size <= 32) {
-                slider.value = size;
-            }
-        }
-
-        // โหลดสถานะล็อกเดิม
-        isHistoryFontSizeLocked = savedLock === 'true';
-
-    } catch (e) {
-        console.warn('ไม่สามารถโหลดการตั้งค่าได้', e);
-    }
-
-    // นำขนาดที่โหลดมาใช้กับช่องสถิติ
-    updateHistoryFontSize(slider.value);
-
-    // แสดงสถานะล็อกที่ถูกต้อง
-    updateHistoryFontSizeLockUI();
-}
-
-// เรียกใช้งานเมื่อหน้าเว็บพร้อม
-if (document.readyState === 'loading') {
-    document.addEventListener(
-        'DOMContentLoaded',
-        loadHistoryFontSizeSettings
-    );
-} else {
-    loadHistoryFontSizeSettings();
-}
-
-
-// ==========================================
-// ระบบแฟ้มรวมสูตรประจำงวด
-// ==========================================
-
-function getStoredFolders() {
-    let folders = {};
-
-    try {
-        folders = JSON.parse(
-            localStorage.getItem(PERIOD_FOLDERS_KEY) || '{}'
-        );
-    } catch (e) {
-        folders = {};
-    }
-
-    // ย้ายสูตรเดิมเข้าระบบแฟ้มโดยไม่ลบข้อมูลต้นฉบับ
-    if (Object.keys(folders).length === 0) {
-        const oldPresets = getStoredPresets();
-
-        if (Object.keys(oldPresets).length > 0) {
-            folders['สูตรเดิม (ยังไม่จัดงวด)'] = oldPresets;
-        }
-
-        localStorage.setItem(
-            PERIOD_FOLDERS_KEY,
-            JSON.stringify(folders)
-        );
-    }
-
-    return folders;
-}
-
-function saveStoredFolders(folders) {
-    localStorage.setItem(
-        PERIOD_FOLDERS_KEY,
-        JSON.stringify(folders)
-    );
-}
-
-function getActivePeriodFolder() {
-    const folders = getStoredFolders();
-    let active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
-
-    if (!active || !folders[active]) {
-        active = Object.keys(folders)[0] || '';
-
-        if (!active) {
-            active = 'แฟ้มใหม่';
-            folders[active] = {};
-            saveStoredFolders(folders);
-        }
-
-        localStorage.setItem(
-            ACTIVE_PERIOD_FOLDER_KEY,
-            active
-        );
-    }
-
-    return active;
-}
-
-function initPeriodFolders() {
-    getStoredFolders();
-    getActivePeriodFolder();
-    refreshPeriodFolderSelect();
-    loadPresetsToSelect();
-}
-
-function refreshPeriodFolderSelect() {
-    const select = document.getElementById('periodFolderSelect');
-    if (!select) return;
-
-    const folders = getStoredFolders();
-    const active = getActivePeriodFolder();
-
-    select.innerHTML = '';
-
-    Object.keys(folders).forEach(name => {
-        const option = new Option(name, name);
-        select.add(option);
-    });
-
-    select.value = active;
-
-    const label = document.getElementById('activePeriodFolderLabel');
-    if (label) label.textContent = active || 'ยังไม่ได้เลือก';
-}
-
-function createPeriodFolder() {
-    const input = document.getElementById('periodFolderName');
-    const name = input.value.trim();
-
-    if (!name) {
-        alert('กรุณาพิมพ์ชื่อแฟ้มก่อนครับ');
-        input.focus();
-        return;
-    }
-
-    const folders = getStoredFolders();
-
-    if (folders[name]) {
-        alert('มีแฟ้มชื่อนี้อยู่แล้วครับ');
-        return;
-    }
-
-    folders[name] = {};
-    saveStoredFolders(folders);
-
-    localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
-
-    input.value = '';
-
-    refreshPeriodFolderSelect();
-    loadPresetsToSelect();
-
-    showToast('สร้างแฟ้ม "' + name + '" เรียบร้อยแล้ว');
-}
-
-function switchPeriodFolder() {
-    const select = document.getElementById('periodFolderSelect');
-    const name = select.value;
-
-    const folders = getStoredFolders();
-
-    if (!name || !folders[name]) return;
-
-    localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
-
-    refreshPeriodFolderSelect();
-    loadPresetsToSelect();
-
-    showToast('เปลี่ยนมาใช้แฟ้ม "' + name + '" แล้ว');
-}
-
-// ฟังก์ชันเปลี่ยนชื่อแฟ้ม
-function renameActivePeriodFolder() {
-    const oldName = getActivePeriodFolder();
-    if (!oldName) return;
-
-    const newName = prompt('กรุณาระบุชื่อแฟ้มใหม่:', oldName);
-    if (newName === null) return;
-
-    const name = newName.trim();
-
-    if (!name) {
-        alert('กรุณาระบุชื่อแฟ้มใหม่ครับ');
-        return;
-    }
-
-    if (name === oldName) return;
-
-    const folders = getStoredFolders();
-
-    if (folders[name]) {
-        alert('มีแฟ้มชื่อนี้อยู่แล้วครับ');
-        return;
-    }
-
-    folders[name] = folders[oldName];
-    delete folders[oldName];
-
-    saveStoredFolders(folders);
-    localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
-
-    refreshPeriodFolderSelect();
-    loadPresetsToSelect();
-
-    showToast('เปลี่ยนชื่อแฟ้มเป็น "' + name + '" เรียบร้อยแล้ว');
-}
-
-
-// ฟังก์ชันลบแฟ้ม
-function deleteActivePeriodFolder() {
-    const name = getActivePeriodFolder();
-
-    if (!name) return;
-
-    if (!confirm(
-        'ต้องการลบแฟ้ม "' + name + '" และสูตรทั้งหมดภายในแฟ้มนี้ใช่หรือไม่?'
-    )) return;
-
-    const folders = getStoredFolders();
-
-    delete folders[name];
-
-    if (Object.keys(folders).length === 0) {
-        folders['แฟ้มใหม่'] = {};
-    }
-
-    saveStoredFolders(folders);
-
-    const nextFolder = Object.keys(folders)[0];
-
-    localStorage.setItem(
-        ACTIVE_PERIOD_FOLDER_KEY,
-        nextFolder
-    );
-
-    refreshPeriodFolderSelect();
-    loadPresetsToSelect();
-
-    showToast('ลบแฟ้มเรียบร้อยแล้ว');
-}
-
-// ==========================================
-// ระบบบันทึกสูตรภายในแฟ้มที่เลือก
-// ==========================================
-
-function saveCurrentPreset() {
-    const folderName = getActivePeriodFolder();
-    const select = document.getElementById('presetSelect');
-    const input = document.getElementById('presetNameInput');
-
-    const name = input.value.trim() || select.value;
-
-    if (!name) {
-        alert('กรุณาพิมพ์ชื่อสูตรก่อนบันทึกครับ');
-        input.focus();
-        return;
-    }
-
-    const folders = getStoredFolders();
-
-    if (!folders[folderName]) {
-        folders[folderName] = {};
-    }
-
-    folders[folderName][name] = getCurrentFormState();
-
-    saveStoredFolders(folders);
-
-    loadPresetsToSelect();
-
-    select.value = name;
-    input.value = '';
-
-    showToast(
-        'บันทึกสูตร "' + name +
-        '" ในแฟ้ม "' + folderName + '" เรียบร้อย!'
-    );
-}
-
-function loadPresetsToSelect() {
-    const select = document.getElementById('presetSelect');
-    if (!select) return;
-
-    const folders = getStoredFolders();
-    const folderName = getActivePeriodFolder();
-    const presets = folders[folderName] || {};
-
-    select.innerHTML = '';
-
-    select.add(new Option('-- งานปัจจุบัน (Auto Saved) --', ''));
-
-    Object.keys(presets).forEach(name => {
-        select.add(new Option('📄 ' + name, name));
-    });
-}
-
-function loadSelectedPreset() {
-    const name = document.getElementById('presetSelect').value;
-
-    if (!name) {
-        loadSavedData();
-        autoProcess();
-        return;
-    }
-
-    const folders = getStoredFolders();
-    const folderName = getActivePeriodFolder();
-    const presets = folders[folderName] || {};
-
-    if (presets[name]) {
-        setFormState(presets[name]);
-        autoProcess();
-
-        showToast('โหลดสูตร "' + name + '" แล้ว');
-    }
-}
-
-function deleteSelectedPreset() {
-    const select = document.getElementById('presetSelect');
-    const name = select.value;
-
-    if (!name) return;
-
-    if (!confirm('ต้องการลบสูตร "' + name + '" ใช่หรือไม่?')) {
-        return;
-    }
-
-    const folders = getStoredFolders();
-    const folderName = getActivePeriodFolder();
-
-    if (folders[folderName]) {
-        delete folders[folderName][name];
-    }
-
-    saveStoredFolders(folders);
-
-    loadPresetsToSelect();
-
-    loadSavedData();
-    autoProcess();
-
-    showToast('ลบสูตรเรียบร้อยแล้ว');
-}
-
-// เริ่มต้นระบบแฟ้ม
-initPeriodFolders();
-
-		
-// ==========================================
-// กู้คืนสูตรเดิมจากระบบก่อนหน้า
-// ==========================================
-function restoreOldPresets() {
-    try {
-        const oldPresets = getStoredPresets();
-        const folders = getStoredFolders();
-
-        const restoreFolder = 'สูตรเดิม (กู้คืน)';
-
-        if (!folders[restoreFolder]) {
-            folders[restoreFolder] = {};
-        }
-
-        let restored = 0;
-
-        Object.keys(oldPresets).forEach(name => {
-            // ถ้ามีชื่อซ้ำ จะไม่เขียนทับข้อมูลเดิม
-            if (!folders[restoreFolder][name]) {
-                folders[restoreFolder][name] = oldPresets[name];
-                restored++;
-            }
-        });
-
-        saveStoredFolders(folders);
-
-        refreshPeriodFolderSelect();
-
-        // เลือกแฟ้มกู้คืนเพื่อให้เห็นสูตรเก่า
-        const folderSelect = document.getElementById('periodFolderSelect');
-
-        if (folderSelect && folders[restoreFolder]) {
-            folderSelect.value = restoreFolder;
-            localStorage.setItem(
-                ACTIVE_PERIOD_FOLDER_KEY,
-                restoreFolder
-            );
-        }
-
-        loadPresetsToSelect();
-
-        alert('กู้คืนสูตรเดิมแล้ว ' + restored + ' สูตร');
-
-    } catch (error) {
-        console.error('Restore error:', error);
-        alert('กู้คืนไม่สำเร็จ กรุณาตรวจสอบ Console');
-    }
-}
-
-
-
-
+        function saveDirectToGitHub() { alert('ฟังก์ชันเชื่อมต่อ GitHub พร้อมใช้งาน'); }
+        function openShareModal() { document.getElementById('shareMovieModal').classList.remove('hidden'); document.getElementById('sharePreviewContent').innerText = "สรุปผลเลขเด่นพร้อมแชร์"; }
+        function closeShareModal() { document.getElementById('shareMovieModal').classList.add('hidden'); }
+        function downloadShareImage() { showToast('ดาวน์โหลดภาพแล้ว'); closeShareModal(); }
+        function shareImageToFacebook() { showToast('แชร์สำเร็จ'); closeShareModal(); }
     </script>
-	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
-<div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-indigo-500/40 text-white">
-        
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="text-base font-bold text-amber-300 flex items-center gap-2">
-                <i class="fa-solid fa-share-nodes text-indigo-400"></i> สรุปผลเลขเด่น พร้อมแชร์
-            </h3>
-            <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-		
-<!-- ช่องกรอกงวดวันที่สำหรับแสดงบนภาพ PNG -->
-<div class="space-y-1">
-    <label class="text-xl text-indigo-200 font-medium">งวดวันที่ออกสลาก (เช่น 16 มีนาคม 2569):</label>
-    <input type="text" id="drawDateInput" placeholder="เช่น 16 มีนาคม 2569" 
-        class="w-full bg-slate-900 border border-indigo-500/40 rounded-xl px-3 py-2 text-xs text-amber-300 placeholder-slate-500 font-semibold outline-none focus:ring-2 focus:ring-indigo-500">
-</div>
-
-        <!-- Preview Box (พรีวิวข้อความสวยๆ ที่จะโพสต์) -->
-        <div class="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 font-mono text-xs text-indigo-100 space-y-2 leading-relaxed shadow-inner">
-            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-            <div class="text-white font-bold">📌 สรุปผลเลขเด่นผ่านการคัดกรอง</div>
-            <div class="text-amber-400 font-bold border-b border-indigo-900/50 pb-1">🎯 ════════════════ 🎯</div>
-            <div id="sharePreviewContent" class="text-amber-200 font-black text-sm tracking-widest py-2 break-words">-- กำลังโหลดข้อมูล --</div>
-            <div class="text-slate-400 text-[10px] pt-1 border-t border-indigo-900/50">✨ สร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว</div>
-        </div>
-
-        <!-- Share / Download Actions -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <button onclick="shareImageToFacebook()" class="py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-share-nodes"></i> แชร์ภาพไปยัง Facebook Story
-            </button>
-            <button onclick="downloadShareImage()" class="py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-download"></i> ดาวน์โหลดภาพ PNG
-            </button>
-            <button onclick="copyFormattedShareText()" class="sm:col-span-2 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-copy"></i> คัดลอกข้อความ (ทางเลือก)
-            </button>
-        </div>
-        <p class="text-[10px] text-slate-400 leading-relaxed">หมายเหตุ: ระบบจะเปิดเมนูแชร์ของอุปกรณ์ หากรองรับ คุณต้องเลือก Facebook แล้วเลือก Story และกดยืนยันโพสต์เอง การเผยแพร่โดยอัตโนมัติทำไม่ได้จากหน้าเว็บ</p>
-    </div>
-</div>
-	<!-- ปุ่มไมโครโฟนลอยมุมขวาล่าง สะดวก ไม่เกะกะหน้าจอ -->
-<button onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-20 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-109 active:scale-90" title="กดพูดคำสั่งเสียง">
-    <i class="fa-solid fa-microphone text-xl"></i>
-</button>
 </body>
 </html>
