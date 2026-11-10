@@ -84,24 +84,16 @@
             <span id="activePeriodFolderLabel" class="text-amber-300 font-bold">ยังไม่ได้เลือก</span>
         </div>
 
-        <div class="flex items-center gap-2">
+        <button type="button" onclick="renameActivePeriodFolder()"
+    class="text-xs text-blue-300 hover:text-blue-200">
+    ✏️ เปลี่ยนชื่อแฟ้ม
+</button>
 
-    <button
-        type="button"
-        onclick="renameActivePeriodFolder()"
-        class="text-xs text-blue-300 hover:text-blue-200">
-        ✏️ เปลี่ยนชื่อแฟ้ม
-    </button>
-
-    <button
-        type="button"
-        onclick="deleteActivePeriodFolder()"
-        class="text-xs text-rose-300 hover:text-rose-200">
-        <i class="fa-solid fa-trash"></i> ลบแฟ้มนี้
-    </button>
-
-</div>
-
+<button type="button" onclick="deleteActivePeriodFolder()"
+    class="text-xs text-rose-300 hover:text-rose-200">
+    <i class="fa-solid fa-trash"></i> ลบแฟ้มนี้
+</button>
+    </div>
 </div>
 
             <div class="bg-gradient-to-r from-[#1877F2] to-blue-800 rounded-2xl shadow-md p-4 text-white space-y-3">
@@ -2640,7 +2632,7 @@ function deleteSelectedPreset() {
 // เริ่มต้นระบบแฟ้ม
 initPeriodFolders();
 
-
+		
 // ==========================================
 // กู้คืนสูตรเดิมจากระบบก่อนหน้า
 // ==========================================
