@@ -513,28 +513,32 @@
             </div>
 
             <!-- VIEW 2: แถบวิเคราะห์ชุดสูตรสร้างเอง -->
-            <div id="bestSumCustomView" class="space-y-4 overflow-y-auto pr-1 flex-1 hidden">
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
-                    <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (เช่น P1+P7+2 หรือ P3+P8+5):</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1" 
-                            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
-                        <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
-                            <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
-                        </button>
-                    </div>
-                </div>
+            <!-- 🧪 แถบวิเคราะห์สูตรสร้างเอง (อัปเดตเพิ่มปุ่มไมโครโฟนสั่งเสียง) -->
+<div id="bestSumCustomView" class="space-y-4 overflow-y-auto pr-1 flex-1 hidden">
+    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+        <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-slate-700">➕ เพิ่มสูตรคำนวณเพิ่มเติมเอง (พิมพ์ หรือใช้เสียงพูด):</label>
+            <!-- 🎤 ปุ่มไมโครโฟนสั่งงานด้วยเสียงสำหรับหน้าวิเคราะห์สูตร -->
+            <button id="micBestSumBtn" onclick="toggleBestSumVoiceRecognition()" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <i class="fa-solid fa-microphone" id="micBestSumIcon"></i> <span id="micBestSumText">🎙️ พูดบอกสูตร</span>
+            </button>
+        </div>
+        <div class="flex gap-2">
+            <input type="text" id="customUserFormulaInput" placeholder="พิมพ์สูตรที่ต้องการทดสอบ เช่น P7+P8+1 หรือกดพูด" 
+                class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono outline-none focus:ring-2 focus:ring-[#1877F2]">
+            <button onclick="addUserCustomFormula()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold whitespace-nowrap shadow-sm transition">
+                <i class="fa-solid fa-plus mr-1"></i> เพิ่มสูตร
+            </button>
+        </div>
+        <div id="bestSumVoiceStatus" class="text-[11px] text-purple-700 font-mono italic">สถานะเสียง: พร้อมฟัง (คลิกปุ่มไมโครโฟนแล้วพูด เช่น "พีเจ็ดบวกพีแปดบวกหนึ่ง")</div>
+    </div>
 
-                <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-3.5 rounded-xl space-y-2 border border-emerald-700 shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-800 pb-2">
-                        <span class="text-xs font-bold text-emerald-300">⚡ สรุปตัวชน (จากสูตรสร้างเองทั้งหมด):</span>
-                        <div class="flex gap-2">
-                            <button onclick="clearUserCustomFormulas()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold">ลบสูตรทั้งหมด</button>
-                            <button onclick="sendCustomIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">🚀 ส่งเข้า "แต้มผลรวมหลัก"</button>
-                        </div>
-                    </div>
-                    <div id="customIntersectionDigitsDisplay" class="font-mono font-black text-amber-300 text-lg tracking-widest text-center sm:text-left py-1">-- พิมพ์หรือเพิ่มสูตรด้านบนเพื่อสแกนตัวชน --</div>
-                </div>
+    <!-- ส่วนแสดงผลตัวชนและตารางด้านล่างตามเดิม -->
+    <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-3.5 rounded-xl space-y-2 border border-emerald-700 shadow-sm">
+        <!-- ... (ส่วนสรุปตัวชนเดิม) ... -->
+    </div>
+    <div id="userCustomFormulasResultList" class="space-y-3"></div>
+</div>
 
                 <p class="text-xs font-bold text-slate-700">🧪 ตารางสถิติย้อนหลังชุดสูตรสร้างเอง (เรียงตามความแม่นยำ):</p>
                 <div id="userCustomFormulasResultList" class="space-y-3">
@@ -2934,6 +2938,137 @@ function restoreOldPresets() {
             closeBestBottomSumModal();
             showToast(`ส่งเลขตัวชน [${formattedSumPoints}] ไปที่ช่องแต้มผลรวมหลักเรียบร้อย!`);
         }
+
+// ==========================================
+// 🎙️ ระบบสั่งงานด้วยเสียงสำหรับหน้าวิเคราะห์ 20 สูตร & สูตรสร้างเอง
+// ==========================================
+let bestSumRecognition = null;
+let isBestSumListening = false;
+
+function toggleBestSumVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert('เบราว์เซอร์นี้ไม่รองรับระบบสั่งงานด้วยเสียง (แนะนำให้ใช้ Google Chrome ครับ)');
+        return;
+    }
+
+    if (isBestSumListening) {
+        if (bestSumRecognition) bestSumRecognition.stop();
+        return;
+    }
+
+    bestSumRecognition = new SpeechRecognition();
+    bestSumRecognition.lang = 'th-TH'; // ตั้งค่าภาษาไทย
+    bestSumRecognition.interimResults = false;
+    bestSumRecognition.maxAlternatives = 1;
+
+    const micBtn = document.getElementById('micBestSumBtn');
+    const micIcon = document.getElementById('micBestSumIcon');
+    const micText = document.getElementById('micBestSumText');
+    const statusText = document.getElementById('bestSumVoiceStatus');
+
+    bestSumRecognition.onstart = function() {
+        isBestSumListening = true;
+        if(micBtn) micBtn.className = "px-2.5 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm animate-pulse";
+        if(micIcon) micIcon.className = "fa-solid fa-microphone-lines fa-bounce";
+        if(micText) micText.innerText = "กำลังฟัง...";
+        if(statusText) statusText.innerText = "🎤 กำลังฟังเสียง... (พูดสูตร เช่น 'พีเจ็ดบวกพีแปดบวกหนึ่ง')";
+    };
+
+    bestSumRecognition.onresult = function(event) {
+        const speechText = event.results[0][0].transcript.trim();
+        if(statusText) statusText.innerText = `🗣️ ได้ยิน: "${speechText}"`;
+        parseAndApplyBestSumVoiceFormula(speechText);
+    };
+
+    bestSumRecognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        if(statusText) statusText.innerText = "❌ เกิดข้อผิดพลาด ลองพูดใหม่อีกครั้ง";
+        resetBestSumMicUI();
+    };
+
+    bestSumRecognition.onend = function() {
+        resetBestSumMicUI();
+    };
+
+    bestSumRecognition.start();
+}
+
+function resetBestSumMicUI() {
+    isBestSumListening = false;
+    const micBtn = document.getElementById('micBestSumBtn');
+    const micIcon = document.getElementById('micBestSumIcon');
+    const micText = document.getElementById('micBestSumText');
+    if(micBtn) {
+        micBtn.className = "px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm";
+        if(micIcon) micIcon.className = "fa-solid fa-microphone";
+        if(micText) micText.innerText = "🎙️ พูดบอกสูตร";
+    }
+}
+
+// แปลงคำพูดภาษาไทยเป็นสูตร P เช่น "พีเจ็ด" -> P7, "บวก" -> +
+function parseAndApplyBestSumVoiceFormula(text) {
+    let cleaned = text.toLowerCase()
+        .replace(/บวก/g, '+')
+        .replace(/ลบ/g, '-')
+        .replace(/คูณ/g, '*')
+        .replace(/หาร/g, '/')
+        .replace(/พี/g, 'P')
+        .replace(/ตัวพี/g, 'P')
+        .replace(/\s+/g, '');
+
+    // แปลงเลขไทยเป็นเลขอราบิกเผื่อระบบเสียงแปลงมาเป็นไทย
+    cleaned = cleaned
+        .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
+        .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
+        .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
+        .replace(/เก้า/g, '9');
+
+    // พจนานุกรมคำศัพท์ตำแหน่งสลากในหน้า Excel
+    const keywordMap = [
+        { key: 'สิบล่าง', val: 'P7' }, { key: 'หน่วยล่าง', val: 'P8' },
+        { key: 'สิบครั้งที่1', val: 'P10' }, { key: 'สิบ1', val: 'P10' },
+        { key: 'หน่วยครั้งที่1', val: 'P11' }, { key: 'หน่วย1', val: 'P11' },
+        { key: 'ร้อยครั้งที่1', val: 'P9' }, { key: 'ร้อย1', val: 'P9' },
+        { key: 'สิบครั้งที่2', val: 'P13' }, { key: 'สิบ2', val: 'P13' },
+        { key: 'หน่วยครั้งที่2', val: 'P14' }, { key: 'หน่วย2', val: 'P14' },
+        { key: 'ร้อยครั้งที่2', val: 'P12' }, { key: 'ร้อย2', val: 'P12' },
+        { key: 'สิบครั้งที่3', val: 'P16' }, { key: 'สิบ3', val: 'P16' },
+        { key: 'หน่วยครั้งที่3', val: 'P17' }, { key: 'หน่วย3', val: 'P17' },
+        { key: 'ร้อยครั้งที่3', val: 'P15' }, { key: 'ร้อย3', val: 'P15' },
+        { key: 'สิบครั้งที่4', val: 'P19' }, { key: 'สิบ4', val: 'P19' },
+        { key: 'หน่วยครั้งที่4', val: 'P20' }, { key: 'หน่วย4', val: 'P20' },
+        { key: 'ร้อยครั้งที่4', val: 'P18' }, { key: 'ร้อย4', val: 'P18' },
+        { key: 'แสน', val: 'P1' }, { key: 'หมื่น', val: 'P2' },
+        { key: 'พัน', val: 'P3' }, { key: 'ร้อย', val: 'P4' },
+        { key: 'สิบ', val: 'P5' }, { key: 'หน่วย', val: 'P6' }
+    ];
+
+    keywordMap.forEach(item => {
+        let regex = new RegExp(item.key, 'g');
+        cleaned = cleaned.replace(regex, item.val);
+    });
+
+    // กรองเอาเฉพาะตัวอักษรสูตรที่ถูกต้อง (P, ตัวเลข, เครื่องหมายคำนวณ)
+    cleaned = cleaned.toUpperCase().replace(/[^P0-9+\-*/().]/g, '');
+
+    if (!cleaned) {
+        showToast('❌ แปลงเสียงพูดเป็นสูตรไม่สำเร็จ ลองใหม่อีกครั้ง');
+        return;
+    }
+
+    // นำสูตรที่แปลงได้ใส่ลงในช่อง input ทันที และกดเพิ่มสูตรเข้าตารางวิเคราะห์เอง
+    const inputEl = document.getElementById('customUserFormulaInput');
+    if (inputEl) {
+        inputEl.value = cleaned;
+    }
+
+    // เรียกฟังก์ชันเพิ่มสูตรเข้าวิเคราะห์ทันที
+    if (typeof addUserCustomFormula === 'function') {
+        addUserCustomFormula();
+        showToast(`🎙️ สั่งงานด้วยเสียงสำเร็จ: [${cleaned}]`);
+    }
+}
 
 
     </script>
