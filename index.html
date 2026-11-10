@@ -48,10 +48,53 @@
         <div id="pageMain" class="space-y-4">
         
             <!-- Preset Manager -->
+			
+<!-- ระบบแฟ้มรวมสูตรประจำงวด -->
+<div class="bg-slate-900/50 border border-blue-400/40 rounded-xl p-3 space-y-2 mb-3">
+    <div class="flex items-center gap-2 text-amber-300 font-bold text-sm">
+        <i class="fa-solid fa-folder-open"></i>
+        แฟ้มรวมสูตรประจำงวด
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+        <div class="sm:col-span-7">
+            <select id="periodFolderSelect"
+                onchange="switchPeriodFolder()"
+                class="w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white">
+                <option value="">-- เลือกแฟ้มงวด --</option>
+            </select>
+        </div>
+
+        <div class="sm:col-span-5 flex gap-2">
+            <input id="periodFolderName"
+                type="text"
+                placeholder="ชื่อแฟ้ม เช่น 16/11/69"
+                class="min-w-0 flex-1 w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white placeholder-blue-300">
+
+            <button onclick="createPeriodFolder()"
+                class="bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap">
+                <i class="fa-solid fa-plus"></i> สร้างแฟ้ม
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap justify-between items-center gap-2">
+        <div class="text-xs text-blue-200">
+            แฟ้มที่กำลังใช้งาน:
+            <span id="activePeriodFolderLabel" class="text-amber-300 font-bold">ยังไม่ได้เลือก</span>
+        </div>
+
+        <button onclick="deleteActivePeriodFolder()"
+            class="text-xs text-rose-300 hover:text-rose-200">
+            <i class="fa-solid fa-trash"></i> ลบแฟ้มนี้
+        </button>
+    </div>
+</div>
+
             <div class="bg-gradient-to-r from-[#1877F2] to-blue-800 rounded-2xl shadow-md p-4 text-white space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-blue-600 pb-2">
                     <h2 class="text-sm font-semibold flex items-center gap-2 text-blue-100">
-                        <i class="fa-solid fa-folder-bookmark text-amber-300"></i> ระบบบันทึกสูตรประกบ & เซฟทับ
+                        <i class="fa-solid fa-folder-bookmark text-amber-300"></i> บันทึกสูตรภายในแฟ้มที่เลือก
                     </h2>
                     <span class="text-xs text-blue-200">เลือกชื่อเพื่อโหลด หรือพิมพ์ชื่อใหม่เพื่อบันทึก</span>
                 </div>
@@ -457,7 +500,10 @@
 
     <script>
         const STORAGE_KEY = 'number_pair_app_main_data_v57';
-        const PRESETS_KEY = 'number_pair_app_presets_v57';
+        const PRESETS_KEY = 'number_pair_app_presets_v57';		
+          // ระบบแฟ้มรวมสูตรประจำงวด
+        const PERIOD_FOLDERS_KEY = 'number_pair_period_folders_v1';
+        const ACTIVE_PERIOD_FOLDER_KEY = 'number_pair_active_period_folder_v1';
         const FILTER_PRESETS_KEY = 'number_pair_app_filter_presets_v57';
         const EXCEL_SHEETS_KEY = 'number_pair_app_excel_multi_sheets_v57';
 
@@ -2269,6 +2315,280 @@ if (document.readyState === 'loading') {
 } else {
     loadHistoryFontSizeSettings();
 }
+
+
+// ==========================================
+// ระบบแฟ้มรวมสูตรประจำงวด
+// ==========================================
+
+function getStoredFolders() {
+    let folders = {};
+
+    try {
+        folders = JSON.parse(
+            localStorage.getItem(PERIOD_FOLDERS_KEY) || '{}'
+        );
+    } catch (e) {
+        folders = {};
+    }
+
+    // ย้ายสูตรเดิมเข้าระบบแฟ้มโดยไม่ลบข้อมูลต้นฉบับ
+    if (Object.keys(folders).length === 0) {
+        const oldPresets = getStoredPresets();
+
+        if (Object.keys(oldPresets).length > 0) {
+            folders['สูตรเดิม (ยังไม่จัดงวด)'] = oldPresets;
+        }
+
+        localStorage.setItem(
+            PERIOD_FOLDERS_KEY,
+            JSON.stringify(folders)
+        );
+    }
+
+    return folders;
+}
+
+function saveStoredFolders(folders) {
+    localStorage.setItem(
+        PERIOD_FOLDERS_KEY,
+        JSON.stringify(folders)
+    );
+}
+
+function getActivePeriodFolder() {
+    const folders = getStoredFolders();
+    let active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+
+    if (!active || !folders[active]) {
+        active = Object.keys(folders)[0] || '';
+
+        if (!active) {
+            active = 'แฟ้มใหม่';
+            folders[active] = {};
+            saveStoredFolders(folders);
+        }
+
+        localStorage.setItem(
+            ACTIVE_PERIOD_FOLDER_KEY,
+            active
+        );
+    }
+
+    return active;
+}
+
+function initPeriodFolders() {
+    getStoredFolders();
+    getActivePeriodFolder();
+    refreshPeriodFolderSelect();
+    loadPresetsToSelect();
+}
+
+function refreshPeriodFolderSelect() {
+    const select = document.getElementById('periodFolderSelect');
+    if (!select) return;
+
+    const folders = getStoredFolders();
+    const active = getActivePeriodFolder();
+
+    select.innerHTML = '';
+
+    Object.keys(folders).forEach(name => {
+        const option = new Option(name, name);
+        select.add(option);
+    });
+
+    select.value = active;
+
+    const label = document.getElementById('activePeriodFolderLabel');
+    if (label) label.textContent = active || 'ยังไม่ได้เลือก';
+}
+
+function createPeriodFolder() {
+    const input = document.getElementById('periodFolderName');
+    const name = input.value.trim();
+
+    if (!name) {
+        alert('กรุณาพิมพ์ชื่อแฟ้มก่อนครับ');
+        input.focus();
+        return;
+    }
+
+    const folders = getStoredFolders();
+
+    if (folders[name]) {
+        alert('มีแฟ้มชื่อนี้อยู่แล้วครับ');
+        return;
+    }
+
+    folders[name] = {};
+    saveStoredFolders(folders);
+
+    localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
+
+    input.value = '';
+
+    refreshPeriodFolderSelect();
+    loadPresetsToSelect();
+
+    showToast('สร้างแฟ้ม "' + name + '" เรียบร้อยแล้ว');
+}
+
+function switchPeriodFolder() {
+    const select = document.getElementById('periodFolderSelect');
+    const name = select.value;
+
+    const folders = getStoredFolders();
+
+    if (!name || !folders[name]) return;
+
+    localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
+
+    refreshPeriodFolderSelect();
+    loadPresetsToSelect();
+
+    showToast('เปลี่ยนมาใช้แฟ้ม "' + name + '" แล้ว');
+}
+
+function deleteActivePeriodFolder() {
+    const name = getActivePeriodFolder();
+
+    if (!name) return;
+
+    if (!confirm(
+        'ต้องการลบแฟ้ม "' + name + '" และสูตรทั้งหมดภายในแฟ้มนี้ใช่หรือไม่?'
+    )) return;
+
+    const folders = getStoredFolders();
+
+    delete folders[name];
+
+    if (Object.keys(folders).length === 0) {
+        folders['แฟ้มใหม่'] = {};
+    }
+
+    saveStoredFolders(folders);
+
+    const nextFolder = Object.keys(folders)[0];
+
+    localStorage.setItem(
+        ACTIVE_PERIOD_FOLDER_KEY,
+        nextFolder
+    );
+
+    refreshPeriodFolderSelect();
+    loadPresetsToSelect();
+
+    showToast('ลบแฟ้มเรียบร้อยแล้ว');
+}
+
+// ==========================================
+// ระบบบันทึกสูตรภายในแฟ้มที่เลือก
+// ==========================================
+
+function saveCurrentPreset() {
+    const folderName = getActivePeriodFolder();
+    const select = document.getElementById('presetSelect');
+    const input = document.getElementById('presetNameInput');
+
+    const name = input.value.trim() || select.value;
+
+    if (!name) {
+        alert('กรุณาพิมพ์ชื่อสูตรก่อนบันทึกครับ');
+        input.focus();
+        return;
+    }
+
+    const folders = getStoredFolders();
+
+    if (!folders[folderName]) {
+        folders[folderName] = {};
+    }
+
+    folders[folderName][name] = getCurrentFormState();
+
+    saveStoredFolders(folders);
+
+    loadPresetsToSelect();
+
+    select.value = name;
+    input.value = '';
+
+    showToast(
+        'บันทึกสูตร "' + name +
+        '" ในแฟ้ม "' + folderName + '" เรียบร้อย!'
+    );
+}
+
+function loadPresetsToSelect() {
+    const select = document.getElementById('presetSelect');
+    if (!select) return;
+
+    const folders = getStoredFolders();
+    const folderName = getActivePeriodFolder();
+    const presets = folders[folderName] || {};
+
+    select.innerHTML = '';
+
+    select.add(new Option('-- งานปัจจุบัน (Auto Saved) --', ''));
+
+    Object.keys(presets).forEach(name => {
+        select.add(new Option('📄 ' + name, name));
+    });
+}
+
+function loadSelectedPreset() {
+    const name = document.getElementById('presetSelect').value;
+
+    if (!name) {
+        loadSavedData();
+        autoProcess();
+        return;
+    }
+
+    const folders = getStoredFolders();
+    const folderName = getActivePeriodFolder();
+    const presets = folders[folderName] || {};
+
+    if (presets[name]) {
+        setFormState(presets[name]);
+        autoProcess();
+
+        showToast('โหลดสูตร "' + name + '" แล้ว');
+    }
+}
+
+function deleteSelectedPreset() {
+    const select = document.getElementById('presetSelect');
+    const name = select.value;
+
+    if (!name) return;
+
+    if (!confirm('ต้องการลบสูตร "' + name + '" ใช่หรือไม่?')) {
+        return;
+    }
+
+    const folders = getStoredFolders();
+    const folderName = getActivePeriodFolder();
+
+    if (folders[folderName]) {
+        delete folders[folderName][name];
+    }
+
+    saveStoredFolders(folders);
+
+    loadPresetsToSelect();
+
+    loadSavedData();
+    autoProcess();
+
+    showToast('ลบสูตรเรียบร้อยแล้ว');
+}
+
+// เริ่มต้นระบบแฟ้ม
+initPeriodFolders();
+
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
