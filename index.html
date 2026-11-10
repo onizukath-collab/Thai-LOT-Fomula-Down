@@ -2589,6 +2589,59 @@ function deleteSelectedPreset() {
 // เริ่มต้นระบบแฟ้ม
 initPeriodFolders();
 
+		
+// ==========================================
+// กู้คืนสูตรเดิมจากระบบก่อนหน้า
+// ==========================================
+function restoreOldPresets() {
+    try {
+        const oldPresets = getStoredPresets();
+        const folders = getStoredFolders();
+
+        const restoreFolder = 'สูตรเดิม (กู้คืน)';
+
+        if (!folders[restoreFolder]) {
+            folders[restoreFolder] = {};
+        }
+
+        let restored = 0;
+
+        Object.keys(oldPresets).forEach(name => {
+            // ถ้ามีชื่อซ้ำ จะไม่เขียนทับข้อมูลเดิม
+            if (!folders[restoreFolder][name]) {
+                folders[restoreFolder][name] = oldPresets[name];
+                restored++;
+            }
+        });
+
+        saveStoredFolders(folders);
+
+        refreshPeriodFolderSelect();
+
+        // เลือกแฟ้มกู้คืนเพื่อให้เห็นสูตรเก่า
+        const folderSelect = document.getElementById('periodFolderSelect');
+
+        if (folderSelect && folders[restoreFolder]) {
+            folderSelect.value = restoreFolder;
+            localStorage.setItem(
+                ACTIVE_PERIOD_FOLDER_KEY,
+                restoreFolder
+            );
+        }
+
+        loadPresetsToSelect();
+
+        alert('กู้คืนสูตรเดิมแล้ว ' + restored + ' สูตร');
+
+    } catch (error) {
+        console.error('Restore error:', error);
+        alert('กู้คืนไม่สำเร็จ กรุณาตรวจสอบ Console');
+    }
+}
+
+restoreOldPresets();
+
+
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
