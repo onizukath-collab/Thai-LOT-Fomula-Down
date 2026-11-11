@@ -1453,7 +1453,7 @@
 
         function getStoredPresets() {
             try {
-                // 💡 ดึงข้อมูลสูตรจากแฟ้มที่กำลังใช้งานอยู่ในระบบแฟ้มประจำงวดโดยตรง
+                // ดึงสูตรจากแฟ้มประจำงวดที่กำลังใช้งานอยู่จริง (เพื่อให้ได้ครบทั้ง 4 สูตร)
                 const folders = getStoredFolders();
                 const activeFolder = getActivePeriodFolder();
                 return (folders && folders[activeFolder]) ? folders[activeFolder] : {};
@@ -1488,7 +1488,6 @@
                 const sumPoint = (Number(a) + Number(b)) % 10;
                 if (allowedSums.length && !allowedSums.includes(sumPoint)) return;
                 const digits = [a, b];
-                // หน้าหลักกำหนดเงื่อนไขชุดคัดกรองเป็น AND
                 if (filterSets.length && !filterSets.every(set => digits.some(d => set.includes(d)))) return;
                 const normalized = normalizePairForPresetCompare(a + b);
                 if (normalized) passed.add(normalized);
