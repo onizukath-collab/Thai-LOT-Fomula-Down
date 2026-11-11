@@ -1503,9 +1503,16 @@
     const content = document.getElementById('presetPairSummaryContent');
     if (!meta || !content) return;
     
-    const presets = getStoredPresets();
-    
-    // 💡 เพิ่มส่วนนี้: ดึงฟอร์มปัจจุบันบนหน้าจอมาใส่ชั่วคราว เพื่อให้รีเฟรชแล้วเห็นผลทันทีแม้ยังไม่กดเซฟสูตร
+    // 💡 ดึงแฟ้มทั้งหมดและรวมสูตรจากทุกแฟ้มเข้ามาด้วยกันทันที
+    const allFolders = getStoredFolders();
+    let presets = {};
+    Object.values(allFolders).forEach(folderPresets => {
+        if (folderPresets && typeof folderPresets === 'object') {
+            presets = { ...presets, ...folderPresets };
+        }
+    });
+
+    // ดึงฟอร์มปัจจุบันบนหน้าจอมาใส่ชั่วคราวเพื่อให้รีเฟรชแล้วเห็นผลทันที
     const activePresetName = document.getElementById('presetSelect').value;
     if (activePresetName && presets[activePresetName]) {
         presets[activePresetName] = getCurrentFormState();
@@ -1525,7 +1532,7 @@
     });
     
     const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    meta.textContent = `นำมาเปรียบเทียบ ${names.length} สูตร · พบคู่ที่ผ่านอย่างน้อย 1 สูตร ${ranked.length} คู่`;
+    meta.textContent = `นำมารวมทุกแฟ้ม ${names.length} สูตร · พบคู่ที่ผ่านอย่างน้อย 1 สูตร ${ranked.length} คู่`;
     
     if (!ranked.length) {
         content.innerHTML = '<p class="text-slate-500">ยังไม่พบคู่ที่ผ่านเงื่อนไขจากสูตรที่บันทึกไว้</p>';
