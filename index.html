@@ -3098,7 +3098,27 @@ function parseAndApplyBestSumVoiceFormula(text) {
     }
 }
 
+const RECORDS_KEY = 'app_records_v1';
 
+function readRecords() {
+    try {
+        return JSON.parse(localStorage.getItem(RECORDS_KEY)) || [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function saveRecords(records) {
+    localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
+    refreshRecords();
+}
+
+function refreshRecords() {
+    const records = readRecords();
+
+    // นำ records ไปแสดงในตารางหรือรายการข้อมูล
+    console.log('ข้อมูลล่าสุด:', records);
+}
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
