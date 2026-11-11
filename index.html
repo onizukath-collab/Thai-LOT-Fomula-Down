@@ -555,6 +555,7 @@
         const PRESETS_KEY = 'number_pair_app_presets_v57';		
           // ระบบแฟ้มรวมสูตรประจำงวด
         const PERIOD_FOLDERS_KEY = 'number_pair_period_folders_v1';
+        const PERIOD_FOLDERS_RECOVERY_KEY = 'number_pair_period_folders_recovery_v1';
         const ACTIVE_PERIOD_FOLDER_KEY = 'number_pair_active_period_folder_v1';
         const FILTER_PRESETS_KEY = 'number_pair_app_filter_presets_v57';
         const EXCEL_SHEETS_KEY = 'number_pair_app_excel_multi_sheets_v57';
@@ -696,8 +697,20 @@
         }
 
         function saveExcelSheetsData() {
-            if (excelSheetsData[activeSheetId]) excelSheetsData[activeSheetId].history = document.getElementById('customHistoryInput').value;
-            localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
+            try {
+                if (excelSheetsData[activeSheetId]) {
+                    const historyEl = document.getElementById('customHistoryInput');
+                    if (historyEl) excelSheetsData[activeSheetId].history = historyEl.value;
+                }
+                localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
+                return true;
+            } catch (error) {
+                console.error('บันทึกข้อมูลตารางสถิติไม่สำเร็จ:', error);
+                if (typeof showToast === 'function') {
+                    showToast('บันทึกตารางไม่สำเร็จ กรุณาส่งออกไฟล์สำรอง');
+                }
+                return false;
+            }
         }
 
         function renderSubTabsBar() {
@@ -1440,7 +1453,15 @@
             else { addFilterRow('24680'); addFilterRow('13579'); }
         }
 
-        function saveToLocalStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(getCurrentFormState())); }
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(getCurrentFormState()));
+                return true;
+            } catch (error) {
+                console.error('บันทึกข้อมูลหน้าหลักไม่สำเร็จ:', error);
+                return false;
+            }
+        }
         function loadSavedData() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) { try { setFormState(JSON.parse(saved)); } catch(e) { initDefaultForm(); } } else initDefaultForm();
@@ -1586,32 +1607,19 @@
     }).join('');
 }
 
-        function saveCurrentPreset() {
-            const select = document.getElementById('presetSelect');
-            let name = document.getElementById('presetNameInput').value.trim() || select.value; if (!name) return;
-            const presets = getStoredPresets(); presets[name] = getCurrentFormState();
-            localStorage.setItem(PRESETS_KEY, JSON.stringify(presets)); loadPresetsToSelect(); select.value = name;
-            showToast(`บันทึกสูตร "${name}" เรียบร้อย!`);
-        }
-        function loadPresetsToSelect() {
-            const select = document.getElementById('presetSelect'); if(!select) return;
-            const presets = getStoredPresets(); select.innerHTML = '<option value="">-- งานปัจจุบัน (Auto Saved) --</option>';
-            for (let name in presets) select.innerHTML += `<option value="${name}">📁 ${name}</option>`;
-            renderPresetPairCollisionSummary();
-        }
-        function loadSelectedPreset() {
-            const name = document.getElementById('presetSelect').value; if (!name) { loadSavedData(); autoProcess(); return; }
-            const presets = getStoredPresets(); if (presets[name]) { setFormState(presets[name]); autoProcess(); showToast(`โหลดสูตร "${name}" แล้ว`); }
-        }
-        function deleteSelectedPreset() {
-            const name = document.getElementById('presetSelect').value; if (!name) return;
-            if (confirm(`ลบสูตร "${name}"?`)) {
-                const presets = getStoredPresets(); delete presets[name]; localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
-                loadPresetsToSelect(); loadSavedData(); autoProcess();
+        // ฟังก์ชันจัดการสูตรเวอร์ชันเดิมถูกแทนที่ด้วยระบบแฟ้มประจำงวดด้านล่างแล้ว
+
+        function getStoredFilterPresets() {
+            try {
+                const raw = localStorage.getItem(FILTER_PRESETS_KEY);
+                if (!raw) return {};
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+            } catch (error) {
+                console.warn('อ่านชุดคัดกรองที่บันทึกไว้ไม่สำเร็จ:', error);
+                return {};
             }
         }
-
-        function getStoredFilterPresets() { const p = localStorage.getItem(FILTER_PRESETS_KEY); return p ? JSON.parse(p) : {}; }
         function saveFilterPreset() {
             const select = document.getElementById('filterPresetSelect');
             let name = document.getElementById('filterPresetNameInput').value.trim() || select.value; if (!name) return;
@@ -2346,37 +2354,7 @@ function parseAndApplyMainTargetVoice(text) {
         }
     }
 }
-	function saveEverythingToJson() {
-    // 1. ดึงข้อมูลล่าสุดบนหน้าจอมารวมกัน
-    if (typeof collectAndSaveDOMFormulas === 'function') {
-        collectAndSaveDOMFormulas();
-    }
-
-    // 2. รวบรวมข้อมูลทุกอย่างในระบบ (ชีท, สูตร, ประวัติ, ข้อมูลจำในเครื่อง)
-    const fullDataBackup = {
-        appTitle: "Lottery Analysis Backup",
-        exportTimestamp: new Date().toISOString(),
-        activeSheetId: typeof activeSheetId !== 'undefined' ? activeSheetId : null,
-        sheetsData: typeof excelSheetsData !== 'undefined' ? excelSheetsData : {},
-        localStorageBackup: { ...localStorage }
-    };
-
-    // 3. แปลงข้อมูลเป็นไฟล์ JSON
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullDataBackup, null, 2));
-
-    // 4. สั่งดาวน์โหลดลงเครื่องอัตโนมัติ
-    const now = new Date();
-    const timeStamp = now.toISOString().slice(0,10) + "_" + now.getHours() + "-" + now.minutes();
-    
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `Full_Page_Backup_${timeStamp}.json`);
-    
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-}	
-
+	// ใช้ฟังก์ชันสำรองข้อมูลเวอร์ชันที่มี try/catch ด้านล่างเพียงชุดเดียว
 
 function saveEverythingToJson() {
     try {
@@ -2596,39 +2574,85 @@ if (document.readyState === 'loading') {
 // ระบบแฟ้มรวมสูตรประจำงวด
 // ==========================================
 
+function readLegacyPresetsForMigration() {
+    try {
+        const raw = localStorage.getItem(PRESETS_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+            ? parsed
+            : {};
+    } catch (error) {
+        console.warn('อ่านข้อมูลสูตรเดิมเพื่อย้ายแฟ้มไม่สำเร็จ:', error);
+        return {};
+    }
+}
+
 function getStoredFolders() {
     let folders = {};
+    const raw = localStorage.getItem(PERIOD_FOLDERS_KEY);
+    let shouldSave = false;
 
-    try {
-        folders = JSON.parse(
-            localStorage.getItem(PERIOD_FOLDERS_KEY) || '{}'
-        );
-    } catch (e) {
-        folders = {};
+    if (raw) {
+        try {
+            const parsed = JSON.parse(raw);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                throw new Error('รูปแบบข้อมูลแฟ้มไม่ถูกต้อง');
+            }
+            folders = parsed;
+        } catch (error) {
+            console.error('อ่านข้อมูลแฟ้มประจำงวดไม่สำเร็จ:', error);
+
+            // เก็บข้อความดิบที่อ่านไม่ได้ไว้ก่อน ห้ามทิ้งข้อมูลต้นฉบับโดยไม่สำรอง
+            try {
+                localStorage.setItem(PERIOD_FOLDERS_RECOVERY_KEY, raw);
+            } catch (backupError) {
+                console.error('สำรองข้อมูลแฟ้มที่เสียหายไม่สำเร็จ:', backupError);
+            }
+
+            folders = {};
+            shouldSave = true;
+        }
     }
 
-    // ย้ายสูตรเดิมเข้าระบบแฟ้มโดยไม่ลบข้อมูลต้นฉบับ
+    // ย้ายข้อมูลจากคีย์เดิมโดยอ่าน PRESETS_KEY โดยตรง เพื่อป้องกันการเรียกฟังก์ชันวนซ้ำ
     if (Object.keys(folders).length === 0) {
-        const oldPresets = getStoredPresets();
-
+        const oldPresets = readLegacyPresetsForMigration();
         if (Object.keys(oldPresets).length > 0) {
             folders['สูตรเดิม (ยังไม่จัดงวด)'] = oldPresets;
+            shouldSave = true;
         }
+    }
 
-        localStorage.setItem(
-            PERIOD_FOLDERS_KEY,
-            JSON.stringify(folders)
-        );
+    if (shouldSave) {
+        saveStoredFolders(folders);
     }
 
     return folders;
 }
 
 function saveStoredFolders(folders) {
-    localStorage.setItem(
-        PERIOD_FOLDERS_KEY,
-        JSON.stringify(folders)
-    );
+    try {
+        if (!folders || typeof folders !== 'object' || Array.isArray(folders)) {
+            throw new Error('ข้อมูลแฟ้มที่จะบันทึกมีรูปแบบไม่ถูกต้อง');
+        }
+
+        const serialized = JSON.stringify(folders);
+        if (typeof serialized !== 'string') {
+            throw new Error('ไม่สามารถแปลงข้อมูลแฟ้มเป็น JSON ได้');
+        }
+
+        localStorage.setItem(PERIOD_FOLDERS_KEY, serialized);
+        return true;
+    } catch (error) {
+        console.error('บันทึกแฟ้มประจำงวดไม่สำเร็จ:', error);
+        if (typeof showToast === 'function') {
+            showToast('บันทึกแฟ้มไม่สำเร็จ กรุณาตรวจสอบพื้นที่จัดเก็บ');
+        } else {
+            alert('บันทึกแฟ้มไม่สำเร็จ กรุณาตรวจสอบพื้นที่จัดเก็บ');
+        }
+        return false;
+    }
 }
 
 function getActivePeriodFolder() {
@@ -2698,7 +2722,7 @@ function createPeriodFolder() {
     }
 
     folders[name] = {};
-    saveStoredFolders(folders);
+    if (!saveStoredFolders(folders)) return;
 
     localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
 
@@ -2753,7 +2777,7 @@ function renameActivePeriodFolder() {
     folders[name] = folders[oldName];
     delete folders[oldName];
 
-    saveStoredFolders(folders);
+    if (!saveStoredFolders(folders)) return;
     localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
 
     refreshPeriodFolderSelect();
@@ -2781,7 +2805,7 @@ function deleteActivePeriodFolder() {
         folders['แฟ้มใหม่'] = {};
     }
 
-    saveStoredFolders(folders);
+    if (!saveStoredFolders(folders)) return;
 
     const nextFolder = Object.keys(folders)[0];
 
@@ -2821,7 +2845,7 @@ function saveCurrentPreset() {
 
     folders[folderName][name] = getCurrentFormState();
 
-    saveStoredFolders(folders);
+    if (!saveStoredFolders(folders)) return;
 
     loadPresetsToSelect();
 
@@ -2889,7 +2913,7 @@ function deleteSelectedPreset() {
         delete folders[folderName][name];
     }
 
-    saveStoredFolders(folders);
+    if (!saveStoredFolders(folders)) return;
 
     loadPresetsToSelect();
 
@@ -2927,7 +2951,7 @@ function restoreOldPresets() {
             }
         });
 
-        saveStoredFolders(folders);
+        if (!saveStoredFolders(folders)) return;
 
         refreshPeriodFolderSelect();
 
