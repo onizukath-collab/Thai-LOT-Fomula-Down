@@ -33,12 +33,15 @@
         </div>
 
         <!-- Main Tab Navigation -->
-        <div class="flex bg-slate-200 p-1.5 rounded-2xl shadow-inner gap-2">
-            <button id="tabMainBtn" onclick="switchPageTab('main')" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 bg-white text-[#1877F2] shadow-sm transition">
+        <div class="flex bg-slate-200 p-1.5 rounded-2xl shadow-inner gap-1.5">
+            <button id="tabMainBtn" onclick="switchPageTab('main')" class="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-bold text-[10px] sm:text-base flex items-center justify-center gap-1.5 sm:gap-2 bg-white text-[#1877F2] shadow-sm transition">
                 <i class="fa-solid fa-table-cells"></i> 🧮 หน้าหลัก & จับคู่ตัวเลข
             </button>
-            <button id="tabCustomEngineBtn" onclick="switchPageTab('customEngine')" class="flex-1 py-3 px-4 rounded-xl font-bold text-xs sm:text-base flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 transition">
-                <i class="fa-solid fa-file-excel text-emerald-600"></i> ⚡ สถิติ & สูตร Excel (สั่งงานด้วยเสียง)
+            <button id="tabCustomEngineBtn" onclick="switchPageTab('customEngine')" class="flex-1 min-w-0 py-3 px-2 sm:px-4 rounded-xl font-bold text-[10px] sm:text-base flex items-center justify-center gap-1.5 sm:gap-2 text-slate-600 hover:text-slate-900 transition">
+                <i class="fa-solid fa-file-excel text-emerald-600"></i> ⚡ สถิติ & สูตร Excel
+            </button>
+            <button id="tabFormulaAnalysisBtn" type="button" onclick="openBestBottomSumModal()" class="shrink-0 py-3 px-2 sm:px-4 rounded-xl font-bold text-[10px] sm:text-base flex items-center justify-center gap-1.5 sm:gap-2 text-slate-700 hover:text-slate-900 bg-amber-300 hover:bg-amber-400 transition whitespace-nowrap">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> ระบบวิเคราะห์สูตร
             </button>
         </div>
 
@@ -56,23 +59,25 @@
         แฟ้มรวมสูตรประจำงวด
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
-        <div class="sm:col-span-7">
+    <div class="grid grid-cols-2 gap-2 items-center">
+        <div class="min-w-0">
             <select id="periodFolderSelect"
                 onchange="switchPeriodFolder()"
-                class="w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white">
-                <option value="">-- เลือกแฟ้มงวด --</option>
+                aria-label="เลือกแฟ้มงวด"
+                class="w-full min-w-0 bg-blue-950 border border-blue-600 rounded-xl px-2 py-2 text-[11px] sm:text-xs text-white">
+                <option value="">-- เลือกแฟ้ม --</option>
             </select>
         </div>
 
-        <div class="sm:col-span-5 flex gap-2">
+        <div class="min-w-0 flex items-center gap-1">
             <input id="periodFolderName"
                 type="text"
-                placeholder="ชื่อแฟ้ม เช่น 16/11/69"
-                class="min-w-0 flex-1 w-full bg-blue-950 border border-blue-600 rounded-xl px-3 py-2 text-xs text-white placeholder-blue-300">
+                placeholder="ชื่อแฟ้ม"
+                aria-label="ชื่อแฟ้มใหม่"
+                class="min-w-0 w-0 flex-1 bg-blue-950 border border-blue-600 rounded-xl px-2 py-2 text-[11px] sm:text-xs text-white placeholder-blue-300">
 
             <button onclick="createPeriodFolder()"
-                class="bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-xl px-3 py-2 text-xs font-bold whitespace-nowrap">
+                class="shrink-0 bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-xl px-2 py-2 text-[11px] sm:text-xs font-bold whitespace-nowrap">
                 <i class="fa-solid fa-plus"></i> สร้างแฟ้ม
             </button>
         </div>
@@ -99,25 +104,26 @@
             <div class="bg-gradient-to-r from-[#1877F2] to-blue-800 rounded-2xl shadow-md p-4 text-white space-y-3">
                 
                
-                <div class="grid grid-cols-2 sm:grid-cols-12 gap-2 items-center">
-                    <div class="sm:col-span-5 flex items-center gap-2">
-                        <label class="text-xs text-blue-100 whitespace-nowrap">เลือกสูตร:</label>
-                        <select id="presetSelect" onchange="loadSelectedPreset()" class="w-full bg-blue-950 border border-blue-700 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:ring-2 focus:ring-amber-300">
-                            <option value="">-- งานปัจจุบัน (Auto Saved) --</option>
+                <!-- แถวจัดการสูตร: เลือกสูตร | ชื่อสูตร + เซฟ | ลบสูตร (อยู่บรรทัดเดียวทุกขนาดจอ) -->
+                <div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_34px] sm:grid-cols-[minmax(0,5fr)_minmax(0,5fr)_auto] gap-1.5 sm:gap-2 items-center w-full">
+                    <div class="min-w-0 flex items-center gap-1 sm:gap-2">
+                        <label for="presetSelect" class="hidden sm:inline text-xs text-blue-100 whitespace-nowrap">เลือกสูตร:</label>
+                        <select id="presetSelect" onchange="loadSelectedPreset()" aria-label="เลือกสูตรที่บันทึกไว้" class="min-w-0 w-full bg-blue-950 border border-blue-700 rounded-xl px-1.5 sm:px-3 py-2 sm:py-1.5 text-[10px] sm:text-xs text-white outline-none focus:ring-2 focus:ring-amber-300">
+                            <option value="">-- งานปัจจุบัน --</option>
                         </select>
                     </div>
-                    
-                    <div class="sm:col-span-5 flex items-center gap-2">
-                        <input type="text" id="presetNameInput" placeholder="ชื่อสูตร (ปล่อยว่างเพื่อเซฟทับ)" 
-                            class="w-full bg-blue-950 border border-blue-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-blue-300 outline-none">
-                        <button onclick="saveCurrentPreset()" title="เซฟทับ & บันทึก" aria-label="เซฟทับ & บันทึก" class="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-400 hover:bg-amber-500 rounded-xl transition shadow-sm">
-                            <img src="icon-512.png" alt="" class="w-10 h-10 object-contain">
+
+                    <div class="min-w-0 flex items-center gap-1 sm:gap-2">
+                        <input type="text" id="presetNameInput" placeholder="ชื่อสูตร" aria-label="ชื่อสูตรใหม่" 
+                            class="min-w-0 w-0 flex-1 bg-blue-950 border border-blue-700 rounded-xl px-1.5 sm:px-3 py-2 sm:py-1.5 text-[10px] sm:text-xs text-white placeholder-blue-300 outline-none">
+                        <button type="button" onclick="saveCurrentPreset()" title="เซฟทับ & บันทึก" aria-label="เซฟทับ & บันทึก" class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center bg-amber-400 hover:bg-amber-500 rounded-xl transition shadow-sm">
+                            <img src="icon-512.png" alt="" class="w-8 h-8 sm:w-10 sm:h-10 object-contain">
                         </button>
                     </div>
 
-                    <div class="col-span-2 sm:col-span-2 flex justify-end">
-                        <button onclick="deleteSelectedPreset()" class="w-full sm:w-auto px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-medium transition flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-trash-can"></i> ลบสูตร
+                    <div class="min-w-0 flex justify-end">
+                        <button type="button" onclick="deleteSelectedPreset()" title="ลบสูตรที่เลือก" aria-label="ลบสูตรที่เลือก" class="w-[34px] h-8 sm:w-auto sm:h-9 sm:px-3 shrink-0 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-medium transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i><span class="hidden sm:inline">ลบสูตร</span>
                         </button>
                     </div>
                 </div>
@@ -194,18 +200,6 @@
                             <i class="fa-solid fa-ban text-rose-500"></i> 2. เลขดับ & แต้มผลรวม & ตัวกรองคำนวณ
                         </h2>
                         
-                        <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl p-3 text-slate-950 space-y-2 shadow-sm">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold flex items-center gap-1.5 text-slate-950">
-                                    <i class="fa-solid fa-trophy"></i> ระบบวิเคราะห์ 4 สูตรแต้มที่ดีที่สุด
-                                </span>
-                                <span class="text-[10px] font-semibold bg-white/20 px-2 py-0.5 rounded-full">ผลชนมาตรฐาน</span>
-                            </div>
-                            <button onclick="openBestBottomSumModal()" class="w-full py-2 bg-slate-900 hover:bg-black text-amber-300 font-bold rounded-lg text-xs shadow transition flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> 🎯 สแกน 4 สูตรเด่น & จับตัวชน
-                            </button>
-                        </div>
-
                         <div>
                             <label class="block text-xs font-medium text-rose-700 mb-1">ชุดเลขดับ (Exclude):</label>
                             <input type="text" id="excludeInput" oninput="debounceAutoProcess()" placeholder="เช่น 13 หรือ 1, 3" 
