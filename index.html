@@ -1452,8 +1452,15 @@
         function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
         function getStoredPresets() {
-            try { const p = localStorage.getItem(PRESETS_KEY); return p ? JSON.parse(p) : {}; }
-            catch (e) { console.warn('อ่านสูตรที่บันทึกไว้ไม่สำเร็จ', e); return {}; }
+            try {
+                // 💡 ดึงข้อมูลสูตรจากแฟ้มที่กำลังใช้งานอยู่ในระบบแฟ้มประจำงวดโดยตรง
+                const folders = getStoredFolders();
+                const activeFolder = getActivePeriodFolder();
+                return (folders && folders[activeFolder]) ? folders[activeFolder] : {};
+            } catch (e) {
+                console.warn('อ่านสูตรในแฟ้มไม่สำเร็จ', e);
+                return {};
+            }
         }
 
         // แปลงคู่กลับให้เป็นคีย์เดียวกัน เช่น 25 และ 52 จะได้คีย์ 25
