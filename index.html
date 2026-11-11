@@ -1471,36 +1471,63 @@
         }
 
         // คำนวณผลคู่ที่ผ่านเงื่อนไขของสูตรที่บันทึก โดยไม่เปลี่ยนค่าบนหน้าจอปัจจุบัน
+        // ฟังก์ชันคำนวณคู่ที่ผ่านเงื่อนไขแบบยืดหยุ่น (รองรับทุกโครงสร้างข้อมูลที่บันทึกไว้)
         function getPassedPairsFromPresetState(data) {
             if (!data || typeof data !== 'object') return new Set();
-            const tens = [...new Set(String(data.tens || '').replace(/[^0-9]/g, '').split(''))];
-            const units = [...new Set(String(data.units || '').replace(/[^0-9]/g, '').split(''))];
-            const stair = [...new Set(String(data.stairInput || '').replace(/[^0-9]/g, '').split(''))];
-            const exclude = [...new Set(String(data.excludeInput || '').replace(/[^0-9]/g, '').split(''))];
-            const allowedSums = [...new Set(String(data.sumPointsInput || '').replace(/[^0-9]/g, '').split(''))].map(Number);
-            const filterSets = (Array.isArray(data.filterInputs) ? data.filterInputs : [])
-                .map(value => [...new Set(String(value || '').replace(/[^0-9]/g, '').split(''))])
+
+            // 1. ดึงค่าชุดตัวเลขหลักแบบเซฟความปลอดภัย (ดึงได้ทั้งกรณีที่เป็น String หรือ Array)
+            const extractDigits = (val) => {
+                if (!val) return [];
+                if (Array.isArray(val)) return val.map(v => String(v).replace(/[^0-9]/g, '')).filter(Boolean);
+                return [...new Set(String(val).replace(/[^0-9]/g, '').split(''))];
+            };
+
+            const tens = extractDigits(data.tens);
+            const units = extractDigits(data.units);
+            const stair = extractDigits(data.stairInput);
+            const exclude = extractDigits(data.excludeInput);
+            const allowedSums = extractDigits(data.sumPointsInput).map(Number);
+
+            // ดึงชุดคัดกรอง (รองรับทั้ง filterInputs และ filterSets)
+            const rawFilters = data.filterInputs || data.filterSets || [];
+            const filterSets = (Array.isArray(rawFilters) ? rawFilters : [])
+                .map(val => extractDigits(val))
                 .filter(set => set.length > 0);
+
             const passed = new Set();
 
+            // ฟังก์ชันทดสอบเงื่อนไขว่าคู่เลขนี้ผ่านคัดกรองหรือไม่
             const testPair = (a, b) => {
-                if (exclude.length && (exclude.includes(a) || exclude.includes(b))) return;
+                // กรองเลขดับ
+                if (exclude.length > 0 && (exclude.includes(a) || exclude.includes(b))) return;
+                
+                // กรองแต้มผลรวม
                 const sumPoint = (Number(a) + Number(b)) % 10;
-                if (allowedSums.length && !allowedSums.includes(sumPoint)) return;
+                if (allowedSums.length > 0 && !allowedSums.includes(sumPoint)) return;
+                
+                // กรองชุดเด่น (AND Condition)
                 const digits = [a, b];
-                if (filterSets.length && !filterSets.every(set => digits.some(d => set.includes(d)))) return;
+                if (filterSets.length > 0 && !filterSets.every(set => digits.some(d => set.includes(d)))) return;
+                
+                // แปลงคู่กลับให้อยู่ในมาตรฐานเดียวกัน (เช่น 89 และ 98 จะได้คีย์ 89)
                 const normalized = normalizePairForPresetCompare(a + b);
                 if (normalized) passed.add(normalized);
             };
 
-            if (tens.length && units.length) {
+            // 2. จับคู่สิบ x หน่วย
+            if (tens.length > 0 && units.length > 0) {
                 tens.forEach(t => units.forEach(u => testPair(t, u)));
             }
-            if (stair.length) {
+
+            // 3. จับคู่วินขึ้นบันได
+            if (stair.length > 0) {
                 for (let i = 0; i < stair.length; i++) {
-                    for (let j = i; j < stair.length; j++) testPair(stair[i], stair[j]);
+                    for (let j = i; j < stair.length; j++) {
+                        testPair(stair[i], stair[j]);
+                    }
                 }
             }
+
             return passed;
         }
 
@@ -3098,27 +3125,7 @@ function parseAndApplyBestSumVoiceFormula(text) {
     }
 }
 
-const RECORDS_KEY = 'app_records_v1';
 
-function readRecords() {
-    try {
-        return JSON.parse(localStorage.getItem(RECORDS_KEY)) || [];
-    } catch (error) {
-        return [];
-    }
-}
-
-function saveRecords(records) {
-    localStorage.setItem(RECORDS_KEY, JSON.stringify(records));
-    refreshRecords();
-}
-
-function refreshRecords() {
-    const records = readRecords();
-
-    // นำ records ไปแสดงในตารางหรือรายการข้อมูล
-    console.log('ข้อมูลล่าสุด:', records);
-}
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
