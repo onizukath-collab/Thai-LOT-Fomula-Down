@@ -1499,42 +1499,52 @@
         }
 
         function renderPresetPairCollisionSummary() {
-            const meta = document.getElementById('presetPairSummaryMeta');
-            const content = document.getElementById('presetPairSummaryContent');
-            if (!meta || !content) return;
-            const presets = getStoredPresets();
-            const names = Object.keys(presets);
-            if (!names.length) {
-                meta.textContent = 'ยังไม่มีสูตรที่บันทึกไว้';
-                content.innerHTML = '<p class="text-slate-500">บันทึกสูตรอย่างน้อย 1 สูตร แล้วจึงจะแสดงผลเปรียบเทียบ</p>';
-                return;
-            }
+    const meta = document.getElementById('presetPairSummaryMeta');
+    const content = document.getElementById('presetPairSummaryContent');
+    if (!meta || !content) return;
+    
+    const presets = getStoredPresets();
+    
+    // 💡 เพิ่มส่วนนี้: ดึงฟอร์มปัจจุบันบนหน้าจอมาใส่ชั่วคราว เพื่อให้รีเฟรชแล้วเห็นผลทันทีแม้ยังไม่กดเซฟสูตร
+    const activePresetName = document.getElementById('presetSelect').value;
+    if (activePresetName && presets[activePresetName]) {
+        presets[activePresetName] = getCurrentFormState();
+    }
 
-            const counts = new Map();
-            names.forEach(name => {
-                const pairsInThisPreset = getPassedPairsFromPresetState(presets[name]);
-                pairsInThisPreset.forEach(pair => counts.set(pair, (counts.get(pair) || 0) + 1));
-            });
-            const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-            meta.textContent = `นำมาเปรียบเทียบ ${names.length} สูตร · พบคู่ที่ผ่านอย่างน้อย 1 สูตร ${ranked.length} คู่`;
-            if (!ranked.length) {
-                content.innerHTML = '<p class="text-slate-500">ยังไม่พบคู่ที่ผ่านเงื่อนไขจากสูตรที่บันทึกไว้</p>';
-                return;
-            }
+    const names = Object.keys(presets);
+    if (!names.length) {
+        meta.textContent = 'ยังไม่มีสูตรที่บันทึกไว้';
+        content.innerHTML = '<p class="text-slate-500">บันทึกสูตรอย่างน้อย 1 สูตร แล้วจึงจะแสดงผลเปรียบเทียบ</p>';
+        return;
+    }
 
-            content.innerHTML = ranked.map(([pair, count], index) => {
-                const rankStyle = index === 0
-                    ? 'bg-amber-100 border-amber-300 text-amber-950'
-                    : 'bg-white border-indigo-100 text-indigo-950';
-                return `<div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border ${rankStyle}">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-[10px] text-slate-500 w-5 shrink-0">${index + 1}.</span>
-                        <strong class="font-mono text-sm tracking-wider">${pair}</strong>
-                    </div>
-                    <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">พบ ${count} สูตร</span>
-                </div>`;
-            }).join('');
-        }
+    const counts = new Map();
+    names.forEach(name => {
+        const pairsInThisPreset = getPassedPairsFromPresetState(presets[name]);
+        pairsInThisPreset.forEach(pair => counts.set(pair, (counts.get(pair) || 0) + 1));
+    });
+    
+    const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    meta.textContent = `นำมาเปรียบเทียบ ${names.length} สูตร · พบคู่ที่ผ่านอย่างน้อย 1 สูตร ${ranked.length} คู่`;
+    
+    if (!ranked.length) {
+        content.innerHTML = '<p class="text-slate-500">ยังไม่พบคู่ที่ผ่านเงื่อนไขจากสูตรที่บันทึกไว้</p>';
+        return;
+    }
+
+    content.innerHTML = ranked.map(([pair, count], index) => {
+        const rankStyle = index === 0
+            ? 'bg-amber-100 border-amber-300 text-amber-950'
+            : 'bg-white border-indigo-100 text-indigo-950';
+        return `<div class="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border ${rankStyle}">
+            <div class="flex items-center gap-2 min-w-0">
+                <span class="text-[10px] text-slate-500 w-5 shrink-0">${index + 1}.</span>
+                <strong class="font-mono text-sm tracking-wider">${pair}</strong>
+            </div>
+            <span class="text-[10px] sm:text-xs font-bold whitespace-nowrap">พบ ${count} สูตร</span>
+        </div>`;
+    }).join('');
+}
 
         function saveCurrentPreset() {
             const select = document.getElementById('presetSelect');
