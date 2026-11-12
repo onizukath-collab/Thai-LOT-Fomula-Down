@@ -1704,28 +1704,37 @@
         }
 
         function applyBackupBundle(bundle) {
-            if (!bundle) return false;
-            if (bundle.mainData) {
-                setFormState(bundle.mainData);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(bundle.mainData));
-            }
-            if (bundle.presets) {
-                localStorage.setItem(PRESETS_KEY, JSON.stringify(bundle.presets));
-                loadPresetsToSelect();
-            }
-            if (bundle.filterPresets) {
-                localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(bundle.filterPresets));
-                loadFilterPresetsToSelect();
-            }
-            if (bundle.excelSheetsData) {
-                excelSheetsData = bundle.excelSheetsData;
-                localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(bundle.excelSheetsData));
-                renderSubTabsBar();
-                loadActiveSheetContent();
-            }
-            autoProcess();
-            return true;
-        }
+    if (!bundle) return false;
+    if (bundle.periodFolders) {
+        localStorage.setItem(PERIOD_FOLDERS_KEY, JSON.stringify(bundle.periodFolders));
+    }
+    if (bundle.activePeriodFolder) {
+        localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, bundle.activePeriodFolder);
+    }
+    if (bundle.mainData) {
+        setFormState(bundle.mainData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bundle.mainData));
+    }
+    if (bundle.presets) {
+        localStorage.setItem(PRESETS_KEY, JSON.stringify(bundle.presets));
+    }
+    if (bundle.filterPresets) {
+        localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(bundle.filterPresets));
+        loadFilterPresetsToSelect();
+    }
+    if (bundle.excelSheetsData) {
+        excelSheetsData = bundle.excelSheetsData;
+        localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(bundle.excelSheetsData));
+        renderSubTabsBar();
+        loadActiveSheetContent();
+    }
+    
+    refreshPeriodFolderSelect();
+    loadPresetsToSelect();
+    autoProcess();
+    renderPresetPairCollisionSummary();
+    return true;
+}
 
         function exportAllDataToFile() {
             const bundle = getAllBackupBundle();
@@ -2397,18 +2406,14 @@ const GITHUB_CONFIG = {
 
 // 2. ฟังก์ชันหลักสำหรับบันทึกข้อมูลเข้า GitHub
 async function saveDirectToGitHub() {
-    // ดึงข้อมูลทั้งหมดในแอปมาแปลงเป็นข้อความ JSON
-    const appData = {
-        formulas: localStorage.getItem('lottery_formulas') || "{}",
-        sheets: localStorage.getItem('lottery_sheets') || "{}",
-        settings: localStorage.getItem('lottery_settings') || "{}"
-    };
+    // ดึงข้อมูลครบทุกส่วน (รวมระบบแฟ้มประจำงวดและสูตรทั้งหมด)
+    const appData = getAllBackupBundle();
+    appData.periodFolders = getStoredFolders();
+    appData.activePeriodFolder = getActivePeriodFolder();
     
-    // แปลงข้อมูลเป็นข้อความ JSON แล้วเข้ารหัสเป็น Base64
     const jsonString = JSON.stringify(appData, null, 2);
     const contentEncoded = btoa(unescape(encodeURIComponent(jsonString)));
 
-    // ดึง Token ที่ผู้ใช้เคยบันทึกไว้
     const token = localStorage.getItem('github_token') || prompt("กรุณากรอก GitHub Personal Access Token (classic):");
     if (!token) return;
     localStorage.setItem('github_token', token);
@@ -2416,7 +2421,6 @@ async function saveDirectToGitHub() {
     const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.filePath}`;
 
     try {
-        // เช็กว่ามีไฟล์เดิมอยู่ไหม เพื่อเอา SHA มาใช้อัปเดตทับไฟล์เดิม
         let sha = "";
         const getRes = await fetch(url, {
             headers: { "Authorization": `token ${token}` }
@@ -2426,7 +2430,6 @@ async function saveDirectToGitHub() {
             sha = fileData.sha;
         }
 
-        // ส่งข้อมูลขึ้น GitHub (ข้อมูลสะอาด ไม่มี Token ปนแน่นอน)
         const response = await fetch(url, {
             method: "PUT",
             headers: {
@@ -2442,7 +2445,7 @@ async function saveDirectToGitHub() {
         });
 
         if (response.ok) {
-            alert("บันทึกข้อมูลลง GitHub สำเร็จเรียบร้อยครับ!");
+            showToast("บันทึกข้อมูลทั้งหมดลง GitHub สำเร็จ!");
         } else {
             const err = await response.json();
             alert("บันทึกไม่สำเร็จ: " + (err.message || response.statusText));
