@@ -1494,61 +1494,67 @@
         // ฟังก์ชันคำนวณคู่ที่ผ่านเงื่อนไขแบบยืดหยุ่น (รองรับทุกโครงสร้างข้อมูลที่บันทึกไว้)
         function getPassedPairsFromPresetState(data) {
             if (!data || typeof data !== 'object') return new Set();
-
-            // 1. ดึงค่าชุดตัวเลขหลักแบบเซฟความปลอดภัย (ดึงได้ทั้งกรณีที่เป็น String หรือ Array)
-            const extractDigits = (val) => {
+            
+            // ดึงค่าจากข้อมูลสูตรที่บันทึกไว้ในแฟ้ม (รองรับทั้งแบบข้อความและอาเรย์)
+            const parseDigits = (val) => {
                 if (!val) return [];
                 if (Array.isArray(val)) return val.map(v => String(v).replace(/[^0-9]/g, '')).filter(Boolean);
                 return [...new Set(String(val).replace(/[^0-9]/g, '').split(''))];
             };
 
-            const tens = extractDigits(data.tens);
-            const units = extractDigits(data.units);
-            const stair = extractDigits(data.stairInput);
-            const exclude = extractDigits(data.excludeInput);
-            const allowedSums = extractDigits(data.sumPointsInput).map(Number);
-
-            // ดึงชุดคัดกรอง (รองรับทั้ง filterInputs และ filterSets)
+            const tens = parseDigits(data.tens);
+            const units = parseDigits(data.units);
+            const stair = parseDigits(data.stairInput);
+            const exclude = parseDigits(data.excludeInput);
+            const allowedSums = parseDigits(data.sumPointsInput).map(Number);
+            
             const rawFilters = data.filterInputs || data.filterSets || [];
             const filterSets = (Array.isArray(rawFilters) ? rawFilters : [])
-                .map(val => extractDigits(val))
+                .map(val => parseDigits(val))
                 .filter(set => set.length > 0);
 
-            const passed = new Set();
+            const passedPairs = new Set();
 
-            // ฟังก์ชันทดสอบเงื่อนไขว่าคู่เลขนี้ผ่านคัดกรองหรือไม่
-            const testPair = (a, b) => {
-                // กรองเลขดับ
+            // เงื่อนไขตรวจสอบแต่ละคู่
+            const checkAndAddPair = (a, b) => {
+                // 1. เช็คเลขดับ (Exclude)
                 if (exclude.length > 0 && (exclude.includes(a) || exclude.includes(b))) return;
                 
-                // กรองแต้มผลรวม
+                // 2. เช็คแต้มผลรวม (Sum Points) ถ้ามีการกำหนดค่า
                 const sumPoint = (Number(a) + Number(b)) % 10;
                 if (allowedSums.length > 0 && !allowedSums.includes(sumPoint)) return;
                 
-                // กรองชุดเด่น (AND Condition)
+                // 3. เช็คชุดคัดกรอง (AND Condition) ถ้ามีการกำหนดค่า
                 const digits = [a, b];
-                if (filterSets.length > 0 && !filterSets.every(set => digits.some(d => set.includes(d)))) return;
-                
-                // แปลงคู่กลับให้อยู่ในมาตรฐานเดียวกัน (เช่น 89 และ 98 จะได้คีย์ 89)
+                if (filterSets.length > 0) {
+                    const matchAllFilters = filterSets.every(set => digits.some(d => set.includes(d)));
+                    if (!matchAllFilters) return;
+                }
+
+                // จัดรูปแบบคู่เลขกลับ (เช่น 89 และ 98 ถือเป็นคู่เดียวกัน)
                 const normalized = normalizePairForPresetCompare(a + b);
-                if (normalized) passed.add(normalized);
+                if (normalized) passedPairs.add(normalized);
             };
 
-            // 2. จับคู่สิบ x หน่วย
+            // ตรวจสอบจากชุดประกบ (สิบ x หน่วย)
             if (tens.length > 0 && units.length > 0) {
-                tens.forEach(t => units.forEach(u => testPair(t, u)));
+                tens.forEach(t => {
+                    units.forEach(u => {
+                        checkAndAddPair(t, u);
+                    });
+                });
             }
 
-            // 3. จับคู่วินขึ้นบันได
+            // ตรวจสอบจากชุดวินขึ้นบันได
             if (stair.length > 0) {
                 for (let i = 0; i < stair.length; i++) {
                     for (let j = i; j < stair.length; j++) {
-                        testPair(stair[i], stair[j]);
+                        checkAndAddPair(stair[i], stair[j]);
                     }
                 }
             }
 
-            return passed;
+            return passedPairs;
         }
 
         function renderPresetPairCollisionSummary() {
