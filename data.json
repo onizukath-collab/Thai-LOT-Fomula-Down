@@ -1,8 +1,8 @@
 {
   "mainData": {
-    "tens": "15678",
-    "units": "23490",
-    "stairInput": "15678",
+    "tens": "456789",
+    "units": "1230",
+    "stairInput": "456789",
     "excludeInput": "",
     "sumPointsInput": "12345679",
     "filterInputs": [
@@ -241,7 +241,7 @@
       ]
     }
   },
-  "exportedAt": "13/11/2569 20:20:07",
+  "exportedAt": "13/11/2569 20:27:51",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
