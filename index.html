@@ -544,6 +544,8 @@
         const ACTIVE_PERIOD_FOLDER_KEY = 'number_pair_active_period_folder_v1';
         const FILTER_PRESETS_KEY = 'number_pair_app_filter_presets_v57';
         const EXCEL_SHEETS_KEY = 'number_pair_app_excel_multi_sheets_v57';
+        const PERIOD_DATA_KEY = 'number_pair_period_data_v1';
+        const SHARED_HISTORY_KEY = 'number_pair_shared_announcement_history_v1';
 
         let activeSheetId = 'sheet_1';
         let excelSheetsData = {};
@@ -666,6 +668,31 @@
             }
         }
 
+        // ผลประกาศเป็นข้อมูลกลาง ใช้ร่วมกันทุกตาราง/ทุกโหมด ไม่แยกตามชีต
+        function getSharedAnnouncementHistory() {
+            try {
+                const shared = localStorage.getItem(SHARED_HISTORY_KEY);
+                if (shared !== null) return shared;
+                // ย้ายประวัติจากชีตเดิมที่กำลังใช้งานเป็นข้อมูลกลางครั้งแรก
+                const legacySheet = excelSheetsData && excelSheetsData[activeSheetId];
+                return legacySheet && legacySheet.history ? legacySheet.history : defaultHistoryData;
+            } catch (e) { return defaultHistoryData; }
+        }
+
+        function saveSharedAnnouncementHistory(value) {
+            try {
+                const history = String(value ?? '');
+                localStorage.setItem(SHARED_HISTORY_KEY, history);
+                Object.values(excelSheetsData || {}).forEach(sheet => { sheet.history = history; });
+                localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
+                return true;
+            } catch (e) {
+                console.error('บันทึกผลประกาศส่วนกลางไม่สำเร็จ:', e);
+                showToast('บันทึกผลประกาศไม่สำเร็จ กรุณาส่งออกข้อมูลสำรอง');
+                return false;
+            }
+        }
+
         function initExcelSheetsEngine() {
             const saved = localStorage.getItem(EXCEL_SHEETS_KEY);
             if (saved) { try { excelSheetsData = JSON.parse(saved); } catch(e) {} }
@@ -678,6 +705,9 @@
                 };
             }
             if (!excelSheetsData[activeSheetId]) activeSheetId = Object.keys(excelSheetsData)[0];
+            const sharedHistory = getSharedAnnouncementHistory();
+            Object.values(excelSheetsData).forEach(sheet => { sheet.history = sharedHistory; });
+            localStorage.setItem(SHARED_HISTORY_KEY, sharedHistory);
             renderSubTabsBar(); loadActiveSheetContent();
         }
 
@@ -685,7 +715,11 @@
             try {
                 if (excelSheetsData[activeSheetId]) {
                     const historyEl = document.getElementById('customHistoryInput');
-                    if (historyEl) excelSheetsData[activeSheetId].history = historyEl.value;
+                    if (historyEl) {
+                        excelSheetsData[activeSheetId].history = historyEl.value;
+                        localStorage.setItem(SHARED_HISTORY_KEY, historyEl.value);
+                        Object.values(excelSheetsData).forEach(sheet => { sheet.history = historyEl.value; });
+                    }
                 }
                 localStorage.setItem(EXCEL_SHEETS_KEY, JSON.stringify(excelSheetsData));
                 return true;
@@ -766,7 +800,7 @@
             if (headRow) headRow.innerHTML = '';
             if (body) body.innerHTML = '';
 
-            document.getElementById('customHistoryInput').value = sheet.history || defaultHistoryData;
+            document.getElementById('customHistoryInput').value = getSharedAnnouncementHistory();
             document.getElementById('outputLengthSelect').value = sheet.outputLength || 5;
             processCustomFormulasEngine();
         }
@@ -780,6 +814,7 @@
             const sheet = excelSheetsData[activeSheetId];
             if (!sheet) return;
             sheet.history = document.getElementById('customHistoryInput').value;
+            saveSharedAnnouncementHistory(sheet.history);
             sheet.columns.forEach((col, idx) => {
                 const nameInput = document.getElementById(`col_name_${idx}`);
                 const formulaInput = document.getElementById(`col_formula_${idx}`);
@@ -1457,7 +1492,16 @@
 
         function saveToLocalStorage() {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(getCurrentFormState()));
+                const state = getCurrentFormState();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                const active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+                if (active) {
+                    const store = readPeriodDataStore();
+                    store[active] = store[active] || {};
+                    store[active].mainData = state;
+                    store[active].filterPresets = getStoredFilterPresets();
+                    localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(store));
+                }
                 return true;
             } catch (error) {
                 console.error('บันทึกข้อมูลหน้าหลักไม่สำเร็จ:', error);
@@ -1618,6 +1662,9 @@
 
         function getStoredFilterPresets() {
             try {
+                const active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+                const scoped = readPeriodDataStore();
+                if (active && scoped[active] && scoped[active].filterPresets) return scoped[active].filterPresets;
                 const raw = localStorage.getItem(FILTER_PRESETS_KEY);
                 if (!raw) return {};
                 const parsed = JSON.parse(raw);
@@ -1632,7 +1679,10 @@
             let name = document.getElementById('filterPresetNameInput').value.trim() || select.value; if (!name) return;
             let filterInputs = []; document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
             const presets = getStoredFilterPresets(); presets[name] = { filterInputs, filterLogic: 'AND' };
-            localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect(); select.value = name;
+            localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets));
+            const active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+            if (active) { const store = readPeriodDataStore(); store[active] = store[active] || {}; store[active].filterPresets = presets; localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(store)); }
+            loadFilterPresetsToSelect(); select.value = name;
         }
         function loadFilterPresetsToSelect() {
             const select = document.getElementById('filterPresetSelect'); if(!select) return;
@@ -1653,7 +1703,10 @@
             const name = document.getElementById('filterPresetSelect').value; if (!name) return;
             if (confirm(`ลบชุดคัดกรอง "${name}"?`)) {
                 const presets = getStoredFilterPresets(); delete presets[name];
-                localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets)); loadFilterPresetsToSelect();
+                localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets));
+                const active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+                if (active) { const store = readPeriodDataStore(); store[active] = store[active] || {}; store[active].filterPresets = presets; localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(store)); }
+                loadFilterPresetsToSelect();
             }
         }
 
@@ -1789,6 +1842,7 @@
         // ระบบแชร์ผลสรุปเป็นภาพ PNG พร้อมเปิดเมนูแชร์ของอุปกรณ์
         let generatedShareText = '';
         let generatedShareNumbers = [];
+        let generatedShareFormulaName = '';
 
         function getPassedShareNumbers() {
             const badges = document.querySelectorAll('.count-passed-pair, .count-passed-stair');
@@ -1797,12 +1851,14 @@
 
         function openShareModal() {
             generatedShareNumbers = getPassedShareNumbers();
+            const formulaSelect = document.getElementById('presetSelect');
+            generatedShareFormulaName = formulaSelect && formulaSelect.value ? formulaSelect.options[formulaSelect.selectedIndex].text.replace(/^\s*🔖\s*/, '').trim() : 'ชุดปัจจุบัน';
             if (generatedShareNumbers.length === 0) {
                 showToast('ยังไม่มีเลขผ่านสำหรับแชร์');
                 return;
             }
-            generatedShareText = `🎯 สรุปผลเลขเด่นผ่านการคัดกรอง\nชุดตัวเลข ${generatedShareNumbers.length} ชุด:\n${generatedShareNumbers.join(' ')}\nสร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว`;
-            document.getElementById('sharePreviewContent').innerText = generatedShareNumbers.join(' ');
+            generatedShareText = `🎯 สรุปผลเลขเด่นผ่านการคัดกรอง\nสูตร: ${generatedShareFormulaName}\nชุดตัวเลข ${generatedShareNumbers.length} ชุด:\n${generatedShareNumbers.join(' ')}\nสร้างจากโปรแกรมวิเคราะห์ตัวเลขส่วนตัว`;
+            document.getElementById('sharePreviewContent').innerText = `สูตร: ${generatedShareFormulaName}\n${generatedShareNumbers.join(' ')}`;
             document.getElementById('shareMovieModal').classList.remove('hidden');
         }
 
@@ -1847,10 +1903,13 @@
             font = 'bold 34px Kanit, sans-serif';
             ctx.font = font;
             ctx.fillText(drawDateText, 540, 280);
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'bold 30px Kanit, sans-serif';
+            ctx.fillText(`สูตร: ${generatedShareFormulaName || 'ชุดปัจจุบัน'}`, 540, 325, 940);
 
             const cols = numbers.length <= 24 ? 4 : 5;
             const rows = Math.ceil(numbers.length / cols);
-            const top = 345;
+            const top = 375;
             const bottom = 900;
             const gapX = 18;
             const gapY = 14;
@@ -2689,9 +2748,19 @@ function getActivePeriodFolder() {
 
 function initPeriodFolders() {
     getStoredFolders();
-    getActivePeriodFolder();
+    const active = getActivePeriodFolder();
+    const store = readPeriodDataStore();
+    if (!store[active]) {
+        let legacyMain = {};
+        try { legacyMain = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
+        let legacyFilters = {};
+        try { legacyFilters = JSON.parse(localStorage.getItem(FILTER_PRESETS_KEY) || '{}'); } catch (e) {}
+        store[active] = { mainData: legacyMain, filterPresets: legacyFilters };
+        localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(store));
+    }
     refreshPeriodFolderSelect();
     loadPresetsToSelect();
+    applyPeriodData(active);
 }
 
 function refreshPeriodFolderSelect() {
@@ -2714,6 +2783,43 @@ function refreshPeriodFolderSelect() {
     if (label) label.textContent = active || 'ยังไม่ได้เลือก';
 }
 
+// เก็บข้อมูลหน้าหลักแยกตามแฟ้มงวด: ค่าแบบฟอร์มและชุดคัดกรองที่บันทึกไว้
+function readPeriodDataStore() {
+    try {
+        const parsed = JSON.parse(localStorage.getItem(PERIOD_DATA_KEY) || '{}');
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (e) { return {}; }
+}
+
+function captureActivePeriodData() {
+    const active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY) || getActivePeriodFolder();
+    const store = readPeriodDataStore();
+    try {
+        store[active] = {
+            mainData: getCurrentFormState(),
+            filterPresets: getStoredFilterPresets()
+        };
+        localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(store));
+        return true;
+    } catch (e) {
+        console.error('บันทึกข้อมูลแฟ้มงวดไม่สำเร็จ:', e);
+        showToast('บันทึกข้อมูลแฟ้มงวดไม่สำเร็จ');
+        return false;
+    }
+}
+
+function applyPeriodData(folderName) {
+    const store = readPeriodDataStore();
+    const data = store[folderName];
+    if (data && data.mainData && Object.keys(data.mainData).length) setFormState(data.mainData);
+    else setFormState({ tens: '6789', units: '56789', stairInput: '67890', excludeInput: '', sumPointsInput: '', filterInputs: ['24680', '13579'] });
+    const presets = data && data.filterPresets && typeof data.filterPresets === 'object' ? data.filterPresets : {};
+    localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets));
+    loadFilterPresetsToSelect();
+    saveToLocalStorage();
+    autoProcess();
+}
+
 function createPeriodFolder() {
     const input = document.getElementById('periodFolderName');
     const name = input.value.trim();
@@ -2724,6 +2830,7 @@ function createPeriodFolder() {
         return;
     }
 
+    captureActivePeriodData();
     const folders = getStoredFolders();
 
     if (folders[name]) {
@@ -2734,7 +2841,11 @@ function createPeriodFolder() {
     folders[name] = {};
     if (!saveStoredFolders(folders)) return;
 
+    const periodData = readPeriodDataStore();
+    periodData[name] = { mainData: null, filterPresets: {} };
+    localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(periodData));
     localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
+    applyPeriodData(name);
 
     input.value = '';
 
@@ -2750,12 +2861,14 @@ function switchPeriodFolder() {
 
     const folders = getStoredFolders();
 
-    if (!name || !folders[name]) return;
+    if (!name || !folders[name] || name === getActivePeriodFolder()) return;
 
+    if (!captureActivePeriodData()) return;
     localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
 
     refreshPeriodFolderSelect();
     loadPresetsToSelect();
+    applyPeriodData(name);
 
     showToast('เปลี่ยนมาใช้แฟ้ม "' + name + '" แล้ว');
 }
@@ -2787,6 +2900,13 @@ function renameActivePeriodFolder() {
     folders[name] = folders[oldName];
     delete folders[oldName];
 
+    const periodData = readPeriodDataStore();
+    if (Object.prototype.hasOwnProperty.call(periodData, oldName)) {
+        periodData[name] = periodData[oldName];
+        delete periodData[oldName];
+        localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(periodData));
+    }
+
     if (!saveStoredFolders(folders)) return;
     localStorage.setItem(ACTIVE_PERIOD_FOLDER_KEY, name);
 
@@ -2810,6 +2930,9 @@ function deleteActivePeriodFolder() {
     const folders = getStoredFolders();
 
     delete folders[name];
+    const periodData = readPeriodDataStore();
+    delete periodData[name];
+    localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(periodData));
 
     if (Object.keys(folders).length === 0) {
         folders['แฟ้มใหม่'] = {};
@@ -2826,6 +2949,7 @@ function deleteActivePeriodFolder() {
 
     refreshPeriodFolderSelect();
     loadPresetsToSelect();
+    applyPeriodData(nextFolder);
 
     showToast('ลบแฟ้มเรียบร้อยแล้ว');
 }
