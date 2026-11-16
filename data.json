@@ -3,10 +3,13 @@
     "tens": "01234",
     "units": "56789",
     "stairInput": "01234",
-    "excludeInput": "",
-    "sumPointsInput": "123",
+    "excludeInput": "7",
+    "sumPointsInput": "",
     "filterInputs": [
-      "1234"
+      "23678",
+      "1234",
+      "2780",
+      "2578"
     ],
     "filterLogic": "AND"
   },
@@ -26,7 +29,10 @@
   "filterPresets": {
     "1/12/69 ชุดเด่น11": {
       "filterInputs": [
-        "1234"
+        "23678",
+        "1234",
+        "2780",
+        "2578"
       ],
       "filterLogic": "AND"
     }
@@ -162,7 +168,7 @@
       "columns": []
     }
   },
-  "exportedAt": "16/11/2569 19:50:12",
+  "exportedAt": "16/11/2569 20:42:01",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
