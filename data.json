@@ -2,11 +2,11 @@
   "mainData": {
     "tens": "01234",
     "units": "56789",
-    "stairInput": "67890",
+    "stairInput": "01234",
     "excludeInput": "",
     "sumPointsInput": "123",
     "filterInputs": [
-      ""
+      "1234"
     ],
     "filterLogic": "AND"
   },
@@ -162,7 +162,7 @@
       "columns": []
     }
   },
-  "exportedAt": "16/11/2569 19:46:24",
+  "exportedAt": "16/11/2569 19:49:44",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
