@@ -1,52 +1,97 @@
 {
   "mainData": {
-    "tens": "01234",
+    "tens": "6789",
     "units": "56789",
-    "stairInput": "01234",
+    "stairInput": "67890",
     "excludeInput": "",
     "sumPointsInput": "",
     "filterInputs": [
-      ""
+      "24680",
+      "13579"
     ],
     "filterLogic": "AND"
   },
   "presets": {
-    "1/12/69 :แสนหมื่น": {
-      "tens": "01234",
-      "units": "56789",
-      "stairInput": "01234",
+    "16/11/69 ชุดตัดไม่น่ามา": {
+      "tens": "456789",
+      "units": "1230",
+      "stairInput": "4567890",
       "excludeInput": "",
       "sumPointsInput": "12345679",
+      "parityFilter": "ALL",
+      "hiLoFilter": "ALL",
       "filterInputs": [
         "134569",
         "124568",
         "1245678",
-        "15678",
+        "15789",
         "235678",
-        "236789",
+        "23678",
+        "13456",
         "016789",
         "156780",
         "135789",
         "347890",
         "34789",
-        "67890",
-        "34678",
-        "15678",
-        "3456",
-        "1359",
-        "05678"
+        "3679",
+        "236780"
       ],
       "filterLogic": "AND"
-    }
-  },
-  "filterPresets": {
-    "1/12/69 ชุดกรอง1": {
+    },
+    "16/11/69 ชุด 1359: 2468": {
+      "tens": "1359",
+      "units": "2468",
+      "stairInput": "2468",
+      "excludeInput": "",
+      "sumPointsInput": "12345679",
+      "parityFilter": "ALL",
+      "hiLoFilter": "ALL",
       "filterInputs": [
-        ""
+        "134569",
+        "124568",
+        "1245678",
+        "15789",
+        "235678",
+        "23678",
+        "13456",
+        "016789",
+        "156780",
+        "135789",
+        "347890",
+        "34789",
+        "3679",
+        "236780"
+      ],
+      "filterLogic": "AND"
+    },
+    "16/11/69 ชุดเด่นหน้า4": {
+      "tens": "15678",
+      "units": "23490",
+      "stairInput": "15678",
+      "excludeInput": "",
+      "sumPointsInput": "12345679",
+      "parityFilter": "ALL",
+      "hiLoFilter": "ALL",
+      "filterInputs": [
+        "134569",
+        "124568",
+        "1245678",
+        "15789",
+        "235678",
+        "23678",
+        "13456",
+        "016789",
+        "156780",
+        "135789",
+        "347890",
+        "34789",
+        "3679",
+        "236780"
       ],
       "filterLogic": "AND"
     }
   },
+  "filterPresets": {},
   "excelSheetsData": {
     "sheet_1": {
       "name": "ตารางสูตรที่ 1",
@@ -178,7 +223,7 @@
       "columns": []
     }
   },
-  "exportedAt": "16/11/2569 19:29:36",
+  "exportedAt": "16/11/2569 19:30:30",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -337,8 +382,7 @@
         ],
         "filterLogic": "AND"
       }
-    },
-    "Test xxxxx": {}
+    }
   },
-  "activePeriodFolder": "งวด 1/12/69"
+  "activePeriodFolder": "สูตรเดิม (ยังไม่จัดงวด)"
 }
