@@ -6,23 +6,8 @@
     "excludeInput": "",
     "sumPointsInput": "12345679",
     "filterInputs": [
-      "134569",
-      "124568",
-      "1245678",
-      "15678",
-      "235678",
-      "236789",
-      "016789",
-      "156780",
-      "135789",
-      "347890",
-      "34789",
-      "67890",
-      "34678",
-      "15678",
-      "3456",
-      "1359",
-      "05678"
+      "1234",
+      "5678"
     ],
     "filterLogic": "AND"
   },
@@ -73,9 +58,28 @@
         "67890"
       ],
       "filterLogic": "AND"
+    },
+    "Test": {
+      "tens": "15678",
+      "units": "23490",
+      "stairInput": "15678",
+      "excludeInput": "",
+      "sumPointsInput": "12345679",
+      "filterInputs": [
+        "1234",
+        "5678"
+      ],
+      "filterLogic": "AND"
     }
   },
   "filterPresets": {
+    "1234": {
+      "filterInputs": [
+        "1234",
+        "5678"
+      ],
+      "filterLogic": "AND"
+    },
     "16/11/69 ชุดเลขเด่น 2": {
       "filterInputs": [
         "134569",
@@ -224,7 +228,7 @@
       ]
     }
   },
-  "exportedAt": "16/11/2569 17:58:35",
+  "exportedAt": "16/11/2569 18:13:04",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -351,6 +355,18 @@
           "670495",
           "34789",
           "67890"
+        ],
+        "filterLogic": "AND"
+      },
+      "Test": {
+        "tens": "15678",
+        "units": "23490",
+        "stairInput": "15678",
+        "excludeInput": "",
+        "sumPointsInput": "12345679",
+        "filterInputs": [
+          "1234",
+          "5678"
         ],
         "filterLogic": "AND"
       }
