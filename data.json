@@ -2,7 +2,7 @@
   "mainData": {
     "tens": "01234",
     "units": "56789",
-    "stairInput": "01234",
+    "stairInput": "",
     "excludeInput": "",
     "sumPointsInput": "",
     "filterInputs": [
@@ -11,42 +11,19 @@
     "filterLogic": "AND"
   },
   "presets": {
-    "1/12/69 :แสนหมื่น": {
+    "1/12/69 : แสนหมื่น": {
       "tens": "01234",
       "units": "56789",
-      "stairInput": "01234",
+      "stairInput": "",
       "excludeInput": "",
-      "sumPointsInput": "12345679",
-      "filterInputs": [
-        "134569",
-        "124568",
-        "1245678",
-        "15678",
-        "235678",
-        "236789",
-        "016789",
-        "156780",
-        "135789",
-        "347890",
-        "34789",
-        "67890",
-        "34678",
-        "15678",
-        "3456",
-        "1359",
-        "05678"
-      ],
-      "filterLogic": "AND"
-    }
-  },
-  "filterPresets": {
-    "1/12/69 ชุดกรอง1": {
+      "sumPointsInput": "",
       "filterInputs": [
         ""
       ],
       "filterLogic": "AND"
     }
   },
+  "filterPresets": {},
   "excelSheetsData": {
     "sheet_1": {
       "name": "ตารางสูตรที่ 1",
@@ -178,7 +155,7 @@
       "columns": []
     }
   },
-  "exportedAt": "16/11/2569 19:38:34",
+  "exportedAt": "16/11/2569 19:42:46",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -310,30 +287,14 @@
       }
     },
     "งวด 1/12/69": {
-      "1/12/69 :แสนหมื่น": {
+      "1/12/69 : แสนหมื่น": {
         "tens": "01234",
         "units": "56789",
-        "stairInput": "01234",
+        "stairInput": "",
         "excludeInput": "",
-        "sumPointsInput": "12345679",
+        "sumPointsInput": "",
         "filterInputs": [
-          "134569",
-          "124568",
-          "1245678",
-          "15678",
-          "235678",
-          "236789",
-          "016789",
-          "156780",
-          "135789",
-          "347890",
-          "34789",
-          "67890",
-          "34678",
-          "15678",
-          "3456",
-          "1359",
-          "05678"
+          ""
         ],
         "filterLogic": "AND"
       }
