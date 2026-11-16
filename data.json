@@ -2,7 +2,7 @@
   "mainData": {
     "tens": "34",
     "units": "780",
-    "stairInput": "",
+    "stairInput": "34780",
     "excludeInput": "",
     "sumPointsInput": "12345679",
     "filterInputs": [
@@ -321,7 +321,7 @@
       ]
     }
   },
-  "exportedAt": "16/11/2569 12:11:57",
+  "exportedAt": "16/11/2569 12:12:21",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
