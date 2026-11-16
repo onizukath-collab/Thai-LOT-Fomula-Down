@@ -39,7 +39,14 @@
       "filterLogic": "AND"
     }
   },
-  "filterPresets": {},
+  "filterPresets": {
+    "1/12/69 ชุดกรอง1": {
+      "filterInputs": [
+        ""
+      ],
+      "filterLogic": "AND"
+    }
+  },
   "excelSheetsData": {
     "sheet_1": {
       "name": "ตารางสูตรที่ 1",
@@ -171,7 +178,7 @@
       "columns": []
     }
   },
-  "exportedAt": "16/11/2569 19:29:06",
+  "exportedAt": "16/11/2569 19:29:36",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
