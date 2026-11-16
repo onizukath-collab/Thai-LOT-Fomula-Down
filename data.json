@@ -1,8 +1,8 @@
 {
   "mainData": {
-    "tens": "456789",
-    "units": "1230",
-    "stairInput": "456789",
+    "tens": "15678",
+    "units": "23490",
+    "stairInput": "15678",
     "excludeInput": "",
     "sumPointsInput": "12345679",
     "filterInputs": [
@@ -70,18 +70,6 @@
         "670495",
         "34789",
         "67890"
-      ],
-      "filterLogic": "AND"
-    },
-    "Test": {
-      "tens": "15678",
-      "units": "23490",
-      "stairInput": "15678",
-      "excludeInput": "",
-      "sumPointsInput": "12345679",
-      "filterInputs": [
-        "1234",
-        "5678"
       ],
       "filterLogic": "AND"
     }
@@ -240,7 +228,7 @@
       "columns": []
     }
   },
-  "exportedAt": "16/11/2569 19:27:34",
+  "exportedAt": "16/11/2569 19:28:20",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -367,18 +355,6 @@
           "670495",
           "34789",
           "67890"
-        ],
-        "filterLogic": "AND"
-      },
-      "Test": {
-        "tens": "15678",
-        "units": "23490",
-        "stairInput": "15678",
-        "excludeInput": "",
-        "sumPointsInput": "12345679",
-        "filterInputs": [
-          "1234",
-          "5678"
         ],
         "filterLogic": "AND"
       }
