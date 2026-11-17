@@ -2963,31 +2963,33 @@ function saveCurrentPreset() {
     const select = document.getElementById('presetSelect');
     const input = document.getElementById('presetNameInput');
 
-    const name = input.value.trim() || select.value;
+    // ถ้าเลือกสูตรจากรายการอยู่ ให้ปุ่มบันทึกทำหน้าที่เซฟทับสูตรนั้นเสมอ
+    // หากต้องการสร้างสูตรใหม่ ให้เลือก "-- งานปัจจุบัน (Auto Saved) --" ก่อน
+    const selectedName = select.value.trim();
+    const typedName = input.value.trim();
+    const name = selectedName || typedName;
 
     if (!name) {
-        alert('กรุณาพิมพ์ชื่อสูตรก่อนบันทึกครับ');
+        alert('กรุณาเลือกสูตรเดิม หรือพิมพ์ชื่อสูตรใหม่ก่อนบันทึกครับ');
         input.focus();
         return;
     }
 
     const folders = getStoredFolders();
+    if (!folders[folderName]) folders[folderName] = {};
 
-    if (!folders[folderName]) {
-        folders[folderName] = {};
-    }
-
-    folders[folderName][name] = getCurrentFormState();
+    // บันทึกค่าฟอร์มปัจจุบันทั้งหมดลงสูตรเป้าหมายในแฟ้มที่กำลังเลือก
+    const currentState = getCurrentFormState();
+    folders[folderName][name] = currentState;
 
     if (!saveStoredFolders(folders)) return;
 
     loadPresetsToSelect();
-
     select.value = name;
     input.value = '';
 
     showToast(
-        'บันทึกสูตร "' + name +
+        (selectedName ? 'เซฟทับสูตร "' : 'สร้างสูตร "') + name +
         '" ในแฟ้ม "' + folderName + '" เรียบร้อย!'
     );
 }
