@@ -3021,11 +3021,32 @@ function loadSelectedPreset() {
     const folders = getStoredFolders();
     const folderName = getActivePeriodFolder();
     const presets = folders[folderName] || {};
+    const presetData = presets[name];
 
-    if (presets[name]) {
-        setFormState(presets[name]);
+    if (presetData && typeof presetData === 'object') {
+        // เก็บค่าปัจจุบันไว้เป็น fallback เฉพาะสูตรเก่าที่ไม่มีฟิลด์เหล่านี้
+        const currentSpecialFields = {
+            stairInput: document.getElementById('stairInput').value,
+            excludeInput: document.getElementById('excludeInput').value,
+            sumPointsInput: document.getElementById('sumPointsInput').value
+        };
+
+        // โหลดหลักสิบ หลักหน่วย และชุดคัดกรองตามสูตรที่บันทึกไว้
+        setFormState(presetData);
+
+        // คืนค่าชุดวิน / เลขดับ / แต้มจากสูตรแบบตรงตัว
+        // รองรับค่าว่างที่ผู้ใช้ตั้งใจบันทึก และไม่ใช้ค่า default มาทับ
+        ['stairInput', 'excludeInput', 'sumPointsInput'].forEach(key => {
+            const field = document.getElementById(key);
+            if (Object.prototype.hasOwnProperty.call(presetData, key)) {
+                field.value = presetData[key] == null ? '' : String(presetData[key]);
+            } else {
+                // สูตรรุ่นเก่าที่ไม่มี key นี้ จะไม่ล้างค่าที่ผู้ใช้กำลังใช้อยู่
+                field.value = currentSpecialFields[key];
+            }
+        });
+
         autoProcess();
-
         showToast('โหลดสูตร "' + name + '" แล้ว');
     }
 }
