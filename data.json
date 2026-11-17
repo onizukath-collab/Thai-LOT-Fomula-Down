@@ -3,7 +3,7 @@
     "tens": "01234",
     "units": "56789",
     "stairInput": "01234",
-    "excludeInput": "7",
+    "excludeInput": "789",
     "sumPointsInput": "",
     "filterInputs": [
       "23678",
@@ -19,11 +19,16 @@
     "1/12/69 : แสนหมื่น": {
       "tens": "01234",
       "units": "56789",
-      "stairInput": "",
-      "excludeInput": "",
+      "stairInput": "01234",
+      "excludeInput": "789",
       "sumPointsInput": "",
       "filterInputs": [
-        ""
+        "23678",
+        "1234",
+        "2780",
+        "2578",
+        "24689",
+        "78901"
       ],
       "filterLogic": "AND"
     },
@@ -188,7 +193,7 @@
       "columns": []
     }
   },
-  "exportedAt": "17/11/2569 08:40:11",
+  "exportedAt": "17/11/2569 09:01:53",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -323,11 +328,16 @@
       "1/12/69 : แสนหมื่น": {
         "tens": "01234",
         "units": "56789",
-        "stairInput": "",
-        "excludeInput": "",
+        "stairInput": "01234",
+        "excludeInput": "789",
         "sumPointsInput": "",
         "filterInputs": [
-          ""
+          "23678",
+          "1234",
+          "2780",
+          "2578",
+          "24689",
+          "78901"
         ],
         "filterLogic": "AND"
       },
