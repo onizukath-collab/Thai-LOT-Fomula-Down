@@ -3,11 +3,10 @@
     "tens": "24689",
     "units": "13570",
     "stairInput": "24689",
-    "excludeInput": "7",
+    "excludeInput": "7984 346",
     "sumPointsInput": "",
     "filterInputs": [
-      "2780",
-      "4780",
+      "23678",
       "24689",
       "235678",
       "123467",
@@ -24,26 +23,10 @@
       "sumPointsInput": "",
       "filterInputs": [
         "23678",
-        "1234",
         "2780",
-        "2578",
-        "24689"
-      ],
-      "filterLogic": "AND"
-    },
-    "1/12/69 : แสนหมื่น2": {
-      "tens": "01234",
-      "units": "56789",
-      "stairInput": "01234",
-      "excludeInput": "7",
-      "sumPointsInput": "",
-      "filterInputs": [
-        "23678",
-        "1234",
-        "2780",
-        "2578",
         "24689",
-        "78901"
+        "012",
+        "24780"
       ],
       "filterLogic": "AND"
     },
@@ -51,11 +34,10 @@
       "tens": "24689",
       "units": "13570",
       "stairInput": "24689",
-      "excludeInput": "7",
+      "excludeInput": "7984 346",
       "sumPointsInput": "",
       "filterInputs": [
-        "2780",
-        "4780",
+        "23678",
         "24689",
         "235678",
         "123467",
@@ -68,12 +50,10 @@
     "1/12/69 ชุดเด่น11": {
       "filterInputs": [
         "23678",
-        "2780",
         "24689",
         "235678",
-        "24780",
         "123467",
-        "01234"
+        "3456789"
       ],
       "filterLogic": "AND"
     },
@@ -220,7 +200,7 @@
       "columns": []
     }
   },
-  "exportedAt": "17/11/2569 17:21:13",
+  "exportedAt": "17/11/2569 18:28:19",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -360,26 +340,10 @@
         "sumPointsInput": "",
         "filterInputs": [
           "23678",
-          "1234",
           "2780",
-          "2578",
-          "24689"
-        ],
-        "filterLogic": "AND"
-      },
-      "1/12/69 : แสนหมื่น2": {
-        "tens": "01234",
-        "units": "56789",
-        "stairInput": "01234",
-        "excludeInput": "7",
-        "sumPointsInput": "",
-        "filterInputs": [
-          "23678",
-          "1234",
-          "2780",
-          "2578",
           "24689",
-          "78901"
+          "012",
+          "24780"
         ],
         "filterLogic": "AND"
       },
@@ -387,11 +351,10 @@
         "tens": "24689",
         "units": "13570",
         "stairInput": "24689",
-        "excludeInput": "7",
+        "excludeInput": "7984 346",
         "sumPointsInput": "",
         "filterInputs": [
-          "2780",
-          "4780",
+          "23678",
           "24689",
           "235678",
           "123467",
