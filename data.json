@@ -1,7 +1,7 @@
 {
   "mainData": {
     "tens": "89347",
-    "units": "78901",
+    "units": "78901 25",
     "stairInput": "",
     "excludeInput": "",
     "sumPointsInput": "",
@@ -59,7 +59,7 @@
     },
     "ปักหลัก 89347:78901": {
       "tens": "89347",
-      "units": "78901",
+      "units": "78901 25",
       "stairInput": "",
       "excludeInput": "",
       "sumPointsInput": "",
@@ -264,7 +264,7 @@
       "columns": []
     }
   },
-  "exportedAt": "19/11/2569 05:31:13",
+  "exportedAt": "19/11/2569 05:40:26",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -431,7 +431,7 @@
       },
       "ปักหลัก 89347:78901": {
         "tens": "89347",
-        "units": "78901",
+        "units": "78901 25",
         "stairInput": "",
         "excludeInput": "",
         "sumPointsInput": "",
