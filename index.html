@@ -522,7 +522,8 @@
                 <div class="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-3.5 rounded-xl space-y-2 border border-emerald-700 shadow-sm">
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-800 pb-2">
                         <span class="text-xs font-bold text-emerald-300">⚡ สรุปตัวชน (จากสูตรสร้างเองทั้งหมด):</span>
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="saveCustomUserFormulasManual()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">💾 บันทึกสูตร</button>
                             <button onclick="clearUserCustomFormulas()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold">ลบสูตรทั้งหมด</button>
                             <button onclick="sendCustomIntersectionToSumPoints()" class="px-3.5 py-1 bg-amber-400 hover:bg-amber-500 text-slate-950 rounded-lg text-xs font-bold transition shadow">🚀 ส่งเข้า "แต้มผลรวมหลัก"</button>
                         </div>
@@ -998,8 +999,55 @@
         let globalTop4Formulas = [];
         let globalLastDigits = [];
 
-        let myCreatedCustomFormulas = [];
+        const CUSTOM_USER_FORMULAS_KEY = 'number_pair_custom_user_formulas_v1';
+        let myCreatedCustomFormulas = (function() {
+            try {
+                const raw = localStorage.getItem(CUSTOM_USER_FORMULAS_KEY);
+                const parsed = JSON.parse(raw || '[]');
+                return Array.isArray(parsed) ? parsed.map(x => String(x).trim().toUpperCase()).filter(Boolean) : [];
+            } catch (e) { return []; }
+        })();
         let customIntersectionDigits = [];
+
+        function persistCustomUserFormulas() {
+            try {
+                localStorage.setItem(CUSTOM_USER_FORMULAS_KEY, JSON.stringify(myCreatedCustomFormulas));
+            } catch (e) {}
+        }
+
+        function saveCustomUserFormulasManual() {
+            const editedInputs = document.querySelectorAll('.edit-custom-formula-input');
+            if (editedInputs.length > 0) {
+                const updatedList = [];
+                editedInputs.forEach(inp => {
+                    const v = inp.value.trim().toUpperCase();
+                    if (v && !updatedList.includes(v)) updatedList.push(v);
+                });
+                myCreatedCustomFormulas = updatedList;
+            }
+            persistCustomUserFormulas();
+            processUserCustomFormulasAnalysis();
+            showToast('บันทึกสูตรสร้างเองเรียบร้อยแล้ว!');
+        }
+
+        function updateSingleCustomFormula(index) {
+            const inp = document.getElementById(`editCustomFormulaInput_${index}`);
+            if (!inp) return;
+            const newVal = inp.value.trim().toUpperCase();
+            if (!newVal) {
+                showToast('กรุณากรอกสูตรก่อนบันทึกการแก้ไข');
+                return;
+            }
+            const dupIdx = myCreatedCustomFormulas.findIndex((item, i) => i !== index && item === newVal);
+            if (dupIdx !== -1) {
+                showToast(`มีสูตร "${newVal}" อยู่แล้ว`);
+                return;
+            }
+            myCreatedCustomFormulas[index] = newVal;
+            persistCustomUserFormulas();
+            processUserCustomFormulasAnalysis();
+            showToast(`แก้ไขสูตรเป็น "${newVal}" และบันทึกแล้ว`);
+        }
 
         // ฟังก์ชันสลับมุมมองใน Modal (ระหว่าง 20 สูตรหลัก กับ สูตรสร้างเอง)
         function switchBestSumViewMode(mode) {
@@ -1165,8 +1213,11 @@
                 const val = input.value.trim().toUpperCase();
                 if (!myCreatedCustomFormulas.includes(val)) {
                     myCreatedCustomFormulas.push(val);
-                    showToast(`เพิ่มสูตร "${val}" เรียบร้อย`);
+                    persistCustomUserFormulas();
+                    showToast(`เพิ่มและบันทึกสูตร "${val}" เรียบร้อย`);
                     processUserCustomFormulasAnalysis();
+                } else {
+                    showToast(`มีสูตร "${val}" อยู่แล้ว`);
                 }
                 input.value = '';
             }
@@ -1174,6 +1225,7 @@
 
         function clearUserCustomFormulas() {
             myCreatedCustomFormulas = [];
+            persistCustomUserFormulas();
             processUserCustomFormulasAnalysis();
             showToast('ลบสูตรสร้างเองทั้งหมดแล้ว');
         }
@@ -1262,9 +1314,12 @@
                 div.className = "p-3 bg-white border border-slate-200 rounded-xl space-y-2 shadow-sm relative";
                 div.innerHTML = `
                     <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-1.5">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[11px] font-bold text-white bg-emerald-600 px-2 py-0.5 rounded shadow-sm">สูตรสร้างเอง #${idx + 1}</span>
-                            <span class="text-xs font-mono font-bold text-slate-800">สูตร: <strong class="text-emerald-700 text-sm">${item.formula}</strong></span>
+                        <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                            <span class="text-[11px] font-bold text-white bg-emerald-600 px-2 py-0.5 rounded shadow-sm shrink-0">สูตรสร้างเอง #${idx + 1}</span>
+                            <input type="text" id="editCustomFormulaInput_${item.formulaIdx}" value="${item.formula}" class="edit-custom-formula-input bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs font-mono font-bold text-emerald-800 w-36 focus:ring-2 focus:ring-emerald-500 outline-none">
+                            <button onclick="updateSingleCustomFormula(${item.formulaIdx})" title="บันทึกการแก้ไขสูตรนี้" class="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-xs font-bold transition shrink-0">
+                                <i class="fa-solid fa-check"></i> บันทึก
+                            </button>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">ความแม่นยำ: ${item.score.toFixed(1)}% (${item.hits}/${item.totalChecked} งวด)</span>
@@ -1304,6 +1359,7 @@
         // ฟังก์ชันกดลบสูตรสร้างเองทีละรายการ
         function removeUserCustomFormula(index) {
             myCreatedCustomFormulas.splice(index, 1);
+            persistCustomUserFormulas();
             processUserCustomFormulasAnalysis();
             showToast('ลบสูตรเรียบร้อยแล้ว');
         }
@@ -1355,7 +1411,7 @@
             const allowedSumPoints = [...new Set(document.getElementById('sumPointsInput').value.replace(/[^0-9]/g, '').split(''))].map(Number);
             
             let filterSets = [];
-            document.querySelectorAll('.filter-input, .excel-main-input').forEach(input => {
+            document.querySelectorAll('.filter-input').forEach(input => {
                 const digits = input.value.replace(/[^0-9]/g, '');
                 if (digits.length > 0) filterSets.push([...new Set(digits.split(''))]);
             });
@@ -1481,12 +1537,58 @@
 
         function reindexFilterRows() { document.querySelectorAll('.filter-row').forEach((row, i) => { row.querySelector('span').innerText = `${i + 1}.`; }); }
 
+        const EXCEL_STANDALONE_KEY = 'number_pair_excel_standalone_v1';
+
+        function getStandaloneExcelRows() {
+            let rows = [];
+            document.querySelectorAll('.excel-main-input').forEach(i => rows.push(i.value));
+            return rows;
+        }
+
+        function persistStandaloneExcelData() {
+            const rows = getStandaloneExcelRows();
+            try {
+                localStorage.setItem(EXCEL_STANDALONE_KEY, JSON.stringify(rows));
+            } catch (e) {}
+            const active = localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+            if (active) {
+                const store = readPeriodDataStore();
+                store[active] = store[active] || {};
+                store[active].excelStandaloneRows = rows;
+                try {
+                    localStorage.setItem(PERIOD_DATA_KEY, JSON.stringify(store));
+                } catch (e) {}
+            }
+        }
+
+        function loadStandaloneExcelData(folderName = null) {
+            const container = document.getElementById('excelMainInputsList');
+            if (!container) return;
+            let rows = null;
+            const active = folderName || localStorage.getItem(ACTIVE_PERIOD_FOLDER_KEY);
+            if (active) {
+                const store = readPeriodDataStore();
+                if (store[active] && Array.isArray(store[active].excelStandaloneRows)) {
+                    rows = store[active].excelStandaloneRows;
+                }
+            }
+            if (!rows) {
+                try {
+                    const parsed = JSON.parse(localStorage.getItem(EXCEL_STANDALONE_KEY) || 'null');
+                    if (Array.isArray(parsed)) rows = parsed;
+                } catch (e) {}
+            }
+            container.innerHTML = '';
+            if (rows && rows.length > 0) rows.forEach(val => addExcelMainRow(val));
+            else addExcelMainRow('');
+        }
+
         function addExcelMainRow(value = '') {
             const container = document.getElementById('excelMainInputsList'); if(!container) return;
             const index = container.children.length + 1;
             const rowId = `excel_main_input_${Date.now()}_${index}`;
             const div = document.createElement('div'); div.className = "flex items-center gap-1.5 min-w-0 w-full excel-main-row";
-            div.innerHTML = `<span class="shrink-0 text-xs text-slate-400 font-mono w-5 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" oninput="debounceAutoProcess()" placeholder="เลขเด่นเอกเซล ${index}" class="excel-main-input min-w-0 w-0 flex-1 px-2 py-1 border border-emerald-200 bg-emerald-50/30 rounded-lg text-xs font-medium text-emerald-950 focus:ring-2 focus:ring-emerald-500 outline-none"><button type="button" onclick="removeExcelMainRow(this)" aria-label="ลบแถว" class="shrink-0 text-slate-500 hover:text-rose-600 p-1.5"><i class="fa-solid fa-xmark"></i></button>`;
+            div.innerHTML = `<span class="shrink-0 text-xs text-slate-400 font-mono w-5 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" placeholder="เลขเด่นเอกเซล ${index}" class="excel-main-input min-w-0 w-0 flex-1 px-2 py-1 border border-emerald-200 bg-emerald-50/30 rounded-lg text-xs font-medium text-emerald-950 focus:ring-2 focus:ring-emerald-500 outline-none"><button type="button" onclick="removeExcelMainRow(this)" aria-label="ลบแถว" class="shrink-0 text-slate-500 hover:text-rose-600 p-1.5"><i class="fa-solid fa-xmark"></i></button>`;
             container.appendChild(div); reindexExcelMainRows();
         }
 
@@ -1494,7 +1596,8 @@
             const container = document.getElementById('excelMainInputsList'); if(!container) return;
             if (container.children.length <= 1) btn.closest('.excel-main-row').querySelector('input').value = '';
             else btn.closest('.excel-main-row').remove();
-            reindexExcelMainRows(); autoProcess();
+            reindexExcelMainRows();
+            persistStandaloneExcelData();
         }
 
         function reindexExcelMainRows() {
@@ -1502,18 +1605,8 @@
         }
 
         function saveExcelMainRows() {
-            saveToLocalStorage();
-            const activePreset = document.getElementById('presetSelect') ? document.getElementById('presetSelect').value : '';
-            if (activePreset) {
-                const folderName = getActivePeriodFolder();
-                const folders = getStoredFolders();
-                if (folders[folderName] && folders[folderName][activePreset]) {
-                    folders[folderName][activePreset] = getCurrentFormState();
-                    saveStoredFolders(folders);
-                }
-            }
-            autoProcess();
-            showToast('บันทึกเลขเด่นจากเอกเซลเรียบร้อย!');
+            persistStandaloneExcelData();
+            showToast('บันทึกรวมเลขเด่นเอกเซลเรียบร้อย (แยกส่วนจากผลจับคู่)');
         }
 
         function getCurrentFormState() {
@@ -1535,12 +1628,7 @@
             document.getElementById('excludeInput').value = data.excludeInput || '';
             document.getElementById('sumPointsInput').value = data.sumPointsInput || '';
             document.getElementById('filterLogic').value = 'AND';
-            const excelContainer = document.getElementById('excelMainInputsList');
-            if (excelContainer) {
-                excelContainer.innerHTML = '';
-                if (data.excelMainInputs && data.excelMainInputs.length > 0) data.excelMainInputs.forEach(val => addExcelMainRow(val));
-                else addExcelMainRow('');
-            }
+            loadStandaloneExcelData();
             const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
             if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
             else { addFilterRow('24680'); addFilterRow('13579'); }
@@ -1570,7 +1658,7 @@
         }
         function initDefaultForm() {
             document.getElementById('tens').value = '6789'; document.getElementById('units').value = '56789';
-            document.getElementById('stairInput').value = '67890'; addExcelMainRow(''); addFilterRow('24680'); addFilterRow('13579');
+            document.getElementById('stairInput').value = '67890'; loadStandaloneExcelData(); addFilterRow('24680'); addFilterRow('13579');
         }
         function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
@@ -1610,10 +1698,7 @@
             const exclude = parseDigits(data.excludeInput);
             const allowedSums = parseDigits(data.sumPointsInput).map(Number);
             
-            const rawFilters = [
-                ...(Array.isArray(data.filterInputs) ? data.filterInputs : (Array.isArray(data.filterSets) ? data.filterSets : [])),
-                ...(Array.isArray(data.excelMainInputs) ? data.excelMainInputs : [])
-            ];
+            const rawFilters = data.filterInputs || data.filterSets || [];
             const filterSets = rawFilters
                 .map(val => parseDigits(val))
                 .filter(set => set.length > 0);
@@ -2451,9 +2536,8 @@ function parseAndApplyMainTargetVoice(text) {
             } else {
                 addExcelMainRow(excelDigits);
             }
-            saveToLocalStorage();
-            autoProcess();
-            if (typeof showToast === 'function') showToast(`✅ เอกเซล: เพิ่มเลขเด่น ${excelDigits}`);
+            persistStandaloneExcelData();
+            if (typeof showToast === 'function') showToast(`✅ เอกเซล: บันทึกเลขเด่น ${excelDigits} (ข้อมูลแยก)`);
         }
         return;
     }
@@ -2897,6 +2981,7 @@ function applyPeriodData(folderName) {
     const data = store[folderName];
     if (data && data.mainData && Object.keys(data.mainData).length) setFormState(data.mainData);
     else setFormState({ tens: '6789', units: '56789', stairInput: '67890', excludeInput: '', sumPointsInput: '', filterInputs: ['24680', '13579'] });
+    loadStandaloneExcelData(folderName);
     const presets = data && data.filterPresets && typeof data.filterPresets === 'object' ? data.filterPresets : {};
     localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(presets));
     loadFilterPresetsToSelect();
