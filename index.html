@@ -211,6 +211,19 @@
                                 class="w-full px-3 py-1.5 border border-blue-200 bg-blue-50/40 rounded-xl focus:ring-2 focus:ring-[#1877F2] outline-none text-sm font-semibold text-blue-900">
                         </div>
 
+                        <!-- เลขเด่นจากเอกเซล (เพิ่มต่อลงมาจากคัดตามแต้มผลรวมหลัก) -->
+                        <div class="pt-2 border-t border-slate-100 space-y-2">
+                            <div class="max-h-48 overflow-y-auto pr-1 space-y-2" id="excelMainInputsList"></div>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="addExcelMainRow()" class="flex-1 py-1.5 border-2 border-dashed border-emerald-200 hover:border-emerald-400 text-emerald-700 rounded-xl text-xs font-medium transition flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-plus"></i> เพิ่มบรรทัด
+                                </button>
+                                <button type="button" onclick="saveExcelMainRows()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1 whitespace-nowrap">
+                                    <i class="fa-solid fa-floppy-disk"></i> บันทึกรวม
+                                </button>
+                            </div>
+                        </div>
+
 
 
                     </div>
@@ -1342,7 +1355,7 @@
             const allowedSumPoints = [...new Set(document.getElementById('sumPointsInput').value.replace(/[^0-9]/g, '').split(''))].map(Number);
             
             let filterSets = [];
-            document.querySelectorAll('.filter-input').forEach(input => {
+            document.querySelectorAll('.filter-input, .excel-main-input').forEach(input => {
                 const digits = input.value.replace(/[^0-9]/g, '');
                 if (digits.length > 0) filterSets.push([...new Set(digits.split(''))]);
             });
@@ -1468,12 +1481,49 @@
 
         function reindexFilterRows() { document.querySelectorAll('.filter-row').forEach((row, i) => { row.querySelector('span').innerText = `${i + 1}.`; }); }
 
+        function addExcelMainRow(value = '') {
+            const container = document.getElementById('excelMainInputsList'); if(!container) return;
+            const index = container.children.length + 1;
+            const rowId = `excel_main_input_${Date.now()}_${index}`;
+            const div = document.createElement('div'); div.className = "flex items-center gap-1.5 min-w-0 w-full excel-main-row";
+            div.innerHTML = `<span class="shrink-0 text-xs text-slate-400 font-mono w-5 text-right">${index}.</span><input type="text" id="${rowId}" value="${value}" oninput="debounceAutoProcess()" placeholder="เลขเด่นเอกเซล ${index}" class="excel-main-input min-w-0 w-0 flex-1 px-2 py-1 border border-emerald-200 bg-emerald-50/30 rounded-lg text-xs font-medium text-emerald-950 focus:ring-2 focus:ring-emerald-500 outline-none"><button type="button" onclick="removeExcelMainRow(this)" aria-label="ลบแถว" class="shrink-0 text-slate-500 hover:text-rose-600 p-1.5"><i class="fa-solid fa-xmark"></i></button>`;
+            container.appendChild(div); reindexExcelMainRows();
+        }
+
+        function removeExcelMainRow(btn) {
+            const container = document.getElementById('excelMainInputsList'); if(!container) return;
+            if (container.children.length <= 1) btn.closest('.excel-main-row').querySelector('input').value = '';
+            else btn.closest('.excel-main-row').remove();
+            reindexExcelMainRows(); autoProcess();
+        }
+
+        function reindexExcelMainRows() {
+            document.querySelectorAll('.excel-main-row').forEach((row, i) => { row.querySelector('span').innerText = `${i + 1}.`; });
+        }
+
+        function saveExcelMainRows() {
+            saveToLocalStorage();
+            const activePreset = document.getElementById('presetSelect') ? document.getElementById('presetSelect').value : '';
+            if (activePreset) {
+                const folderName = getActivePeriodFolder();
+                const folders = getStoredFolders();
+                if (folders[folderName] && folders[folderName][activePreset]) {
+                    folders[folderName][activePreset] = getCurrentFormState();
+                    saveStoredFolders(folders);
+                }
+            }
+            autoProcess();
+            showToast('บันทึกเลขเด่นจากเอกเซลเรียบร้อย!');
+        }
+
         function getCurrentFormState() {
             let filterInputs = []; document.querySelectorAll('.filter-input').forEach(i => filterInputs.push(i.value));
+            let excelMainInputs = []; document.querySelectorAll('.excel-main-input').forEach(i => excelMainInputs.push(i.value));
             return {
                 tens: document.getElementById('tens').value, units: document.getElementById('units').value,
                 stairInput: document.getElementById('stairInput').value, excludeInput: document.getElementById('excludeInput').value,
                 sumPointsInput: document.getElementById('sumPointsInput').value,
+                excelMainInputs,
                 filterInputs, filterLogic: 'AND'
             };
         }
@@ -1485,6 +1535,12 @@
             document.getElementById('excludeInput').value = data.excludeInput || '';
             document.getElementById('sumPointsInput').value = data.sumPointsInput || '';
             document.getElementById('filterLogic').value = 'AND';
+            const excelContainer = document.getElementById('excelMainInputsList');
+            if (excelContainer) {
+                excelContainer.innerHTML = '';
+                if (data.excelMainInputs && data.excelMainInputs.length > 0) data.excelMainInputs.forEach(val => addExcelMainRow(val));
+                else addExcelMainRow('');
+            }
             const container = document.getElementById('filterInputsList'); if(!container) return; container.innerHTML = '';
             if (data.filterInputs && data.filterInputs.length > 0) data.filterInputs.forEach(val => addFilterRow(val));
             else { addFilterRow('24680'); addFilterRow('13579'); }
@@ -1514,7 +1570,7 @@
         }
         function initDefaultForm() {
             document.getElementById('tens').value = '6789'; document.getElementById('units').value = '56789';
-            document.getElementById('stairInput').value = '67890'; addFilterRow('24680'); addFilterRow('13579');
+            document.getElementById('stairInput').value = '67890'; addExcelMainRow(''); addFilterRow('24680'); addFilterRow('13579');
         }
         function clearAllData() { if (confirm('ล้างข้อมูลทั้งหมด?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
 
@@ -1554,8 +1610,11 @@
             const exclude = parseDigits(data.excludeInput);
             const allowedSums = parseDigits(data.sumPointsInput).map(Number);
             
-            const rawFilters = data.filterInputs || data.filterSets || [];
-            const filterSets = (Array.isArray(rawFilters) ? rawFilters : [])
+            const rawFilters = [
+                ...(Array.isArray(data.filterInputs) ? data.filterInputs : (Array.isArray(data.filterSets) ? data.filterSets : [])),
+                ...(Array.isArray(data.excelMainInputs) ? data.excelMainInputs : [])
+            ];
+            const filterSets = rawFilters
                 .map(val => parseDigits(val))
                 .filter(set => set.length > 0);
 
@@ -2374,7 +2433,32 @@ function parseAndApplyMainTargetVoice(text) {
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
         .replace(/เก้า/g, '9');
 
-    // 2. ดึงเฉพาะตัวเลขทั้งหมด
+    // 2. ตรวจสอบคำสั่งขึ้นต้นด้วย "เอกเซล" (รองรับคำพ้องเสียง เอ็กเซล / excel)
+    const excelTriggerRegex = /(เอกเซล|เอ็กเซล|excel)/i;
+    if (excelTriggerRegex.test(cleaned)) {
+        const afterKeyword = cleaned.split(excelTriggerRegex).pop() || '';
+        const excelDigits = afterKeyword.replace(/[^0-9]/g, '');
+        if (!excelDigits) {
+            if (typeof showToast === 'function') showToast('🎙️ รับคำสั่ง "เอกเซล" แล้ว แต่ไม่พบตัวเลขตามหลัง');
+            return;
+        }
+        const container = document.getElementById('excelMainInputsList');
+        if (container) {
+            const inputs = container.querySelectorAll('.excel-main-input');
+            const lastInput = inputs.length > 0 ? inputs[inputs.length - 1] : null;
+            if (lastInput && lastInput.value.trim() === '') {
+                lastInput.value = excelDigits;
+            } else {
+                addExcelMainRow(excelDigits);
+            }
+            saveToLocalStorage();
+            autoProcess();
+            if (typeof showToast === 'function') showToast(`✅ เอกเซล: เพิ่มเลขเด่น ${excelDigits}`);
+        }
+        return;
+    }
+
+    // 3. ดึงเฉพาะตัวเลขทั้งหมด
     let digits = cleaned.replace(/[^0-9]/g, '');
 
     if (!digits) {
@@ -2382,7 +2466,7 @@ function parseAndApplyMainTargetVoice(text) {
         return;
     }
 
-    // 3. แยกแยะหมวดหมู่คำสั่งลงช่องจริง
+    // 4. แยกแยะหมวดหมู่คำสั่งลงช่องจริง
     if (cleaned.includes('สิบ') && !cleaned.includes('หน่วย')) {
         let inputEl = document.getElementById('tensInput') || document.getElementById('tens') || document.querySelector('[name="tens"]');
         if (inputEl) {
