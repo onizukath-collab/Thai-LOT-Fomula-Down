@@ -1,8 +1,8 @@
 {
   "mainData": {
-    "tens": "01234",
-    "units": "56789",
-    "stairInput": "01234",
+    "tens": "234580",
+    "units": "1679",
+    "stairInput": "234580",
     "excludeInput": "",
     "sumPointsInput": "",
     "excelMainInputs": [
@@ -25,7 +25,9 @@
       "1234",
       "2780",
       "24890",
-      "23480"
+      "23480",
+      "234580",
+      "234580"
     ],
     "filterLogic": "AND"
   },
@@ -147,9 +149,9 @@
       "filterLogic": "AND"
     },
     "คู่ไม่ชน 234580": {
-      "tens": "01234",
-      "units": "56789",
-      "stairInput": "01234",
+      "tens": "234580",
+      "units": "1679",
+      "stairInput": "234580",
       "excludeInput": "",
       "sumPointsInput": "",
       "excelMainInputs": [
@@ -172,7 +174,9 @@
         "1234",
         "2780",
         "24890",
-        "23480"
+        "23480",
+        "234580",
+        "234580"
       ],
       "filterLogic": "AND"
     }
@@ -386,7 +390,7 @@
       "columns": []
     }
   },
-  "exportedAt": "26/11/2569 21:04:57",
+  "exportedAt": "26/11/2569 21:06:35",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -635,9 +639,9 @@
         "filterLogic": "AND"
       },
       "คู่ไม่ชน 234580": {
-        "tens": "01234",
-        "units": "56789",
-        "stairInput": "01234",
+        "tens": "234580",
+        "units": "1679",
+        "stairInput": "234580",
         "excludeInput": "",
         "sumPointsInput": "",
         "excelMainInputs": [
@@ -660,7 +664,9 @@
           "1234",
           "2780",
           "24890",
-          "23480"
+          "23480",
+          "234580",
+          "234580"
         ],
         "filterLogic": "AND"
       }
