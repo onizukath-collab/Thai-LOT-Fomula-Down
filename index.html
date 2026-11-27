@@ -2526,8 +2526,44 @@ function toggleMainTargetVoiceRecognition() {
 }
 
 function parseAndApplyMainTargetVoice(text) {
-    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก
-    let cleaned = text
+    // เก็บข้อความต้นฉบับไว้สำหรับชื่อแฟ้ม/ชื่อสูตร เพื่อรักษาภาษาไทยและเครื่องหมาย / : ฯลฯ
+    const originalText = String(text || '').trim();
+
+    // คำสั่งตั้งชื่อ: ใช้ข้อความดิบหลังคำสั่ง ไม่แปลงคำไทยเป็นตัวเลข
+    // ตัวอย่าง: "สร้างแฟ้ม งวด 1/12/69" และ "ชื่อสูตร 1/12/69 : แสนหมื่น"
+    const namingCommands = [
+        { pattern: /สร้าง\s*แฟ้ม\s*/i, type: 'folder', label: 'สร้างแฟ้ม' },
+        { pattern: /ชื่อ\s*สูตร\s*/i, type: 'preset', label: 'ชื่อสูตร' }
+    ];
+    const namingCommand = namingCommands.find(command => command.pattern.test(originalText));
+    if (namingCommand) {
+        const match = originalText.match(namingCommand.pattern);
+        const name = match ? originalText.slice(match.index + match[0].length).trim()
+            .replace(/\s*(?:ทับ|สแลช)\s*/gi, '/')
+            .replace(/\s*(?:โคลอน|โคล่อน)\s*/gi, ':') : '';
+        if (!name) {
+            showToast(`⚠️ รับคำสั่ง "${namingCommand.label}" แล้ว แต่ไม่พบชื่อที่ต้องการ`);
+            return;
+        }
+
+        if (namingCommand.type === 'folder') {
+            const field = document.getElementById('periodFolderName');
+            if (!field) return;
+            field.value = name;
+            createPeriodFolder();
+        } else {
+            const field = document.getElementById('presetNameInput');
+            const select = document.getElementById('presetSelect');
+            if (!field) return;
+            if (select) select.value = '';
+            field.value = name;
+            saveCurrentPreset();
+        }
+        return;
+    }
+
+    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก สำหรับคำสั่งตัวเลขเดิมเท่านั้น
+    let cleaned = originalText
         .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
         .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
@@ -2560,8 +2596,6 @@ function parseAndApplyMainTargetVoice(text) {
     // 2.5 คำสั่งหน้าหลัก: แฟ้ม / ชื่อสูตร / เลขดับ / แต้มผลรวมหลัก
     // รองรับทั้งการพูดตัวเลขเป็นเลขอารบิกและคำอ่านตัวเลขภาษาไทย
     const mainCommands = [
-        { pattern: /สร้าง\s*แฟ้ม/i, type: 'folder', label: 'สร้างแฟ้ม' },
-        { pattern: /ชื่อ\s*สูตร/i, type: 'preset', label: 'ชื่อสูตร' },
         { pattern: /เลข\s*ดับ/i, type: 'exclude', label: 'เลขดับ' },
         { pattern: /แต้ม\s*(?:ผล)?\s*รวม\s*หลัก/i, type: 'sum', label: 'แต้มผลรวมหลัก' }
     ];
@@ -2577,20 +2611,7 @@ function parseAndApplyMainTargetVoice(text) {
             return;
         }
 
-        if (matchedCommand.type === 'folder') {
-            const field = document.getElementById('periodFolderName');
-            if (!field) return;
-            field.value = commandDigits;
-            createPeriodFolder();
-        } else if (matchedCommand.type === 'preset') {
-            const field = document.getElementById('presetNameInput');
-            const select = document.getElementById('presetSelect');
-            if (!field) return;
-            // ล้างการเลือกสูตรเดิม เพื่อให้คำสั่งเสียงสร้างชื่อสูตรใหม่ ไม่เซฟทับสูตรเดิม
-            if (select) select.value = '';
-            field.value = commandDigits;
-            saveCurrentPreset();
-        } else if (matchedCommand.type === 'exclude') {
+        if (matchedCommand.type === 'exclude') {
             const field = document.getElementById('excludeInput');
             if (!field) return;
             field.value = commandDigits;
