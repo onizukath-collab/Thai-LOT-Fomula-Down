@@ -2560,10 +2560,10 @@ function parseAndApplyMainTargetVoice(text) {
     // 2.5 คำสั่งหน้าหลัก: แฟ้ม / ชื่อสูตร / เลขดับ / แต้มผลรวมหลัก
     // รองรับทั้งการพูดตัวเลขเป็นเลขอารบิกและคำอ่านตัวเลขภาษาไทย
     const mainCommands = [
-        { pattern: /สร้าง\\s*แฟ้ม/i, type: 'folder', label: 'สร้างแฟ้ม' },
-        { pattern: /ชื่อ\\s*สูตร/i, type: 'preset', label: 'ชื่อสูตร' },
-        { pattern: /เลข\\s*ดับ/i, type: 'exclude', label: 'เลขดับ' },
-        { pattern: /แต้ม\\s*(?:ผล)?\\s*รวม\\s*หลัก/i, type: 'sum', label: 'แต้มผลรวมหลัก' }
+        { pattern: /สร้าง\s*แฟ้ม/i, type: 'folder', label: 'สร้างแฟ้ม' },
+        { pattern: /ชื่อ\s*สูตร/i, type: 'preset', label: 'ชื่อสูตร' },
+        { pattern: /เลข\s*ดับ/i, type: 'exclude', label: 'เลขดับ' },
+        { pattern: /แต้ม\s*(?:ผล)?\s*รวม\s*หลัก/i, type: 'sum', label: 'แต้มผลรวมหลัก' }
     ];
     const matchedCommand = mainCommands.find(command => command.pattern.test(cleaned));
     if (matchedCommand) {
