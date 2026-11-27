@@ -2532,9 +2532,9 @@ function parseAndApplyMainTargetVoice(text) {
     // คำสั่งตั้งชื่อ: ใช้ข้อความดิบหลังคำสั่ง ไม่แปลงคำไทยเป็นตัวเลข
     // ตัวอย่าง: "สร้างแฟ้ม งวด 1/12/69" และ "ชื่อสูตร 1/12/69 : แสนหมื่น"
     const namingCommands = [
-        { pattern: /สร้าง\s*แฟ้ม\s*/i, type: 'folder', label: 'สร้างแฟ้ม' },
-        { pattern: /ชื่อ\s*สูตร\s*/i, type: 'preset', label: 'ชื่อสูตร' },
-        { pattern: /^\s*ชุด\s*/i, type: 'filterPreset', label: 'ชุด' }
+        { pattern: /แฟ้ม/i, type: 'folder', label: 'สร้างแฟ้ม' },
+        { pattern: /สูตร/i, type: 'preset', label: 'ชื่อสูตร' },
+        { pattern: /เลข\s*เด่น\s*/i, type: 'filterPreset', label: 'เลขเด่น' }
     ];
     const namingCommand = namingCommands.find(command => command.pattern.test(originalText));
     if (namingCommand) {
