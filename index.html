@@ -2485,13 +2485,8 @@ function toggleMainTargetVoiceRecognition() {
 
     mainTargetRecognition.onstart = function() {
         isMainTargetListening = true;
-        const micButton = document.getElementById('mainVoiceCommandBtn');
-        if (micButton) {
-            micButton.classList.remove('bg-indigo-600');
-            micButton.classList.add('bg-rose-600', 'animate-pulse');
-        }
         if (typeof showToast === 'function') {
-            showToast('🎙️ กำลังฟังคำสั่ง... เช่น สร้างแฟ้ม 161169, ชื่อสูตร 123, เลขดับ 13, แต้มผลรวมหลัก 0258');
+            showToast('🎙️ กำลังฟัง... (เช่น "หลักสิบ 123" หรือ "หน่วย 456")');
         }
     };
 
@@ -2506,64 +2501,18 @@ function toggleMainTargetVoiceRecognition() {
             showToast('❌ ฟังเสียงไม่ชัดเจน ลองใหม่อีกครั้ง');
         }
         isMainTargetListening = false;
-        const micButton = document.getElementById('mainVoiceCommandBtn');
-        if (micButton) {
-            micButton.classList.remove('bg-rose-600', 'animate-pulse');
-            micButton.classList.add('bg-indigo-600');
-        }
     };
 
     mainTargetRecognition.onend = function() {
         isMainTargetListening = false;
-        const micButton = document.getElementById('mainVoiceCommandBtn');
-        if (micButton) {
-            micButton.classList.remove('bg-rose-600', 'animate-pulse');
-            micButton.classList.add('bg-indigo-600');
-        }
     };
 
     mainTargetRecognition.start();
 }
 
 function parseAndApplyMainTargetVoice(text) {
-    // เก็บข้อความต้นฉบับไว้สำหรับชื่อแฟ้ม/ชื่อสูตร เพื่อรักษาภาษาไทยและเครื่องหมาย / : ฯลฯ
-    const originalText = String(text || '').trim();
-
-    // คำสั่งตั้งชื่อ: ใช้ข้อความดิบหลังคำสั่ง ไม่แปลงคำไทยเป็นตัวเลข
-    // ตัวอย่าง: "สร้างแฟ้ม งวด 1/12/69" และ "ชื่อสูตร 1/12/69 : แสนหมื่น"
-    const namingCommands = [
-        { pattern: /สร้าง\s*แฟ้ม\s*/i, type: 'folder', label: 'สร้างแฟ้ม' },
-        { pattern: /ชื่อ\s*สูตร\s*/i, type: 'preset', label: 'สูตร' }
-    ];
-    const namingCommand = namingCommands.find(command => command.pattern.test(originalText));
-    if (namingCommand) {
-        const match = originalText.match(namingCommand.pattern);
-        const name = match ? originalText.slice(match.index + match[0].length).trim()
-            .replace(/\s*(?:ทับ|สแลช)\s*/gi, '/')
-            .replace(/\s*(?:โคลอน|โคล่อน|โคโลน|colon)\s*/gi, ':') : '';
-        if (!name) {
-            showToast(`⚠️ รับคำสั่ง "${namingCommand.label}" แล้ว แต่ไม่พบชื่อที่ต้องการ`);
-            return;
-        }
-
-        if (namingCommand.type === 'folder') {
-            const field = document.getElementById('periodFolderName');
-            if (!field) return;
-            field.value = name;
-            createPeriodFolder();
-        } else {
-            const field = document.getElementById('presetNameInput');
-            const select = document.getElementById('presetSelect');
-            if (!field) return;
-            if (select) select.value = '';
-            field.value = name;
-            saveCurrentPreset();
-        }
-        return;
-    }
-
-    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก สำหรับคำสั่งตัวเลขเดิมเท่านั้น
-    let cleaned = originalText
+    // 1. แปลงตัวเลขไทยเป็นเลขอราบิก
+    let cleaned = text
         .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
         .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
         .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
@@ -2589,42 +2538,6 @@ function parseAndApplyMainTargetVoice(text) {
             }
             persistStandaloneExcelData();
             if (typeof showToast === 'function') showToast(`✅ เอกเซล: บันทึกเลขเด่น ${excelDigits} (ข้อมูลแยก)`);
-        }
-        return;
-    }
-
-    // 2.5 คำสั่งหน้าหลัก: แฟ้ม / ชื่อสูตร / เลขดับ / แต้มผลรวมหลัก
-    // รองรับทั้งการพูดตัวเลขเป็นเลขอารบิกและคำอ่านตัวเลขภาษาไทย
-    const mainCommands = [
-        { pattern: /เลข\s*ดับ/i, type: 'exclude', label: 'เลขดับ' },
-        { pattern: /แต้ม\s*(?:ผล)?\s*รวม\s*หลัก/i, type: 'sum', label: 'แต้ม }
-    ];
-    const matchedCommand = mainCommands.find(command => command.pattern.test(cleaned));
-    if (matchedCommand) {
-        const commandMatch = cleaned.match(matchedCommand.pattern);
-        const commandIndex = commandMatch ? commandMatch.index + commandMatch[0].length : 0;
-        const spokenValue = cleaned.slice(commandIndex);
-        const commandDigits = spokenValue.replace(/[^0-9]/g, '');
-
-        if (!commandDigits) {
-            showToast(`⚠️ รับคำสั่ง "${matchedCommand.label}" แล้ว แต่ไม่พบตัวเลขตามหลัง`);
-            return;
-        }
-
-        if (matchedCommand.type === 'exclude') {
-            const field = document.getElementById('excludeInput');
-            if (!field) return;
-            field.value = commandDigits;
-            field.dispatchEvent(new Event('input', { bubbles: true }));
-            field.dispatchEvent(new Event('change', { bubbles: true }));
-            showToast(`✅ เลขดับ: ${commandDigits}`);
-        } else if (matchedCommand.type === 'sum') {
-            const field = document.getElementById('sumPointsInput');
-            if (!field) return;
-            field.value = commandDigits;
-            field.dispatchEvent(new Event('input', { bubbles: true }));
-            field.dispatchEvent(new Event('change', { bubbles: true }));
-            showToast(`✅ แต้มผลรวมหลัก: ${commandDigits}`);
         }
         return;
     }
@@ -3608,8 +3521,8 @@ function parseAndApplyBestSumVoiceFormula(text) {
     </div>
 </div>
 	<!-- ปุ่มไมโครโฟนลอยมุมขวาล่าง สะดวก ไม่เกะกะหน้าจอ -->
-<button id="mainVoiceCommandBtn" type="button" onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-5 right-5 z-50 bg-indigo-600 hover:bg-indigo-700 text-white w-11 h-11 rounded-full shadow-xl flex items-center justify-center transition transform hover:scale-105 active:scale-95" title="กดพูดคำสั่งเสียง" aria-label="สั่งงานด้วยเสียง">
-    <i class="fa-solid fa-microphone text-base"></i>
+<button onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-20 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition transform hover:scale-109 active:scale-90" title="กดพูดคำสั่งเสียง">
+    <i class="fa-solid fa-microphone text-xl"></i>
 </button>
 </body>
 </html>
