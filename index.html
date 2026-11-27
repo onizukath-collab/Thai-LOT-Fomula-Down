@@ -2491,7 +2491,7 @@ function toggleMainTargetVoiceRecognition() {
             micButton.classList.add('bg-rose-600', 'animate-pulse');
         }
         if (typeof showToast === 'function') {
-            showToast('🎙️ กำลังฟังคำสั่ง... เช่น แฟ้ม 161169, สูตร 123, เลขดับ 13, แต้ม 0258');
+            showToast('🎙️ กำลังฟังคำสั่ง... เช่น สร้างแฟ้ม งวด 1/12/69, ชื่อสูตร 1/12/69 : แสนหมื่น, ชุด ชุดทดลอง, เลขดับ 13, แต้ม 0258');
         }
     };
 
@@ -2532,8 +2532,9 @@ function parseAndApplyMainTargetVoice(text) {
     // คำสั่งตั้งชื่อ: ใช้ข้อความดิบหลังคำสั่ง ไม่แปลงคำไทยเป็นตัวเลข
     // ตัวอย่าง: "สร้างแฟ้ม งวด 1/12/69" และ "ชื่อสูตร 1/12/69 : แสนหมื่น"
     const namingCommands = [
-        { pattern: /แฟ้ม/i, type: 'folder', label: 'สร้างแฟ้ม' },
+        { pattern: /แฟ้ม/i, type: 'folder', label: 'สร้างแฟ้ม' }, 
         { pattern: /สูตร/i, type: 'preset', label: 'ชื่อสูตร' }
+        { pattern: /^\s*ชุด\s*/i, type: 'filterPreset', label: 'ชุด' }
     ];
     const namingCommand = namingCommands.find(command => command.pattern.test(originalText));
     if (namingCommand) {
@@ -2551,13 +2552,22 @@ function parseAndApplyMainTargetVoice(text) {
             if (!field) return;
             field.value = name;
             createPeriodFolder();
-        } else {
+        } else if (namingCommand.type === 'preset') {
             const field = document.getElementById('presetNameInput');
             const select = document.getElementById('presetSelect');
             if (!field) return;
             if (select) select.value = '';
             field.value = name;
             saveCurrentPreset();
+        } else if (namingCommand.type === 'filterPreset') {
+            const field = document.getElementById('filterPresetNameInput');
+            const select = document.getElementById('filterPresetSelect');
+            if (!field) return;
+            // ล้างตัวเลือกเดิม เพื่อให้บันทึกเป็นชื่อชุดใหม่ ไม่ใช่เซฟทับชุดที่เลือกอยู่
+            if (select) select.value = '';
+            field.value = name;
+            saveFilterPreset();
+            if (typeof showToast === 'function') showToast(`✅ สร้างชุดคัดกรองชื่อ \"${name}\" แล้ว`);
         }
         return;
     }
