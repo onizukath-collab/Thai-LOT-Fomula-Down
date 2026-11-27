@@ -2533,14 +2533,14 @@ function parseAndApplyMainTargetVoice(text) {
     // ตัวอย่าง: "สร้างแฟ้ม งวด 1/12/69" และ "ชื่อสูตร 1/12/69 : แสนหมื่น"
     const namingCommands = [
         { pattern: /สร้าง\s*แฟ้ม\s*/i, type: 'folder', label: 'สร้างแฟ้ม' },
-        { pattern: /ชื่อ\s*สูตร\s*/i, type: 'preset', label: 'ชื่อสูตร' }
+        { pattern: /ชื่อ\s*สูตร\s*/i, type: 'preset', label: 'สูตร' }
     ];
     const namingCommand = namingCommands.find(command => command.pattern.test(originalText));
     if (namingCommand) {
         const match = originalText.match(namingCommand.pattern);
         const name = match ? originalText.slice(match.index + match[0].length).trim()
             .replace(/\s*(?:ทับ|สแลช)\s*/gi, '/')
-            .replace(/\s*(?:โคลอน|โคล่อน)\s*/gi, ':') : '';
+            .replace(/\s*(?:โคลอน|โคล่อน|โคโลน|colon)\s*/gi, ':') : '';
         if (!name) {
             showToast(`⚠️ รับคำสั่ง "${namingCommand.label}" แล้ว แต่ไม่พบชื่อที่ต้องการ`);
             return;
@@ -2597,7 +2597,7 @@ function parseAndApplyMainTargetVoice(text) {
     // รองรับทั้งการพูดตัวเลขเป็นเลขอารบิกและคำอ่านตัวเลขภาษาไทย
     const mainCommands = [
         { pattern: /เลข\s*ดับ/i, type: 'exclude', label: 'เลขดับ' },
-        { pattern: /แต้ม\s*(?:ผล)?\s*รวม\s*หลัก/i, type: 'sum', label: 'แต้มผลรวมหลัก' }
+        { pattern: /แต้ม\s*(?:ผล)?\s*รวม\s*หลัก/i, type: 'sum', label: 'แต้ม }
     ];
     const matchedCommand = mainCommands.find(command => command.pattern.test(cleaned));
     if (matchedCommand) {
