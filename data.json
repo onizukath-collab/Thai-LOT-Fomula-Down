@@ -4,7 +4,7 @@
     "units": "56789",
     "stairInput": "67890",
     "excludeInput": "7894",
-    "sumPointsInput": "901234560",
+    "sumPointsInput": "901234",
     "excelMainInputs": [
       "07",
       "79",
@@ -14,18 +14,18 @@
     "filterInputs": [
       "24680",
       "13579",
-      "1169",
+      "12345678",
       "12345"
     ],
     "filterLogic": "AND"
   },
   "presets": {
-    "1/1/69:แสนหมื่น": {
+    "1/1/70:แสนหมื่น": {
       "tens": "6789",
       "units": "56789",
       "stairInput": "67890",
       "excludeInput": "7894",
-      "sumPointsInput": "901234560",
+      "sumPointsInput": "901234",
       "excelMainInputs": [
         "07",
         "79",
@@ -35,18 +35,19 @@
       "filterInputs": [
         "24680",
         "13579",
-        "1169",
+        "12345678",
         "12345"
       ],
       "filterLogic": "AND"
     }
   },
   "filterPresets": {
-    "เด่นจักรวาล": {
+    "จักรวาล": {
       "filterInputs": [
         "24680",
         "13579",
-        "1169"
+        "12345678",
+        "12345"
       ],
       "filterLogic": "AND"
     }
@@ -182,7 +183,7 @@
       "columns": []
     }
   },
-  "exportedAt": "27/11/2569 10:07:53",
+  "exportedAt": "27/11/2569 10:11:26",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -465,13 +466,13 @@
         "filterLogic": "AND"
       }
     },
-    "งวด 1/1/69": {
-      "1/1/69:แสนหมื่น": {
+    "งวดวันที่ 1/1/70": {
+      "1/1/70:แสนหมื่น": {
         "tens": "6789",
         "units": "56789",
         "stairInput": "67890",
         "excludeInput": "7894",
-        "sumPointsInput": "901234560",
+        "sumPointsInput": "901234",
         "excelMainInputs": [
           "07",
           "79",
@@ -481,12 +482,12 @@
         "filterInputs": [
           "24680",
           "13579",
-          "1169",
+          "12345678",
           "12345"
         ],
         "filterLogic": "AND"
       }
     }
   },
-  "activePeriodFolder": "งวด 1/1/69"
+  "activePeriodFolder": "งวดวันที่ 1/1/70"
 }
