@@ -1,8 +1,8 @@
 {
   "mainData": {
-    "tens": "6789",
-    "units": "56789",
-    "stairInput": "67890",
+    "tens": "12345",
+    "units": "78901",
+    "stairInput": "12345",
     "excludeInput": "7894",
     "sumPointsInput": "901234",
     "excelMainInputs": [
@@ -14,16 +14,18 @@
     "filterInputs": [
       "24680",
       "13579",
-      "12345678",
-      "12345"
+      "901234",
+      "1234",
+      "1056789",
+      "156789"
     ],
     "filterLogic": "AND"
   },
   "presets": {
-    "1/1/70:แสนหมื่น": {
-      "tens": "6789",
-      "units": "56789",
-      "stairInput": "67890",
+    "1/1/80:10 หมื่น": {
+      "tens": "12345",
+      "units": "78901",
+      "stairInput": "12345",
       "excludeInput": "7894",
       "sumPointsInput": "901234",
       "excelMainInputs": [
@@ -35,8 +37,10 @@
       "filterInputs": [
         "24680",
         "13579",
-        "12345678",
-        "12345"
+        "901234",
+        "1234",
+        "1056789",
+        "156789"
       ],
       "filterLogic": "AND"
     }
@@ -46,8 +50,18 @@
       "filterInputs": [
         "24680",
         "13579",
-        "12345678",
-        "12345"
+        "901234"
+      ],
+      "filterLogic": "AND"
+    },
+    "Galaxy": {
+      "filterInputs": [
+        "24680",
+        "13579",
+        "901234",
+        "1234",
+        "1056789",
+        "156789"
       ],
       "filterLogic": "AND"
     }
@@ -183,7 +197,7 @@
       "columns": []
     }
   },
-  "exportedAt": "27/11/2569 10:12:03",
+  "exportedAt": "27/11/2569 10:26:08",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -487,7 +501,31 @@
         ],
         "filterLogic": "AND"
       }
+    },
+    "งวดวันที่ 1/1/80": {
+      "1/1/80:10 หมื่น": {
+        "tens": "12345",
+        "units": "78901",
+        "stairInput": "12345",
+        "excludeInput": "7894",
+        "sumPointsInput": "901234",
+        "excelMainInputs": [
+          "07",
+          "79",
+          "80",
+          "47"
+        ],
+        "filterInputs": [
+          "24680",
+          "13579",
+          "901234",
+          "1234",
+          "1056789",
+          "156789"
+        ],
+        "filterLogic": "AND"
+      }
     }
   },
-  "activePeriodFolder": "งวดวันที่ 1/1/70"
+  "activePeriodFolder": "งวดวันที่ 1/1/80"
 }
