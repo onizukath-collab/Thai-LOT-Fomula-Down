@@ -3,7 +3,7 @@
     "tens": "01234",
     "units": "56789",
     "stairInput": "01234",
-    "excludeInput": "7894618",
+    "excludeInput": "",
     "sumPointsInput": "9012345678",
     "excelMainInputs": [
       "07",
@@ -63,7 +63,7 @@
       "tens": "01234",
       "units": "56789",
       "stairInput": "01234",
-      "excludeInput": "7894618",
+      "excludeInput": "",
       "sumPointsInput": "9012345678",
       "excelMainInputs": [
         "07",
@@ -499,7 +499,7 @@
       "columns": []
     }
   },
-  "exportedAt": "28/11/2569 09:52:50",
+  "exportedAt": "28/11/2569 09:56:17",
   "periodFolders": {
     "สูตรเดิม (ยังไม่จัดงวด)": {
       "16/11/69 ชุดตัดไม่น่ามา": {
@@ -663,7 +663,7 @@
         "tens": "01234",
         "units": "56789",
         "stairInput": "01234",
-        "excludeInput": "7894618",
+        "excludeInput": "",
         "sumPointsInput": "9012345678",
         "excelMainInputs": [
           "07",
