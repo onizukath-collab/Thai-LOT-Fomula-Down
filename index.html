@@ -3849,9 +3849,21 @@ function readCurrentPDG83Summary() {
     '8': 'แปด',
     '9': 'เก้า'
   };
-  const clean = String(digitsStr || '').replace(/[^0-9]/g, '');
+  const clean = String(digitsStr || '')
+    .replace(/ศูนย์/g, '0')
+    .replace(/หนึ่ง/g, '1')
+    .replace(/สอง/g, '2')
+    .replace(/สาม/g, '3')
+    .replace(/สี่/g, '4')
+    .replace(/ห้า/g, '5')
+    .replace(/หก/g, '6')
+    .replace(/เจ็ด/g, '7')
+    .replace(/แปด/g, '8')
+    .replace(/เก้า/g, '9')
+    .replace(/[^0-9]/g, '');
+
   if (!clean) return '';
-  return clean.split('').map(ch => thaiDigits[ch] || ch).join(' ');
+  return clean.split('').map(ch => thaiDigits[ch] || ch).join(' , ');
 }
 
   function handleVoiceCommandText(rawTranscript) {
