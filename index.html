@@ -3837,14 +3837,22 @@ function readCurrentPDG83Summary() {
 
   // --- ชุดที่ 2: คำสั่งเสียงลบช่องต่าง ๆ และอ่านตัวเลข ---
   function formatThaiNumberSpeech(digitsStr) {
-    const clean = String(digitsStr || '').replace(/[^0-9]/g, '');
-    if (!clean) return '';
-    const num = Number(clean);
-    if (!Number.isSafeInteger(num)) {
-      return clean.split('').join(' ');
-    }
-    return num.toLocaleString('th-TH');
-  }
+  const thaiDigits = {
+    '0': 'ศูนย์',
+    '1': 'หนึ่ง',
+    '2': 'สอง',
+    '3': 'สาม',
+    '4': 'สี่',
+    '5': 'ห้า',
+    '6': 'หก',
+    '7': 'เจ็ด',
+    '8': 'แปด',
+    '9': 'เก้า'
+  };
+  const clean = String(digitsStr || '').replace(/[^0-9]/g, '');
+  if (!clean) return '';
+  return clean.split('').map(ch => thaiDigits[ch] || ch).join(' ');
+}
 
   function handleVoiceCommandText(rawTranscript) {
     const text = String(rawTranscript || '').trim();
