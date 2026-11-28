@@ -3572,7 +3572,133 @@ function parseAndApplyBestSumVoiceFormula(text) {
     }
 }
 
+// ==========================================
+// 🔊 ระบบเสียงพูดตอบโต้ของแอป PDG83 (Text-to-Speech)
+// ==========================================
+const PDG83_VOICE_REPLY_KEY = 'pdg83_voice_reply_enabled_v1';
+let isVoiceReplyEnabled = (function () {
+    try {
+        const saved = localStorage.getItem(PDG83_VOICE_REPLY_KEY);
+        return saved === null ? true : saved === 'true';
+    } catch (e) {
+        return true;
+    }
+})();
 
+function speakThaiReply(message, force = false) {
+    if (!force && !isVoiceReplyEnabled) return;
+    if (!('speechSynthesis' in window) || !message) return;
+
+    try {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(String(message));
+        utter.lang = 'th-TH';
+        utter.rate = 1.02;
+        utter.pitch = 1.0;
+
+        const voices = window.speechSynthesis.getVoices();
+        const thaiVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('th'));
+        if (thaiVoice) utter.voice = thaiVoice;
+
+        window.speechSynthesis.speak(utter);
+    } catch (err) {
+        console.warn('ไม่สามารถออกเสียงพูดได้:', err);
+    }
+}
+
+function updateVoiceReplyButtonUI() {
+    const btn = document.getElementById('toggleVoiceReplyBtn');
+    const icon = document.getElementById('toggleVoiceReplyIcon');
+    if (!btn || !icon) return;
+
+    if (isVoiceReplyEnabled) {
+        btn.className = "fixed bottom-4 right-12 z-50 w-7 h-7 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg flex items-center justify-center transition active:scale-90";
+        icon.className = "fa-solid fa-volume-high text-[11px]";
+        btn.title = "เสียงพูดตอบโต้: เปิดอยู่ (คลิกเพื่อปิด)";
+    } else {
+        btn.className = "fixed bottom-4 right-12 z-50 w-7 h-7 bg-slate-600 hover:bg-slate-700 text-white rounded-full shadow-lg flex items-center justify-center transition active:scale-90";
+        icon.className = "fa-solid fa-volume-xmark text-[11px]";
+        btn.title = "เสียงพูดตอบโต้: ปิดอยู่ (คลิกเพื่อเปิด)";
+    }
+}
+
+function toggleVoiceReply() {
+    isVoiceReplyEnabled = !isVoiceReplyEnabled;
+    try {
+        localStorage.setItem(PDG83_VOICE_REPLY_KEY, isVoiceReplyEnabled ? 'true' : 'false');
+    } catch (e) {}
+    updateVoiceReplyButtonUI();
+    if (isVoiceReplyEnabled) {
+        speakThaiReply('เปิดเสียงพูดตอบโต้แล้วครับ', true);
+    } else {
+        window.speechSynthesis && window.speechSynthesis.cancel();
+        if (typeof showToast === 'function') showToast('ปิดเสียงพูดตอบโต้แล้ว');
+    }
+}
+
+function readCurrentPDG83Summary() {
+    const pairCount = Number(document.getElementById('statPairPassed')?.innerText || 0);
+    const stairCount = Number(document.getElementById('statStairPassed')?.innerText || 0);
+    const passedBadges = [...new Set(
+        Array.from(document.querySelectorAll('.count-passed-pair, .count-passed-stair'))
+            .map(el => el.innerText.trim())
+            .filter(Boolean)
+    )];
+
+    if (passedBadges.length === 0) {
+        speakThaiReply('ตอนนี้ยังไม่มีเลขที่ผ่านเงื่อนไขครับ');
+        return;
+    }
+
+    const spokenPairs = passedBadges.slice(0, 20).map(p => p.split('').join(' ')).join(', ');
+    const extraNote = passedBadges.length > 20 ? ` และอีก ${passedBadges.length - 20} ชุดครับ` : 'ครับ';
+    speakThaiReply(`ชุดประกบผ่าน ${pairCount} ชุด วินผ่าน ${stairCount} ชุด เลขที่ผ่านคือ ${spokenPairs}${extraNote}`);
+}
+
+// ผูกเสียงตอบกลับเข้ากับคำสั่งเสียงหลักและ showToast แบบไม่แก้โค้ดเดิม
+(function attachPDG83VoiceFeedback() {
+    const origShowToast = window.showToast;
+    if (typeof origShowToast === 'function' && !origShowToast._hasVoiceHook) {
+        window.showToast = function (msg) {
+            origShowToast(msg);
+            const cleanMsg = String(msg || '');
+            if (cleanMsg.startsWith('✅')) {
+                speakThaiReply(cleanMsg.replace(/^✅\s*/, 'บันทึก '));
+            } else if (cleanMsg.startsWith('สร้างแฟ้ม "')) {
+                const match = cleanMsg.match(/สร้างแฟ้ม "([^"]+)"/);
+                if (match) speakThaiReply(`สร้างแฟ้ม ${match[1]} แล้วครับ`);
+            } else if (cleanMsg.startsWith('❌')) {
+                speakThaiReply(cleanMsg.replace(/^❌\s*/, ''));
+            }
+        };
+        window.showToast._hasVoiceHook = true;
+    }
+
+    const origParseMain = window.parseAndApplyMainTargetVoice;
+    if (typeof origParseMain === 'function' && !origParseMain._hasReadHook) {
+        window.parseAndApplyMainTargetVoice = function (text) {
+            const t = String(text || '').trim();
+            if (/อ่านผล|สรุปผล|ผลลัพธ์|ผ่านกี่ชุด/.test(t)) {
+                readCurrentPDG83Summary();
+                return;
+            }
+            return origParseMain.apply(this, arguments);
+        };
+        window.parseAndApplyMainTargetVoice._hasReadHook = true;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (!document.getElementById('toggleVoiceReplyBtn')) {
+            const btn = document.createElement('button');
+            btn.id = 'toggleVoiceReplyBtn';
+            btn.type = 'button';
+            btn.onclick = toggleVoiceReply;
+            btn.innerHTML = '<i id="toggleVoiceReplyIcon" class="fa-solid fa-volume-high text-[11px]"></i>';
+            document.body.appendChild(btn);
+        }
+        updateVoiceReplyButtonUI();
+    });
+})();
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -3621,221 +3747,5 @@ function parseAndApplyBestSumVoiceFormula(text) {
 <button id="mainVoiceCommandBtn" type="button" onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-5 right-5 z-50 bg-indigo-600 hover:bg-indigo-700 text-white w-5 h-7 rounded-full shadow-xl flex items-center justify-center transition transform hover:scale-105 active:scale-95" title="กดพูดคำสั่งเสียง" aria-label="สั่งงานด้วยเสียง">
     <i class="fa-solid fa-microphone text-base"></i>
 </button>
-
-<!-- ผู้ช่วยเสียงโต้ตอบกับแอป (ทำงานในเบราว์เซอร์ ไม่เรียก API) -->
-<div id="appVoiceChatPanel" class="hidden fixed bottom-20 right-4 z-[60] w-[min(340px,calc(100vw-2rem))] bg-white rounded-2xl shadow-2xl border border-indigo-200 overflow-hidden">
-    <div class="bg-gradient-to-r from-indigo-800 to-purple-800 text-white px-4 py-3 flex items-center justify-between">
-        <div class="font-bold text-sm flex items-center gap-2">
-            <i class="fa-solid fa-comments"></i> ผู้ช่วยเสียงของแอป
-        </div>
-        <button type="button" onclick="closeAppVoiceChat()" class="text-white/80 hover:text-white px-2" aria-label="ปิดผู้ช่วย">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-    </div>
-    <div class="p-3 space-y-3">
-        <div class="rounded-xl bg-slate-50 border border-slate-200 p-3">
-            <div class="text-[11px] text-slate-500 font-semibold mb-1">คุณพูดว่า</div>
-            <div id="appVoiceUserText" class="text-sm text-slate-800 min-h-5">กดปุ่มไมโครโฟน แล้วลองถามได้เลยครับ</div>
-        </div>
-        <div class="rounded-xl bg-indigo-50 border border-indigo-100 p-3">
-            <div class="text-[11px] text-indigo-600 font-semibold mb-1">ผู้ช่วยตอบ</div>
-            <div id="appVoiceReplyText" class="text-sm text-indigo-950 min-h-10">สวัสดีครับ ผมช่วยนำทางและบอกวิธีใช้งานเบื้องต้นได้</div>
-        </div>
-        <div class="flex gap-2">
-            <button id="appVoiceListenBtn" type="button" onclick="startAppVoiceChatListening()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-2.5 text-sm font-bold flex items-center justify-center gap-2">
-                <i id="appVoiceListenIcon" class="fa-solid fa-microphone"></i>
-                <span id="appVoiceListenLabel">พูดคุยกับแอป</span>
-            </button>
-            <button id="appVoiceSpeechToggleBtn" type="button" onclick="toggleAppVoiceChatSpeech()" class="px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl" title="ปิดเสียงตอบกลับ" aria-label="ปิดเสียงตอบกลับ">
-                <i id="appVoiceSpeechToggleIcon" class="fa-solid fa-volume-high"></i>
-            </button>
-        </div>
-        <div id="appVoiceChatStatus" class="text-[11px] text-slate-500 text-center">พร้อมใช้งาน • รองรับคำสั่งนำทางและคำถามทั่วไปเกี่ยวกับแอป</div>
-    </div>
-</div>
-<button id="appVoiceChatOpenBtn" type="button" onclick="openAppVoiceChat()" class="fixed bottom-5 right-[4.5rem] z-50 bg-violet-600 hover:bg-violet-700 text-white rounded-full shadow-xl px-3 h-11 flex items-center justify-center gap-2 text-xs font-bold transition" title="เปิดผู้ช่วยเสียง">
-    <i class="fa-solid fa-comments text-base"></i><span>คุยกับแอป</span>
-</button>
-
-<script>
-/* ผู้ช่วยเสียงแบบ local: ไม่ส่งเสียงหรือข้อความไปยัง API */
-let appVoiceChatRecognition = null;
-let appVoiceChatListening = false;
-let appVoiceChatSpeechEnabled = true;
-
-function updateAppVoiceChatSpeechButton() {
-    const btn = document.getElementById('appVoiceSpeechToggleBtn');
-    const icon = document.getElementById('appVoiceSpeechToggleIcon');
-    if (btn) {
-        btn.title = appVoiceChatSpeechEnabled ? 'ปิดเสียงตอบกลับ' : 'เปิดเสียงตอบกลับ';
-        btn.setAttribute('aria-label', btn.title);
-    }
-    if (icon) icon.className = appVoiceChatSpeechEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
-}
-
-function toggleAppVoiceChatSpeech() {
-    appVoiceChatSpeechEnabled = !appVoiceChatSpeechEnabled;
-    if (!appVoiceChatSpeechEnabled) stopAppVoiceChatSpeech();
-    updateAppVoiceChatSpeechButton();
-    const status = document.getElementById('appVoiceChatStatus');
-    if (status) status.textContent = appVoiceChatSpeechEnabled
-        ? 'เปิดเสียงตอบกลับแล้วครับ'
-        : 'ปิดเสียงตอบกลับแล้วครับ แตะไอคอนลำโพงเพื่อเปิดเสียง';
-}
-
-function openAppVoiceChat() {
-    const panel = document.getElementById('appVoiceChatPanel');
-    if (panel) panel.classList.remove('hidden');
-    updateAppVoiceChatSpeechButton();
-    const status = document.getElementById('appVoiceChatStatus');
-    if (status) status.textContent = 'พร้อมฟังครับ กด “พูดคุยกับแอป” แล้วเริ่มพูดได้เลย';
-}
-
-function closeAppVoiceChat() {
-    if (appVoiceChatRecognition && appVoiceChatListening) {
-        try { appVoiceChatRecognition.stop(); } catch (e) {}
-    }
-    stopAppVoiceChatSpeech();
-    appVoiceChatListening = false;
-    const panel = document.getElementById('appVoiceChatPanel');
-    if (panel) panel.classList.add('hidden');
-    resetAppVoiceChatButton();
-}
-
-function stopAppVoiceChatSpeech() {
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-}
-
-function speakAppVoiceChat(message) {
-    const reply = document.getElementById('appVoiceReplyText');
-    if (reply) reply.textContent = message;
-    if (!appVoiceChatSpeechEnabled || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.lang = 'th-TH';
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    window.speechSynthesis.speak(utterance);
-}
-
-function resetAppVoiceChatButton() {
-    appVoiceChatListening = false;
-    const btn = document.getElementById('appVoiceListenBtn');
-    const icon = document.getElementById('appVoiceListenIcon');
-    const label = document.getElementById('appVoiceListenLabel');
-    if (btn) btn.className = 'flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-2.5 text-sm font-bold flex items-center justify-center gap-2';
-    if (icon) icon.className = 'fa-solid fa-microphone';
-    if (label) label.textContent = 'พูดคุยกับแอป';
-}
-
-function startAppVoiceChatListening() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const status = document.getElementById('appVoiceChatStatus');
-    if (!SpeechRecognition) {
-        if (status) status.textContent = 'เบราว์เซอร์นี้ไม่รองรับการฟังเสียง แนะนำ Google Chrome หรือ Microsoft Edge';
-        speakAppVoiceChat('เบราว์เซอร์นี้ยังไม่รองรับการฟังเสียง กรุณาใช้ Google Chrome หรือ Microsoft Edge');
-        return;
-    }
-    if (appVoiceChatListening) {
-        try { appVoiceChatRecognition.stop(); } catch (e) {}
-        return;
-    }
-
-    stopAppVoiceChatSpeech();
-    appVoiceChatRecognition = new SpeechRecognition();
-    appVoiceChatRecognition.lang = 'th-TH';
-    appVoiceChatRecognition.interimResults = false;
-    appVoiceChatRecognition.maxAlternatives = 1;
-
-    appVoiceChatRecognition.onstart = function() {
-        appVoiceChatListening = true;
-        const btn = document.getElementById('appVoiceListenBtn');
-        const icon = document.getElementById('appVoiceListenIcon');
-        const label = document.getElementById('appVoiceListenLabel');
-        if (btn) btn.className = 'flex-1 bg-rose-600 text-white rounded-xl py-2.5 text-sm font-bold flex items-center justify-center gap-2 animate-pulse';
-        if (icon) icon.className = 'fa-solid fa-microphone-lines';
-        if (label) label.textContent = 'กำลังฟัง...';
-        if (status) status.textContent = 'กำลังฟังครับ พูดได้เลย';
-    };
-
-    appVoiceChatRecognition.onresult = function(event) {
-        const spoken = String(event.results?.[0]?.[0]?.transcript || '').trim();
-        const userText = document.getElementById('appVoiceUserText');
-        if (userText) userText.textContent = spoken || 'ไม่ได้ยินข้อความ';
-        handleAppVoiceChatIntent(spoken);
-    };
-
-    appVoiceChatRecognition.onerror = function(event) {
-        if (status) status.textContent = event.error === 'not-allowed'
-            ? 'ยังไม่ได้รับอนุญาตใช้ไมโครโฟน กรุณาอนุญาตในเบราว์เซอร์'
-            : 'ฟังเสียงไม่สำเร็จ ลองกดไมโครโฟนอีกครั้งครับ';
-        resetAppVoiceChatButton();
-    };
-
-    appVoiceChatRecognition.onend = function() {
-        resetAppVoiceChatButton();
-    };
-
-    try {
-        appVoiceChatRecognition.start();
-    } catch (error) {
-        if (status) status.textContent = 'เริ่มฟังเสียงไม่ได้ กรุณาลองใหม่อีกครั้ง';
-        resetAppVoiceChatButton();
-    }
-}
-
-function handleAppVoiceChatIntent(rawText) {
-    const text = String(rawText || '').toLowerCase().replace(/\s+/g, '');
-    const status = document.getElementById('appVoiceChatStatus');
-
-    if (!text) {
-        speakAppVoiceChat('ผมยังไม่ได้ยินคำถาม ลองพูดอีกครั้งได้ครับ');
-        return;
-    }
-
-    if (/หยุดพูด|หยุดเสียง|เงียบก่อน/.test(text)) {
-        stopAppVoiceChatSpeech();
-        if (status) status.textContent = 'หยุดเสียงแล้ว';
-        return;
-    }
-
-    if (/ไปหน้าสถิติ|เปิดหน้าสถิติ|หน้าสถิติ|หน้าexcel|หน้าเอ็กเซล|ไปหน้าexcel/.test(text)) {
-        if (typeof switchPageTab === 'function') switchPageTab('customEngine');
-        speakAppVoiceChat('เปิดหน้าสถิติและสูตร Excel ให้แล้วครับ');
-        return;
-    }
-
-    if (/ไปหน้าหลัก|กลับหน้าหลัก|เปิดหน้าหลัก|หน้าแรก/.test(text)) {
-        if (typeof switchPageTab === 'function') switchPageTab('main');
-        speakAppVoiceChat('กลับมาที่หน้าหลักให้แล้วครับ');
-        return;
-    }
-
-    if (/ตอนนี้อยู่หน้าไหน|อยู่หน้าไหน|หน้าอะไรอยู่/.test(text)) {
-        const statsPage = document.getElementById('pageCustomEngine');
-        const isStats = statsPage && !statsPage.classList.contains('hidden');
-        speakAppVoiceChat(isStats ? 'ตอนนี้อยู่หน้าสถิติและสูตร Excel ครับ' : 'ตอนนี้อยู่หน้าหลักครับ');
-        return;
-    }
-
-    if (/ช่วยอะไรได้บ้าง|ทำอะไรได้บ้าง|คำสั่งอะไร|วิธีใช้|ขอวิธีใช้/.test(text)) {
-        speakAppVoiceChat('ตอนนี้ผมช่วยเปิดหน้าหลัก เปิดหน้าสถิติ บอกว่ากำลังอยู่หน้าไหน และอธิบายวิธีใช้เบื้องต้นได้ครับ ลองพูดว่า ไปหน้าสถิติ หรือ กลับหน้าหลัก');
-        return;
-    }
-
-    if (/สวัสดี|หวัดดี|hello/.test(text)) {
-        speakAppVoiceChat('สวัสดีครับ ยินดีช่วยใช้งานแอปครับ อยากไปหน้าไหนหรือถามวิธีใช้งานอะไร ลองพูดได้เลย');
-        return;
-    }
-
-    if (/ขอบคุณ|แต๊งกิ้ว/.test(text)) {
-        speakAppVoiceChat('ยินดีครับ ถ้าต้องการให้ช่วยนำทางหรืออธิบายเมนู ก็บอกได้เลยครับ');
-        return;
-    }
-
-    speakAppVoiceChat('ขอโทษครับ ตอนนี้ผมยังไม่เข้าใจประโยคนี้ ผมช่วยนำทางระหว่างหน้าหลักกับหน้าสถิติ และบอกวิธีใช้เบื้องต้นได้ ลองถามว่า ไปหน้าสถิติ หรือ ช่วยอะไรได้บ้าง');
-}
-</script>
-
 </body>
 </html>
