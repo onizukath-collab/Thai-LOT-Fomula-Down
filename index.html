@@ -3964,6 +3964,100 @@ function readCurrentPDG83Summary() {
 
   updateVoiceReplyButtonUI();
 })();
+
+(function () {
+  const THAI_DIGITS = {
+    '0': 'ศูนย์', '1': 'หนึ่ง', '2': 'สอง', '3': 'สาม', '4': 'สี่',
+    '5': 'ห้า', '6': 'หก', '7': 'เจ็ด', '8': 'แปด', '9': 'เก้า'
+  };
+
+  function toPerDigitSpeech(input) {
+    const normalized = String(input || '')
+      .replace(/ศูนย์/g, '0').replace(/หนึ่ง/g, '1').replace(/สอง/g, '2')
+      .replace(/สาม/g, '3').replace(/สี่/g, '4').replace(/ห้า/g, '5')
+      .replace(/หก/g, '6').replace(/เจ็ด/g, '7').replace(/แปด/g, '8')
+      .replace(/เก้า/g, '9')
+      .replace(/[^0-9]/g, '');
+    if (!normalized) return '';
+    return normalized.split('').map(d => THAI_DIGITS[d]).join(' , ');
+  }
+
+  function forcePerDigitInText(text) {
+    return String(text || '').replace(/[0-9]+/g, m => toPerDigitSpeech(m));
+  }
+
+  window.formatThaiNumberSpeech = toPerDigitSpeech;
+
+  const prevSpeak = window.speakThaiReply;
+  window.speakThaiReply = function (text, force = false) {
+    const cleanText = forcePerDigitInText(text);
+    if (!cleanText) return;
+    if (typeof prevSpeak === 'function') {
+      return prevSpeak(cleanText, force);
+    }
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.resume();
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(cleanText);
+    u.lang = 'th-TH';
+    u.rate = 0.95;
+    window.speechSynthesis.speak(u);
+  };
+
+  window.handleVoiceCommandText = function (raw) {
+    const txt = String(raw || '').trim();
+    if (!txt) return false;
+    const compact = txt.replace(/\s+/g, '');
+
+    // กันเสียงรบกวนหรือคำพ้องเสียงไม่ให้ไปสร้างแฟ้มเอง เว้นแต่พูดคำว่า "สร้างแฟ้มใหม่" ชัดเจน
+    if (/สร้างแฟ้ม/.test(compact) && !/สร้างแฟ้มใหม่/.test(compact)) {
+      window.speakThaiReply('ยกเลิกคำสั่งสร้างแฟ้มครับ', true);
+      return true;
+    }
+
+    if (/ลบแต้ม|ล้างแต้ม/.test(compact)) {
+      const el = document.getElementById('sumPointsInput');
+      if (el) { el.value = ''; el.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (typeof autoProcess === 'function') autoProcess();
+      window.speakThaiReply('ลบแต้มเรียบร้อยครับ', true);
+      return true;
+    }
+
+    if (/ลบเลขดับ|ล้างเลขดับ/.test(compact)) {
+      const el = document.getElementById('excludeInput');
+      if (el) { el.value = ''; el.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (typeof autoProcess === 'function') autoProcess();
+      window.speakThaiReply('ลบเลขดับเรียบร้อยครับ', true);
+      return true;
+    }
+
+    if (/ล้างทั้งหมด|ลบทุกอย่าง/.test(compact)) {
+      ['tens', 'units', 'stairInput', 'excludeInput', 'sumPointsInput'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      if (typeof autoProcess === 'function') autoProcess();
+      window.speakThaiReply('ล้างทั้งหมดเรียบร้อยครับ', true);
+      return true;
+    }
+
+    const onlyDigits = compact.replace(/[0-9ศูนย์หนึ่งสองสามสี่ห้าหกเจ็ดแปดเก้า]/g, '');
+    if (onlyDigits.length === 0 && compact.length > 0) {
+      window.speakThaiReply(toPerDigitSpeech(compact), true);
+      return true;
+    }
+
+    return false;
+  };
+
+  const prevParseMain = window.parseAndApplyMainTargetVoice;
+  if (typeof prevParseMain === 'function') {
+    window.parseAndApplyMainTargetVoice = function (text) {
+      if (window.handleVoiceCommandText(text)) return;
+      return prevParseMain.apply(this, arguments);
+    };
+  }
+})();
 </script>
 	<!-- ปุ่มไมโครโฟนลอยมุมขวาล่าง สะดวก ไม่เกะกะหน้าจอ -->
 <button id="mainVoiceCommandBtn" type="button" onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-5 right-5 z-50 bg-indigo-600 hover:bg-indigo-700 text-white w-5 h-7 rounded-full shadow-xl flex items-center justify-center transition transform hover:scale-105 active:scale-95" title="กดพูดคำสั่งเสียง" aria-label="สั่งงานด้วยเสียง">
