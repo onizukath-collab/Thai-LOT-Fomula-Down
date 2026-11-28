@@ -3699,6 +3699,95 @@ function readCurrentPDG83Summary() {
         updateVoiceReplyButtonUI();
     });
 })();
+
+<button id="toggleVoiceReplyBtn" type="button" onclick="toggleVoiceReply()"
+  class="fixed bottom-5 right-36 z-50 px-3.5 py-2 rounded-xl shadow-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition">
+  <i id="voiceReplyIcon" class="fa-solid fa-volume-high"></i>
+  <span id="voiceReplyLabel">เสียงตอบกลับ: เปิด</span>
+</button>
+
+<script>
+  let isVoiceReplyEnabled = true;
+  let cachedThaiVoice = null;
+
+  function loadThaiVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices() || [];
+    cachedThaiVoice =
+      voices.find(v => /th[-_]?TH/i.test(v.lang)) ||
+      voices.find(v => /^th/i.test(v.lang)) ||
+      null;
+    return cachedThaiVoice;
+  }
+
+  if ('speechSynthesis' in window) {
+    loadThaiVoice();
+    window.speechSynthesis.onvoiceschanged = loadThaiVoice;
+  }
+
+  function updateVoiceReplyButtonUI() {
+    const btn = document.getElementById('toggleVoiceReplyBtn');
+    const icon = document.getElementById('voiceReplyIcon');
+    const label = document.getElementById('voiceReplyLabel');
+    if (!btn || !icon || !label) return;
+    if (isVoiceReplyEnabled) {
+      btn.className = 'fixed bottom-5 right-36 z-50 px-3.5 py-2 rounded-xl shadow-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition';
+      icon.className = 'fa-solid fa-volume-high';
+      label.textContent = 'เสียงตอบกลับ: เปิด';
+    } else {
+      btn.className = 'fixed bottom-5 right-36 z-50 px-3.5 py-2 rounded-xl shadow-lg text-xs font-bold bg-slate-700 hover:bg-slate-800 text-slate-200 flex items-center gap-1.5 transition';
+      icon.className = 'fa-solid fa-volume-xmark';
+      label.textContent = 'เสียงตอบกลับ: ปิด';
+    }
+  }
+
+  function speakThaiReply(text, force = false) {
+    if (!text) return;
+    if (!force && !isVoiceReplyEnabled) return;
+    if (!('speechSynthesis' in window)) {
+      if (typeof showToast === 'function') showToast('เบราว์เซอร์นี้ไม่รองรับเสียงพูด');
+      return;
+    }
+    try {
+      window.speechSynthesis.resume();
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(String(text));
+      utter.lang = 'th-TH';
+      utter.rate = 1.0;
+      const voice = cachedThaiVoice || loadThaiVoice();
+      if (voice) utter.voice = voice;
+      utter.onerror = (e) => console.warn('SpeechSynthesis error:', e);
+      window.speechSynthesis.speak(utter);
+    } catch (err) {
+      console.warn('speakThaiReply failed:', err);
+    }
+  }
+
+  function toggleVoiceReply() {
+    isVoiceReplyEnabled = !isVoiceReplyEnabled;
+    updateVoiceReplyButtonUI();
+    if (isVoiceReplyEnabled) {
+      speakThaiReply('เปิดเสียงพูดตอบกลับแล้วครับ', true);
+    } else if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }
+
+  function readCurrentPDG83Summary() {
+    const pairCount = document.getElementById('statPairPassed')?.textContent?.trim() || '0';
+    const stairCount = document.getElementById('statStairPassed')?.textContent?.trim() || '0';
+    const firstDigits = document.getElementById('extractedFirstDigitsDisplay')?.textContent?.trim() || '';
+    const msg = `ชุดประกบผ่าน ${pairCount} ชุด ชุดวินผ่าน ${stairCount} ชุด` +
+      (firstDigits && !firstDigits.includes('รอคำนวณ') ? ` เลขตัวแรกสรุปคือ ${firstDigits}` : '');
+    speakThaiReply(msg, true);
+  }
+
+  const _origShowToast = window.showToast;
+  window.showToast = function(msg) {
+    if (typeof _origShowToast === 'function') _origShowToast(msg);
+    if (msg) speakThaiReply(msg, false);
+  };
+</script>
     </script>
 	<!-- Modal สำหรับแสดงผลการแชร์แบบสวยงาม -->
 <div id="shareMovieModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -3747,5 +3836,7 @@ function readCurrentPDG83Summary() {
 <button id="mainVoiceCommandBtn" type="button" onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-5 right-5 z-50 bg-indigo-600 hover:bg-indigo-700 text-white w-5 h-7 rounded-full shadow-xl flex items-center justify-center transition transform hover:scale-105 active:scale-95" title="กดพูดคำสั่งเสียง" aria-label="สั่งงานด้วยเสียง">
     <i class="fa-solid fa-microphone text-base"></i>
 </button>
+
+
 </body>
 </html>
