@@ -3834,6 +3834,76 @@ function readCurrentPDG83Summary() {
     if (msg) speakThaiReply(msg, false);
   };
 </script>
+<script>
+  function formatThaiNumberSpeech(digitsStr) {
+    const clean = String(digitsStr || '').replace(/[^0-9]/g, '');
+    if (!clean) return '';
+    const num = Number(clean);
+    if (!Number.isSafeInteger(num)) {
+      return clean.split('').join(' ');
+    }
+    return num.toLocaleString('th-TH');
+  }
+
+  function handleVoiceCommandText(rawTranscript) {
+    const text = String(rawTranscript || '').trim();
+    if (!text) return false;
+    const compact = text.replace(/\s+/g, '');
+
+    if (/ลบแต้ม|ล้างแต้ม|เอาแต้มออก/.test(compact)) {
+      const sumInput = document.getElementById('sumPointsInput');
+      if (sumInput) {
+        sumInput.value = '';
+        if (typeof autoProcess === 'function') autoProcess();
+      }
+      speakThaiReply('ลบแต้มผลรวมหลักเรียบร้อยครับ', true);
+      return true;
+    }
+
+    if (/ลบเลขดับ|ล้างเลขดับ/.test(compact)) {
+      const exInput = document.getElementById('excludeInput');
+      if (exInput) {
+        exInput.value = '';
+        if (typeof autoProcess === 'function') autoProcess();
+      }
+      speakThaiReply('ลบชุดเลขดับเรียบร้อยครับ', true);
+      return true;
+    }
+
+    if (/ลบตัวกรอง|ล้างตัวกรอง|ลบเลขเด่น/.test(compact)) {
+      document.querySelectorAll('.filter-input').forEach((inp, idx) => {
+        inp.value = idx === 0 ? '' : inp.value;
+      });
+      if (typeof autoProcess === 'function') autoProcess();
+      speakThaiReply('ลบตัวเลขในช่องคัดกรองเรียบร้อยครับ', true);
+      return true;
+    }
+
+    if (/ล้างทั้งหมด|ลบทุกอย่าง/.test(compact)) {
+      ['tens', 'units', 'stairInput', 'excludeInput', 'sumPointsInput'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.querySelectorAll('.filter-input').forEach(inp => { inp.value = ''; });
+      if (typeof autoProcess === 'function') autoProcess();
+      speakThaiReply('ล้างตัวเลขทั้งหมดเรียบร้อยครับ', true);
+      return true;
+    }
+
+    if (/อ่านผล|สรุปผล/.test(compact)) {
+      if (typeof readCurrentPDG83Summary === 'function') readCurrentPDG83Summary();
+      return true;
+    }
+
+    const pureDigits = compact.replace(/[^0-9]/g, '');
+    if (pureDigits && pureDigits.length === compact.length) {
+      speakThaiReply(formatThaiNumberSpeech(pureDigits), true);
+      return true;
+    }
+
+    return false;
+  }
+</script>
 	<!-- ปุ่มไมโครโฟนลอยมุมขวาล่าง สะดวก ไม่เกะกะหน้าจอ -->
 <button id="mainVoiceCommandBtn" type="button" onclick="toggleMainTargetVoiceRecognition()" class="fixed bottom-5 right-5 z-50 bg-indigo-600 hover:bg-indigo-700 text-white w-5 h-7 rounded-full shadow-xl flex items-center justify-center transition transform hover:scale-105 active:scale-95" title="กดพูดคำสั่งเสียง" aria-label="สั่งงานด้วยเสียง">
     <i class="fa-solid fa-microphone text-base"></i>
